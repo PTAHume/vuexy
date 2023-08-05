@@ -7,7 +7,7 @@ import NodeGlobalsPolyfillPlugin from '@esbuild-plugins/node-globals-polyfill'
 
 export default () => {
   return defineConfig({
-    base:'vuexy',
+    base:'/vuexy/',
     plugins: [react()],
     define: {
       global: 'globalThis'
@@ -16,7 +16,7 @@ export default () => {
       port: 3000,
       proxy: 'https://pixinvent.com/',
       cors: {
-        origin: ['http://localhost:3000'],
+        origin: ['http://localhost:3000', 'https://ptahume.github.io'],
         methods: ['GET', 'PATCH', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
       }
