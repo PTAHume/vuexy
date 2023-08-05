@@ -87,6 +87,7 @@ export default () => {
       }
     },
     build: {
+      target: 'esnext',
       rollupOptions: {
         plugins: [rollupNodePolyFill()]
       }
