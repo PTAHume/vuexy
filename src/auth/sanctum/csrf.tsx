@@ -15,7 +15,7 @@ function getCsrfToken() {
       },
     });
 
-    csrfTokenPromise = instance.get("http://134.122.97.77/sanctum/csrf-cookie");
+    csrfTokenPromise = instance.get("https://134.122.97.77/sanctum/csrf-cookie");
     csrfTokenTimeStamp = now;
   }
 
