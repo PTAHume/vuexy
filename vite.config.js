@@ -7,7 +7,7 @@ import NodeGlobalsPolyfillPlugin from '@esbuild-plugins/node-globals-polyfill'
 
 export default () => {
   return defineConfig({
-    base:'/home/',
+    base:'https://ptahume.github.io/vuexy/',
     plugins: [react()],
     define: {
       global: 'globalThis'

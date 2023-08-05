@@ -1,6 +1,6 @@
 // ** Auth Endpoints
 export default {
-  baseUrl: 'http://134.122.97.77/', // or your base URL
+  baseUrl: 'https://134.122.97.77/', // or your base URL
   loginEndpoint: "api/admin/login", 
   registerEndpoint: "sanctum/register",
   refreshEndpoint: "api/admin/refreshtoken",
