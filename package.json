@@ -107,7 +107,7 @@
     "xlsx": "^0.18.5",
     "yup": "^0.32.11"
   },
-  "homepage": "/vuexy/",
+  "homepage": "/",
   "scripts": {
     "build": "vite build",
     "predeploy": "npm run build",
