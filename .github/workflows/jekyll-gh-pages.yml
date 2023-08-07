@@ -50,7 +50,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@master
       - name: Deploying to Digitalocean droplet
         uses: appleboy/ssh-action@master # An action made to control Linux servers
         with: # We set all our secrets here for the action, these won't be shown in the action logs
@@ -59,9 +59,10 @@ jobs:
           password: ${{ secrets.SSH_PW }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd  /home/dealmanager.co.uk/public_html # we move into our app's folder
-            rm -rf  {*,.*}
-            git init .
-            git checkout -b gh-pages
-            git pull https://github.com/PTAHume/vuexy.git gh-pages
+            cd  /home/dealmanager.co.uk/public_html # change to folder
+            rm -rf  {*,.*} # clear contents
+            git init . # initalise git
+            git checkout -b gh-pages # check a branch 
+            git pull https://github.com/PTAHume/vuexy.git gh-pages # pull our changes into this 
+            git status # confrim
         
