@@ -1,6 +1,6 @@
 import sanctumService from "../../../../../@core/auth/sanctum/sanctumService";
 import { paginateArray, sortCompare, getSortBy } from "./util";
-import moment  from 'moment';
+import moment from 'moment';
 const sanctum = new sanctumService();
 
 
@@ -49,67 +49,65 @@ const fetchOffers = async ({
   }
 };
 
-
-
+export const findProductById = async (id) => {
   const productsData = await fetchOffers();
-  const products  = productsData.data;
+  const products = productsData.data;
+  products.find((product) => product.id === id);
+}
 
-  export const findProductById = (products, id) =>
-    products.find((product) => product.id === id);
+export const getFilteredProducts = async (params) => {
+  try {
+    const response = await fetchOffers(params);
 
-    export const getFilteredProducts = async (params) => {
-      try {
-        const response = await fetchOffers(params);
-    
-        return {
-          products: response.data,
-          params,
-          total: response.total,
-          page: response.page,
-          perPage: response.perPage,
-        };
-      } catch (error) {
-        console.error(error);
-        return {
-          products: [],
-          params,
-          total: 0,
-          page: 1,
-          perPage: 9,
-        };
-      }
+    return {
+      products: response.data,
+      params,
+      total: response.total,
+      page: response.page,
+      perPage: response.perPage,
     };
-    
+  } catch (error) {
+    console.error(error);
+    return {
+      products: [],
+      params,
+      total: 0,
+      page: 1,
+      perPage: 9,
+    };
+  }
+};
 
 
-  {/*This is coming from SIDEBAR we will send the searchQuery because it will fetch data based on this */}
-  export const getFrontSidebarData = async (
-    searchQuery = "",
-    searchField,
-    departure_country_id,
-    departure_city_id,
-    arrival_country_id,
-    arrival_city_id,
-    departure_airport_id,
-    arrival_airport_id
-  ) => {
-    try {
-      const response = await sanctum.getFrontSidebarData(
-        searchQuery,
-        searchField || "",
-        departure_country_id || null,
-        departure_city_id || null,
-        arrival_country_id || null,
-        arrival_city_id || null,
-        departure_airport_id || null,
-        arrival_airport_id
-      );
-  
-      return response.data;
-    } catch (error) {
-      return { error: error.response };
-    }
-  };
-  
 
- export default { products };
+{/*This is coming from SIDEBAR we will send the searchQuery because it will fetch data based on this */ }
+export const getFrontSidebarData = async (
+  searchQuery = "",
+  searchField,
+  departure_country_id,
+  departure_city_id,
+  arrival_country_id,
+  arrival_city_id,
+  departure_airport_id,
+  arrival_airport_id
+) => {
+  try {
+    const response = await sanctum.getFrontSidebarData(
+      searchQuery,
+      searchField || "",
+      departure_country_id || null,
+      departure_city_id || null,
+      arrival_country_id || null,
+      arrival_city_id || null,
+      departure_airport_id || null,
+      arrival_airport_id
+    );
+
+    return response.data;
+  } catch (error) {
+    return { error: error.response };
+  }
+};
+
+
+export default { products };

@@ -284,11 +284,6 @@ export default class sanctumService {
     );
   }
 
-  deleteDeal(id) {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteDeal}${id}`
-    );
-  }
 
   //when you press submit in deal editing page
   updateDeal(data, id) {
@@ -350,7 +345,6 @@ export default class sanctumService {
       `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteDeal}${id}`
     );
   }
-
 
   //*************USERS */
    //when you press submit in admin editing page
