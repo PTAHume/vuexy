@@ -54,7 +54,7 @@ jobs:
          uses: actions/setup-node@v1 # downloads node and npm
          with:
            node-version: ${{ matrix.node-version }}
-       - run: npm install # installs your dependencies
+       - run: npm install --silent # installs your dependencies
        - run: npm run build # installs your dependencies
        - run: npm run deploy # installs your dependencies
          env:
