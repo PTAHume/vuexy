@@ -38,15 +38,33 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
 
+        
+  # Build job
+  bundle-package:
+    runs-on: ubuntu-latest
+    needs: build  # this job depends 
+    strategy:
+       fail-fast: false # tells github to not run further steps if this one fails
+       matrix:
+         node-version: [12.22.9] # sets the version of node we want to use, should be what you have on your server
+    steps:
+       - uses: actions/checkout@v2 # fetches your commit to test it
+       - name: Use Node.js ${{ matrix.node-version }} # names our step
+         uses: actions/setup-node@v1 # downloads node and npm
+         with:
+           node-version: ${{ matrix.node-version }}
+       - run: npm run deploy # installs your dependencies
+         env:
+           CI: true # shows terminal output!
+          
+
   # Deployment job
   deploy-to-github-pages:
     environment:
-      name: github-pages
+      name: bundle-package
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
-
-    
+    needs: build    
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
