@@ -41,6 +41,7 @@ jobs:
         
   # Build job
   bundle-package:
+    name: Create package for deploy
     runs-on: ubuntu-latest
     needs: build  # this job depends 
     strategy:
@@ -53,6 +54,8 @@ jobs:
          uses: actions/setup-node@v1 # downloads node and npm
          with:
            node-version: ${{ matrix.node-version }}
+       - run: npm install # installs your dependencies
+       - run: npm run build # installs your dependencies
        - run: npm run deploy # installs your dependencies
          env:
            CI: true # shows terminal output!
@@ -61,10 +64,10 @@ jobs:
   # Deployment job
   deploy-to-github-pages:
     environment:
-      name: bundle-package
+      name: Deploying to Digitalocean droplet
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build    
+    needs: bundle-package    
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
