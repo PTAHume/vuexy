@@ -59,7 +59,6 @@ jobs:
           password: ${{ secrets.SSH_PW }}
           port: ${{ secrets.SSH_PORT }}
       - name: test
-        shell: bash
         run: |
             cd  /home/dealmanager.co.uk/public_html # we move into our app's folder
             rm -rf  {*,.*}
