@@ -15,7 +15,7 @@ export const useSubscribeToAllDealsList  = (onError, onSuccess, onDataReceived) 
         key: 'alikoza',
         cluster: 'mt1',
         encrypted: false,
-        wsHost: '46.101.81.249', // e.g., 'localhost'
+        wsHost: 'https://api.dealmanager.co.uk', // e.g., 'localhost'
         wsPort: 6001, // Use the appropriate port if different
         wssPort: 6001, // Use the appropriate secure port if different
         disableStats: true,

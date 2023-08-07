@@ -15,7 +15,7 @@ function getCsrfToken() {
       },
     });
 
-    csrfTokenPromise = instance.get("http://46.101.81.249/sanctum/csrf-cookie");
+    csrfTokenPromise = instance.get("https://api.dealmanager.co.uk/sanctum/csrf-cookie");
     csrfTokenTimeStamp = now;
   }
 

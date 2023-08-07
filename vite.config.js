@@ -19,6 +19,12 @@ export default () => {
         origin: ['http://localhost:3000', 'https://ptahume.github.io'],
         methods: ['GET', 'PATCH', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+      },
+      '/api': {
+        target: 'https://api.dealmanager.co.uk',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     },
     css: {
