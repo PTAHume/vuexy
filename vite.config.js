@@ -51,7 +51,7 @@ export default () => {
         { find: '@assets', replacement: path.resolve(__dirname, 'src/@core/assets') },
         { find: '@layouts', replacement: path.resolve(__dirname, 'src/@core/layouts') },
         { find: '@components', replacement: path.resolve(__dirname, 'src/@core/components') },
-        { find: '@sanctum' , replacement: path.resolve(__dirname, 'src/@core/auth/sanctum')}
+        { find: '@sanctum', replacement: path.resolve(__dirname, 'src/@core/auth/sanctum')}
       ]
     }
   })
