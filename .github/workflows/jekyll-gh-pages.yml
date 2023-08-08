@@ -53,6 +53,7 @@ jobs:
        - name: Use Node.js ${{ matrix.node-version }} # names our step
          uses: actions/setup-node@v1 # downloads node and npm
          with:
+           host: Host github.com  IdentityFile ~/.ssh/github_rsa
            node-version: ${{ matrix.node-version }}
        - run: npm install --save --legacy-peer-deps # installs your dependencies
        - run: hash -d npm # clean packages
