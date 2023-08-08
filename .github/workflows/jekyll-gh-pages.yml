@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Build with Jekyll
@@ -49,17 +49,17 @@ jobs:
        matrix:
          node-version: [20.5.0] # sets the version of node we want to use, should be what you have on your server
     steps:
-       - uses: actions/checkout@v2 # fetches your commit to test it
-       - name: Use Node.js ${{ matrix.node-version }} # names our step
-         uses: actions/setup-node@v1 # downloads node and npm
-         with:
-           node-version: ${{ matrix.node-version }}
-       - run: npm install # installs your dependencies
-       - run: npm run build --omit=dev # installs your dependencies
-       - run: npm run deploy # installs your dependencies
-         env:
-           CI: true # shows terminal output!
-          
+      - uses: actions/checkout@v2 # fetches your commit to test it
+      - name: Use Node.js ${{ matrix.node-version }} # names our step
+        uses: actions/setup-node@v1 # downloads node and npm
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install # installs your dependencies
+      - run: npm prune # builds your app
+      - run: npm run build # builds your app
+      - run: npm run deploy # runs your test suite
+        env:
+          CI: true # shows terminal output!          
 
   # Deployment job
   deploy-to-github-pages:
