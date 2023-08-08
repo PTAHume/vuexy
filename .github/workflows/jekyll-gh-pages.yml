@@ -62,8 +62,6 @@ jobs:
           git pull https://github.com/PTAHume/vuexy.git gh-pages
           git status
 
-    - uses: actions/checkout@v2
-
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
