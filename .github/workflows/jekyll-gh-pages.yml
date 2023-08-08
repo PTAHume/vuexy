@@ -58,7 +58,7 @@ jobs:
        - run: hash -d npm # clean packages
        - run: git config --global user.email "patricktahume@outlook.com"
        - run: git config --global user.name "Patrick Hume"
-       - run:git remote set-url origin git@github.com:PTAHume/vuexy.git
+       - run: git remote set-url origin git@github.com:PTAHume/vuexy.git
        - run: npm run deploy --omit=dev # installs your dependencies
          env:
            CI: true # shows terminal output!
