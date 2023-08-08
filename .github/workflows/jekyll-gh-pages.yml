@@ -55,8 +55,10 @@ jobs:
          with:
            node-version: ${{ matrix.node-version }}
        - run: npm install --save --legacy-peer-deps # installs your dependencies
-       - run: npm run build # installs your dependencies
-       - run: npm run deploy # installs your dependencies
+       - run: npm prune # clean packages
+       - run: git config --global user.email "patricktahume@outlook.com"
+       - run: git config --global user.name "patricktahume@outlook.com"
+       - run: npm run deploy --omit=dev # installs your dependencies
          env:
            CI: true # shows terminal output!
           
