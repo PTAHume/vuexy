@@ -3,13 +3,11 @@ name: Deploy Jekyll with GitHub Pages dependencies preinstalled
 
 on:
   workflow_run:
-    workflows: ["pages-build-deployment"]
+    workflows: ["Deploy to gh-pages"] # Replace with the actual workflow name
     types:
       - completed
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
+    
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -21,8 +19,11 @@ permissions:
 concurrency:
   group: "pages"
   cancel-in-progress: false
-
+  
 jobs:
+  post_deployment:
+    runs-on: ubuntu-latest
+    
   # Build job
   build:
     runs-on: ubuntu-latest
