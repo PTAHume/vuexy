@@ -56,14 +56,6 @@ jobs:
       matrix:
         node-version: [20.5.0]
     steps:
-    - name: Set up SSH
-      env:
-        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      run: |
-        mkdir -p ~/.ssh
-        echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
 
     - uses: actions/checkout@v2
 
@@ -71,6 +63,12 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+
+    - name: Use Node.js ${{ matrix.node-version }}
+    - uses: actions/checkout@v3
+    - uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - run: npm install --save --legacy-peer-deps
 
