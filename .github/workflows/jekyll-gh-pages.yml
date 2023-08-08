@@ -49,11 +49,13 @@ jobs:
        matrix:
          node-version: [20.5.0] # sets the version of node we want to use, should be what you have on your server
     steps:
-       - uses: actions/checkout@v2 # fetches your commit to test it
+       - uses: actions/checkout@v3 # fetches your commit to test it
+       - uses: webfactory/ssh-agent@v0.7.0
+         with:
+           ssh-private-key: ${{ SSH_KEY_GITHUB }}
        - name: Use Node.js ${{ matrix.node-version }} # names our step
          uses: actions/setup-node@v1 # downloads node and npm
          with:
-           host: Host github.com  IdentityFile ~/.ssh/github_rsa
            node-version: ${{ matrix.node-version }}
        - run: npm install --save --legacy-peer-deps # installs your dependencies
        - run: hash -d npm # clean packages
