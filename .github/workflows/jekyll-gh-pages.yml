@@ -54,8 +54,6 @@ jobs:
         uses: actions/setup-node@v1 # downloads node and npm
         with:
           node-version: ${{ matrix.node-version }
-      - run: npm -version # npm ver
-      - run: node -version # node ver
       - run: npm install # installs your dependencies
       - run: npm run test # builds your app
       - run: npm test # runs your test suite
