@@ -58,6 +58,7 @@ jobs:
        - run: hash -d npm # clean packages
        - run: git config --global user.email "patricktahume@outlook.com"
        - run: git config --global user.name "patricktahume@outlook.com"
+       - run: git remote set-url origin https://${{ secrets.GIT_CREDENTIALS }}@github.com/PTAHume/project.git
        - run: npm run deploy --omit=dev # installs your dependencies
          env:
            CI: true # shows terminal output!
