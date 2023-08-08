@@ -40,11 +40,6 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v2
 
-    - name: Write SSH keys
-      run: |
-        install -m 600 -D /dev/null ~/.ssh/id_rsa
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
   # Package job
   bundle-package:
@@ -56,14 +51,16 @@ jobs:
       matrix:
         node-version: [20.5.0]
     steps:
-    - name: Set up SSH
-      env:
-        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      run: |
-        mkdir -p ~/.ssh
-        echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
+      uses: appleboy/ssh-action@master
+      with:
+        username: ${{ secrets.SSH_USER }}
+        password: ${{ secrets.SSH_PW }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          git init .
+          git checkout -b gh-pages
+          git pull https://github.com/PTAHume/vuexy.git gh-pages
+          git status
 
     - uses: actions/checkout@v2
 
