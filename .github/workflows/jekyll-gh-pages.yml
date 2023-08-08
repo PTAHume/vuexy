@@ -37,6 +37,13 @@ jobs:
           destination: ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
+      - name: Write SSH keys
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          host='host.example.com'
+          hosts="$(dig +short "$host" | grep -v '\.$' | sed -z 's|\n|,|g')$host"
+          ssh-keyscan -H "$hosts" > ~/.ssh/known_hosts
 
         
   # Build job
@@ -49,10 +56,7 @@ jobs:
        matrix:
          node-version: [20.5.0] # sets the version of node we want to use, should be what you have on your server
     steps:
-       - uses: actions/checkout@v3 # fetches your commit to test it
-       - uses: webfactory/ssh-agent@v0.7.0
-         with:
-           ssh-private-key:  "${{ secrets.SSH_PRIVATE_KEY }}"
+       - uses: actions/checkout@v2 # fetches your commit to test it
        - name: Use Node.js ${{ matrix.node-version }} # names our step
          uses: actions/setup-node@v1 # downloads node and npm
          with:
