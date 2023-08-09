@@ -52,7 +52,6 @@ const handleSorting = async (sortBy) => {
   return (
     <div className="ecommerce-header">
       <Row>
-        <div>another file changed on this commit</div>
       {loading ? (
                 <div id="loading-overlay" style={{ display: "flex" }}>
                   <div className="loader"></div>
