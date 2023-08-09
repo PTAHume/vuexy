@@ -4,7 +4,7 @@ name: Deploy To Server
 on:
   workflow_run:
     workflows:
-      - Name_Of_Your_Workflow_To_Watch
+      - gh-pages
     types:
       - completed
 
@@ -27,7 +27,6 @@ jobs:
   # Deployment job
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/gh-pages' # we tell Github to only execute this step if we're on our master branch (so we don't put unfinished branches in production)
     steps:
       - name: Deploying to Digitalocean droplet
         uses: appleboy/ssh-action@master # An action made to control Linux servers
