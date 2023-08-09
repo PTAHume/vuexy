@@ -31,9 +31,9 @@ jobs:
     steps:
       - name: Deploy git hub pages to server
         id: deployment
-        uses: actions/deploy-pages@master
+        uses: actions/deploy-pages@gh-pages
       - name: Deploying to Digitalocean droplet
-        uses: appleboy/ssh-action@master # An action made to control Linux servers
+        uses: appleboy/ssh-action@gh-pages # An action made to control Linux servers
         with: # We set all our secrets here for the action, these won't be shown in the action logs
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
