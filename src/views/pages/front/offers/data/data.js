@@ -54,6 +54,10 @@ const fetchOffers = async ({
 
 
 
+ const products =  async () => {
+  return await fetchOffers()
+}
+
   export const findProductById = async (id) =>{
     const productsData = await fetchOffers()
     return productsData.find((product) => product.id === id)
@@ -114,3 +118,4 @@ const fetchOffers = async ({
   };
   
 
+export default {products}
