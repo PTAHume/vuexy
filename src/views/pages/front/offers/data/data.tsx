@@ -48,11 +48,11 @@ const fetchOffers = async ({
     return [];
   }
 };
+const products: any[] = [];
 
 export const findProductById = async (id) => {
   const productsData = await fetchOffers();
-  const products = productsData.data;
-  products.find((product) => product.id === id);
+  products = productsData.data.find(x => x.id === id);
 }
 
 export const getFilteredProducts = async (params) => {
