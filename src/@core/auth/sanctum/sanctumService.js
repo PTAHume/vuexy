@@ -284,6 +284,11 @@ export default class sanctumService {
     );
   }
 
+  deleteDeal(id) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteDeal}${id}`
+    );
+  }
 
   //when you press submit in deal editing page
   updateDeal(data, id) {
@@ -337,12 +342,6 @@ export default class sanctumService {
   async getAllData() {
     return axios.get(
     `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getAllData}`
-    );
-  }
-
-  deleteDeal(id) {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteDeal}${id}`
     );
   }
 

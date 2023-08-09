@@ -56,7 +56,6 @@ const Shop = () => {
         <div id="loading-overlay" style={{ display: "flex" }}>
           <div className="loader"></div>
         </div>
-        
       ) : (
         <>
           <Breadcrumbs
