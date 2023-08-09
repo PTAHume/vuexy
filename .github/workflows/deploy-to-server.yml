@@ -23,17 +23,12 @@ concurrency:
 
 jobs:     
   # Deployment job
-  deployment:
-    environment:
-      name: Deploying to Digitalocean droplet
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest 
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/gh-pages' # we tell Github to only execute this step if we're on our master branch (so we don't put unfinished branches in production)
     steps:
-      - name: Deploy git hub pages to server
-        id: deployment
-        uses: actions/deploy-pages@gh-pages
       - name: Deploying to Digitalocean droplet
-        uses: appleboy/ssh-action@gh-pages # An action made to control Linux servers
+        uses: appleboy/ssh-action@master # An action made to control Linux servers
         with: # We set all our secrets here for the action, these won't be shown in the action logs
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
