@@ -28,7 +28,6 @@ import Offers from './Front/FrontendHome'
 import UserAuthenticationRoutes from './Front/UserAuthentication'
 import MyChats from './Front/MyChats';
 
-
 const getLayout = {
   blank: <BlankLayout />,
   vertical: <VerticalLayout />,

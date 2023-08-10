@@ -32,12 +32,6 @@ const navigationUser = [
       ]
     },
     {
-      id: 'games-list',
-      title: 'Games List',
-      icon: <Home />,
-      navLink: '/games',
-    },
-    {
       id: 'addNewOffer',
       title: 'Add New Deal',
       icon: <Home />,

@@ -345,6 +345,13 @@ export default class sanctumService {
     );
   }
 
+  deleteDeal(id) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteDeal}${id}`
+    );
+  }
+
+
   //*************USERS */
    //when you press submit in admin editing page
    updateUser(data) {

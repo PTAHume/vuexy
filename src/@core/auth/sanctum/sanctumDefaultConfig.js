@@ -1,6 +1,6 @@
 // ** Auth Endpoints
 export default {
-  baseUrl: 'https://api.dealmanager.co.uk/', // or your base URL
+  baseUrl: 'http://localhost/', // or your base URL
   loginEndpoint: "api/admin/login", 
   registerEndpoint: "sanctum/register",
   refreshEndpoint: "api/admin/refreshtoken",
@@ -41,6 +41,8 @@ export default {
   getairports: "api/admin/getairports",
   getAllData : "api/admin/getAllData",
 
+
+
   //********************************USERS *******************/
   //when we press submit button
   updateUserDetail : "api/admin/updateuserdetails/",
@@ -66,5 +68,6 @@ export default {
   getChat : "api/front/getChat/",
   sendMsg : "api/front/sendMsg",
   getMoreMsgs: "api/front/getMoreMsgs/",
-  subscribeChatLists : "api/front/subscribe-chat-list"
-}
+
+  subscribeChatLists : "api/front/subscribe-chat-list",
+};
