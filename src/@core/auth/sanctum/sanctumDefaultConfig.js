@@ -41,8 +41,6 @@ export default {
   getairports: "api/admin/getairports",
   getAllData : "api/admin/getAllData",
 
-
-
   //********************************USERS *******************/
   //when we press submit button
   updateUserDetail : "api/admin/updateuserdetails/",
@@ -68,6 +66,5 @@ export default {
   getChat : "api/front/getChat/",
   sendMsg : "api/front/sendMsg",
   getMoreMsgs: "api/front/getMoreMsgs/",
-
-  subscribeChatLists : "api/front/subscribe-chat-list",
-};
+  subscribeChatLists : "api/front/subscribe-chat-list"
+}
