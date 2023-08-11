@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 
 export default () => {
   return defineConfig({
+    base: `/`,
     plugins: [react()],
     define: {
       global: 'globalThis'
@@ -13,7 +14,7 @@ export default () => {
       port: 3000,
       proxy: 'https://pixinvent.com/',
       cors: {
-        origin: ['http://localhost:3000', 'https://ptahume.github.io', 'https://api.dealmanager.co.uk'],
+        origin: ['http://localhost', 'https://ptahume.github.io', 'https://api.dealmanager.co.uk'],
         methods: ['GET', 'PATCH', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
       },
