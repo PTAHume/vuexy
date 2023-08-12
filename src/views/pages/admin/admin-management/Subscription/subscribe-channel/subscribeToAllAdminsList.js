@@ -9,16 +9,17 @@ export const useSubscribeToAllAdminsList  = (onError, onSuccess, onDataReceived)
     let cleanup
 
     async function subscribeToChannel() {
+      console.log('Attempting to subscribe to channel...')
       const echo = new Echo({
         broadcaster: 'pusher',
         key: 'alikoza',
         cluster: 'mt1',
-        encrypted: true,
+        encrypted: false,
         wsHost: 'api.dealmanager.co.uk', 
         wsPort: 6004, 
         wssPort: 6004, 
         disableStats: true,
-        forceTLS: true,
+        forceTLS: false,
         authEndpoint: `${sanctum.baseurl().replace(/\s/g, '')}/api/admin/subscribeToAdminsList`,
         authorizer: (channel) => {
          
