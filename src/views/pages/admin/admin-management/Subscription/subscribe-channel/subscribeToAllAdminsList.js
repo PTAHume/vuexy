@@ -18,7 +18,7 @@ export const useSubscribeToAllAdminsList  = (onError, onSuccess, onDataReceived)
         wsPort: 6004, 
         wssPort: 6004, 
         disableStats: true,
-        forceTLS: false,
+        forceTLS: true,
         authEndpoint: `${sanctum.baseurl().replace(/\s/g, '')}/api/admin/subscribeToAdminsList`,
         authorizer: (channel) => {
          
