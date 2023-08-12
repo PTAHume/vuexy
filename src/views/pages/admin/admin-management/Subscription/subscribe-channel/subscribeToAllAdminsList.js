@@ -14,12 +14,12 @@ export const useSubscribeToAllAdminsList  = (onError, onSuccess, onDataReceived)
         broadcaster: 'pusher',
         key: 'alikoza',
         cluster: 'mt1',
-        encrypted: false,
+        encrypted: true,
         wsHost: 'api.dealmanager.co.uk', 
         wsPort: 6004, 
         wssPort: 6004, 
         disableStats: true,
-        forceTLS: false,
+        forceTLS: true,
         authEndpoint: `${sanctum.baseurl().replace(/\s/g, '')}/api/admin/subscribeToAdminsList`,
         authorizer: (channel) => {
          
