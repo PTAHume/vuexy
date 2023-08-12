@@ -12,6 +12,7 @@
 /build
 /dist
 /demo-*
+!prodlic/.htacess
 
 # misc
 .DS_Store
