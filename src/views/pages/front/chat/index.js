@@ -1,6 +1,6 @@
 // ** React Imports
 import { Fragment, useState, useEffect } from 'react'
-import { getReduxUserData } from "../../../../utility/Utils";
+import { getReduxUserData } from "../../../../utility/Utils"
 // ** Chat App Component Imports
 import Chat from './Chat'
 import Sidebar from './SidebarLeft'
@@ -8,28 +8,21 @@ import UserProfileSidebar from './UserProfileSidebar'
 
 // ** Third Party Components
 import classnames from 'classnames'
-import { showLoader, hideLoader, updateChatListWithWebsocket } from './store';
+
 // ** Store & Actions
 import { useDispatch, useSelector } from 'react-redux'
-import { getUserProfile, getChatContacts } from './store'
+import { getUserProfile, getChatContacts, hideLoader } from './store'
 
-// import { useSubscribeToAllChatsList  } from './Subscription/subscribe-channel/subscribeToAllChatsList.js';
-// import Pusher from 'pusher-js';
 import '@styles/base/pages/app-chat.scss'
 import '@styles/base/pages/app-chat-list.scss'
-import "@styles/react/libs/spinner/spinner.scss";
-const AppChat = () => {
-  //const isLoading = useSelector((state) => state.appChat.isLoading);
-  const state = useSelector((state) => state);
-  const reduxUserData = getReduxUserData(state);
-  // console.log(state)
+import "@styles/react/libs/spinner/spinner.scss"
 
+const AppChat = () => {
+  const reduxUserData = useSelector((state) => getReduxUserData(state))
   const store = useSelector(state => state.chatData)
-  //console.log("store index page",store)
 
   // ** Store Vars
   const dispatch = useDispatch()
-  // const reduxUserData = useSelector(state => state.getReduxUserData);
 
   // ** States
   const [user, setUser] = useState({})
@@ -56,17 +49,16 @@ useEffect(() => {
     try {
       await Promise.all([
         dispatch(getChatContacts()).unwrap(),
-        dispatch(getUserProfile(reduxUserData.id)).unwrap(),
-      ]);
+        dispatch(getUserProfile(reduxUserData.id)).unwrap()
+      ])
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching data:", error)
     } finally {
-      dispatch(hideLoader());
+      dispatch(hideLoader())
     }
-  };
-
-  fetchData();
-}, [dispatch, reduxUserData.id]);
+  }
+  fetchData()
+}, [dispatch, reduxUserData.id])
 
 
   return (

@@ -1,8 +1,6 @@
-import sanctumService from "../../../../../@core/auth/sanctum/sanctumService";
-import { paginateArray, sortCompare, getSortBy } from "./util";
-import moment  from 'moment';
-const sanctum = new sanctumService();
+import sanctumService from "../../../../../@core/auth/sanctum/sanctumService"
 
+const sanctum = new sanctumService()
 
 const fetchOffers = async ({
   page = 1,
@@ -20,7 +18,7 @@ const fetchOffers = async ({
   departure_airport,
   departure_city,
   departure_country,
-  weight,
+  weight
 } = {}) => {
   try {
     const response = await sanctum.getFrontOffersData({
@@ -39,59 +37,54 @@ const fetchOffers = async ({
       departure_airport,
       departure_city,
       departure_country,
-      weight,
-    });
-    // console.log(response)
-    return response.data;
+      weight
+    })
+    return response.data
   } catch (error) {
-    console.error(error);
-    return [];
+    console.error(error)
+    return []
   }
-};
-
+}
 
 
  export const fetchInitialProducts = async () => {
     try {
-        const productsData = await fetchOffers();
-        return productsData.data;
+        const productsData = await fetchOffers()
+        return productsData.data
     } catch (error) {
-        console.error(error);
-        return [];
+        console.error(error)
+        return []
     }
-};
+}
 
-const products = fetchInitialProducts();
+const products = fetchInitialProducts()
 
-  export const findProductById = (products, id) =>
-    products.find((product) => product.id === id);
+  export const findProductById = (products, id) => products.find((product) => product.id === id)
 
     export const getFilteredProducts = async (params) => {
       try {
-        const response = await fetchOffers(params);
+        const response = await fetchOffers(params)
     
         return {
           products: response.data,
           params,
           total: response.total,
           page: response.page,
-          perPage: response.perPage,
-        };
+          perPage: response.perPage
+        }
       } catch (error) {
-        console.error(error);
+        console.error(error)
         return {
           products: [],
           params,
           total: 0,
           page: 1,
-          perPage: 9,
-        };
+          perPage: 9
+        }
       }
-    };
-    
+      }
 
-
-  {/*This is coming from SIDEBAR we will send the searchQuery because it will fetch data based on this */}
+  { /*This is coming from SIDEBAR we will send the searchQuery because it will fetch data based on this */ }
   export const getFrontSidebarData = async (
     searchQuery = "",
     searchField,
@@ -112,13 +105,13 @@ const products = fetchInitialProducts();
         arrival_city_id || null,
         departure_airport_id || null,
         arrival_airport_id
-      );
+      )
   
-      return response.data;
+      return response.data
     } catch (error) {
-      return { error: error.response };
+      return { error: error.response }
     }
-  };
+    }
   
 
- export default { products };
+ export default { products }

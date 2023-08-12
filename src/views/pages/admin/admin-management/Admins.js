@@ -4,17 +4,19 @@ import { getColumns, getData } from './data/FetchTableData'
 import AddNewModal from './AddNewModal'
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
+import { StyleSheetManager } from 'styled-components'
+import isPropValid from '@emotion/is-prop-valid'
 import { ChevronDown, Share, Printer, FileText, File, Grid, Copy, Plus, Check } from 'react-feather'
-import { useDispatch } from 'react-redux';
-import PageSpinner from '@components/globalspinner/PageSpinner';
-import sanctumService from '../../../../@core/auth/sanctum/sanctumService.js';
+import { useDispatch } from 'react-redux'
+import PageSpinner from '@components/globalspinner/PageSpinner'
+import sanctumService from '../../../../@core/auth/sanctum/sanctumService.js'
 //lets call file for subscriibng channel websocket
-import { useSubscribeToAllAdminsList  } from './Subscription/subscribe-channel/subscribeToAllAdminsList.js';
-import Pusher from 'pusher-js';
-import Echo from 'laravel-echo';
-import toast from 'react-hot-toast';
-import Avatar from '@components/avatar';
-import { fetchAdminDataSuccess } from './store/adminSlice'
+import { useSubscribeToAllAdminsList  } from './Subscription/subscribe-channel/subscribeToAllAdminsList.js'
+import Pusher from 'pusher-js'
+import Echo from 'laravel-echo'
+import toast from 'react-hot-toast'
+import Avatar from '@components/avatar'
+//import { fetchAdminDataSuccess } from './store/adminSlice'
 
 
 // ** Reactstrap Imports
@@ -43,16 +45,16 @@ const BootstrapCheckbox = forwardRef((props, ref) => (
 
 const Admins = () => {
   // ** States
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([])
   const [modal, setModal] = useState(false)
   const [currentPage, setCurrentPage] = useState(0)
   const [searchValue, setSearchValue] = useState('')
   const [filteredData, setFilteredData] = useState([])
 
-  const [tableData, setTableData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const sanctum = new sanctumService();
-  const dispatch = useDispatch(); // Get the dispatch method
+  const [tableData, setTableData] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const sanctum = new sanctumService()
+  const dispatch = useDispatch() // Get the dispatch method
 
   // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal)
@@ -62,23 +64,23 @@ const Admins = () => {
     if (error.response && error.response.status === 401) {
       sanctum.refreshToken()
     }
-  };
+  }
   
   const handleWebSocketSuccess = (status) => {
     // Your success handling code here
-    //  console.log(status);
-  };
+     console.log("for testing only", status)
+  }
 
 
   const onDataReceived = (data) => {
 
-    setIsLoading(true);
+    setIsLoading(true)
     // Assuming data.admins contains the updated admin object
-    const updatedAdmin = data.admins;
+    const updatedAdmin = data.admins
   
     setTableData((prevTableData) => {
       // Find the index of the admin to update in the prevTableData array
-      const adminIndex = prevTableData.findIndex((admin) => admin.id === updatedAdmin.id);
+      const adminIndex = prevTableData.findIndex((admin) => admin.id === updatedAdmin.id)
   
       // If the admin is found, update it in the prevTableData array
       if (adminIndex !== -1) {
@@ -86,19 +88,20 @@ const Admins = () => {
         const updatedTableData = [
           ...prevTableData.slice(0, adminIndex),
           updatedAdmin,
-          ...prevTableData.slice(adminIndex + 1),
-        ];
+          ...prevTableData.slice(adminIndex + 1)
+        ]
       
         // Return the updated table data
-        return updatedTableData;
+        return updatedTableData
       } else {
         // If the admin is not found, return the previous state
-        return prevTableData;
+        return prevTableData
       }
-    });
+    })
     setTimeout(() => {
-      setIsLoading(false);
+      setIsLoading(false)
       toast(
+        <StyleSheetManager shouldForwardProp={prop => isPropValid(prop)}>
         <div className='d-flex'>
           <div className='me-1'>
             <Avatar size='sm' color='success' icon={<Check size={12} />} />
@@ -109,38 +112,34 @@ const Admins = () => {
             <span>List Updated by Admin!</span>
           </div>
         </div>
-      );
-    }, 400);
+        </StyleSheetManager>
+      )
+    }, 400)
    
-  };
+  }
   
-
-
   const refreshData = async () => {
     try {
-      setIsLoading(true);
-      const data = await getData();
-      setTableData(data);
+      setIsLoading(true)
+      const data = await getData()
+      setTableData(data)
  
-      setIsLoading(false);
+      setIsLoading(false)
     } catch (error) {
-      console.log(error);
-      setIsLoading(false);
+      console.log(error)
+      setIsLoading(false)
     }
-  };
+  }
   
-  const columns = getColumns(refreshData, dispatch);
+  const columns = getColumns(refreshData, dispatch)
   
   useEffect(() => {
-    refreshData();
-  }, []);
-  
-
+    refreshData()
+  }, [])
 
 
   //lets listen the channel if something changes we reflect this
-  useSubscribeToAllAdminsList(handleWebSocketError, handleWebSocketSuccess, onDataReceived);
-
+  useSubscribeToAllAdminsList(handleWebSocketError, handleWebSocketSuccess, onDataReceived)
 
 
   // ** Function to handle filter
@@ -159,16 +158,12 @@ const Admins = () => {
           item.type.toLowerCase().startsWith(value.toLowerCase()) ||
           item.image.toLowerCase().startsWith(value.toLowerCase()) 
           
-
-          
         const includes =
           item.name.toLowerCase().includes(value.toLowerCase()) ||
           item.email.toLowerCase().includes(value.toLowerCase()) || 
           item.mobile.toLowerCase().startsWith(value.toLowerCase()) ||
           item.type.toLowerCase().startsWith(value.toLowerCase())  || 
           item.image.toLowerCase().startsWith(value.toLowerCase())
-         
-
         
 
         if (startsWith) {
@@ -240,20 +235,20 @@ const Admins = () => {
 
   // ** Downloads CSV
   function downloadCSV() {
-    const dataToExport = selectedRows.length > 0 ? selectedRows : tableData;
-    const link = document.createElement('a');
-    let csv = convertArrayOfObjectsToCSV(dataToExport);
-    if (csv === null) return;
+    const dataToExport = selectedRows.length > 0 ? selectedRows : tableData
+    const link = document.createElement('a')
+    let csv = convertArrayOfObjectsToCSV(dataToExport)
+    if (csv === null) return
   
-    const filename = 'export.csv';
+    const filename = 'export.csv'
   
     if (!csv.match(/^data:text\/csv/i)) {
-      csv = `data:text/csv;charset=utf-8,${csv}`;
+      csv = `data:text/csv;charset=utf-8,${csv}`
     }
   
-    link.setAttribute('href', encodeURI(csv));
-    link.setAttribute('download', filename);
-    link.click();
+    link.setAttribute('href', encodeURI(csv))
+    link.setAttribute('download', filename)
+    link.click()
   }
 
   return (

@@ -1,11 +1,11 @@
 // ** React Imports
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import "@styles/react/libs/spinner/spinner.scss";
+import { Link, useNavigate } from "react-router-dom"
+import { useEffect, useState  } from "react"
+import "@styles/react/libs/spinner/spinner.scss"
 
 // ** Custom Components
-import Avatar from "@components/avatar";
-import PageSpinner from "@components/globalspinner/PageSpinner";
+import Avatar from "@components/avatar"
+import PageSpinner from "@components/globalspinner/PageSpinner"
 
 // ** Utils
 import {
@@ -14,90 +14,78 @@ import {
   getReduxAdminUserData,
   baseURL,
   getReduxUserData,
-  getUserData,
-  getHomeRouteForLoggedInUser,
-} from "@utils";
+  getHomeRouteForLoggedInUser
+} from "@utils"
 
 // ** Redux Imports
-import { useDispatch, useSelector } from "react-redux";
-import { handleLogout } from "../../../../redux/authentication"; //admin logout
+import { useDispatch, useSelector  } from "react-redux"
+import { handleLogout } from "../../../../redux/authentication" //admin logout
 import {
   updateUserStatus, 
-  handleFrontLogout,
-} from "../../../../views/pages/front/authentication/store/FrontAuthentication"; //user
+  handleFrontLogout
+} from "../../../../views/pages/front/authentication/store/FrontAuthentication" //user
 
 // ** Third Party Components
 import {
   User,
   Mail,
-  // CheckSquare,
-  // MessageSquare,
   Settings,
-  // CreditCard,
-  // HelpCircle,
-  Power,
-} from "react-feather";
-// import { NavDropdown } from "react-bootstrap";
-import toast from "react-hot-toast";
+  Power
+} from "react-feather"
+
+import toast from "react-hot-toast"
 
 // ** Reactstrap Imports
 import {
   UncontrolledDropdown,
   DropdownMenu,
   DropdownToggle,
-  DropdownItem,
-} from "reactstrap";
+  DropdownItem
+} from "reactstrap"
 
 // ** Sanctum Service
-import sanctumService from "../../../../@core/auth/sanctum/sanctumService";
+import sanctumService from "../../../../@core/auth/sanctum/sanctumService"
 
 // ** Default Avatar Image
-import defaultAvatar from "@src/assets/images/avatars/no-image.png";
+import defaultAvatar from "@src/assets/images/avatars/no-image.png"
 
 const UserDropdown = () => {
   
   {
-    /*Lets add variables for status */
-  }
-  const state = useSelector((state) => state);
-
-  {
     /*Lets check if user is ADmin or not */
   }
-  const reduxAdminUserData = getReduxAdminUserData(state);
-  const isAdmin = reduxAdminUserData && reduxAdminUserData.type === "admin";
-  const isAdminLoggedIn = isAdminUserLoggedIn(state);
 
+  const reduxAdminUserData = useSelector((state) => getReduxAdminUserData(state))
+  const isAdminLoggedIn = useSelector((state) => isAdminUserLoggedIn(state))
+  const isAdmin = reduxAdminUserData && reduxAdminUserData.type === "admin"
+ 
   {
     /*Get the user details */
   }
-  const reduxUserData = getReduxUserData(state);
-  const isFrontUserLoggedIn = isUserLoggedIn(state);
+  const reduxUserData = useSelector((state) => getReduxUserData(state))
+  const isFrontUserLoggedIn = useSelector((state) => isUserLoggedIn(state))
+  
+  const status = isAdminLoggedIn ? "online" : reduxUserData.online_status ?? "offline"
+  const [logout, setLogout] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const sanctum = new sanctumService()
 
   {
     /*Avatars */
   }
-  const Avatars =
-    isAdminLoggedIn && reduxAdminUserData?.image
-      ? `${baseURL}/${reduxAdminUserData.image}`
-      : reduxUserData?.image
-      ? `${baseURL}/${reduxUserData.image}`
-      : defaultAvatar;
+  const Avatars = isAdminLoggedIn && reduxAdminUserData?.image ? `${baseURL}/${reduxAdminUserData.image}` : reduxUserData?.image ? `${baseURL}/${reduxUserData.image}` : defaultAvatar
 
-
-  {/*lets get the user logged in user type */}
-  const userType = isAdminLoggedIn
-  ? "admin"
-  : isFrontUserLoggedIn
-  ? "user"
-  : null;
+  { /*lets get the user logged in user type */ }
+  const userType = isAdminLoggedIn ? "admin" : isFrontUserLoggedIn  ? "user" : null
 
   const updateStatusForUserType = async (id, status) => {
     if (userType === 'admin') {
       // Admin is always online, so nothing happens
     } else if (userType === 'user') {
       try {
-        const response = await sanctum.setOnlineStatus(id, status);
+        const response = await sanctum.setOnlineStatus(id, status)
         if (response.status === 201) {
           toast.promise(
             Promise.resolve(dispatch(updateUserStatus(status))),
@@ -106,46 +94,33 @@ const UserDropdown = () => {
               loading: "Updating Status...",
               success: () => {
                // navigate(getHomeRouteForLoggedInUser("admin"));
-                setIsLoading(false);
-                return "Status Updated!";
+                setIsLoading(false)
+                return "Status Updated!"
               },
               error: (error) => {
-                console.log(error);
-                return "Error updating status!";
-              },
+                console.log(error)
+                return "Error updating status!"
+              }
             }
-          );
+          )
+
           // Let's update user online status in localStorage and Redux
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     } else {
-      console.log('Unknown user type');
+      console.log('Unknown user type')
     }
-  };
-  
-
+  }
 
   {
     /*Lets update status */
   }
 
-  // console.log (reduxUserData )
-  const status = isAdminLoggedIn
-    ? "online"
-    : reduxUserData.online_status ?? "offline";
-
-  const [logout, setLogout] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  // const user = getUserData(); // localstorage
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const sanctum = new sanctumService();
-
   useEffect(() => {
     if (logout) {
-      setIsLoading(true);
+      setIsLoading(true)
       try {
         if (isAdminLoggedIn) {
           // Call admin logout API here
@@ -157,18 +132,18 @@ const UserDropdown = () => {
                   position: "bottom-left",
                   loading: "Logging out...",
                   success: () => {
-                    navigate(getHomeRouteForLoggedInUser("admin"));
-                    setIsLoading(false);
-                    return "Logged out successfully!";
+                    navigate(getHomeRouteForLoggedInUser("admin"))
+                    setIsLoading(false)
+                    return "Logged out successfully!"
                   },
                   error: (error) => {
-                    console.log(error);
-                    return "Error Logging out!";
-                  },
+                    console.log(error)
+                    return "Error Logging out!"
+                  }
                 }
-              );
+              )
             }
-          });
+          })
         } else {
           // Call user logout API here
           sanctum.frontLogout().then((res) => {
@@ -179,24 +154,24 @@ const UserDropdown = () => {
                   position: "bottom-left",
                   loading: "Logging out...",
                   success: () => {
-                    navigate(getHomeRouteForLoggedInUser(""));
-                    setIsLoading(false);
-                    return "Logged out successfully!";
+                    navigate(getHomeRouteForLoggedInUser(""))
+                    setIsLoading(false)
+                    return "Logged out successfully!"
                   },
                   error: (error) => {
-                    console.log(error);
-                    return "Error Logging out!";
-                  },
+                    console.log(error)
+                    return "Error Logging out!"
+                  }
                 }
-              );
+              )
             }
-          });
+          })
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     }
-  }, [logout]);
+  }, [logout])
   return (
     <>
       {isLoading && <PageSpinner />}
@@ -336,7 +311,7 @@ const UserDropdown = () => {
         </DropdownMenu>
       </UncontrolledDropdown>
     </>
-  );
-};
+  )
+}
 
-export default UserDropdown;
+export default UserDropdown

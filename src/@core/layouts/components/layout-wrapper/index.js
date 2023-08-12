@@ -1,86 +1,90 @@
 // ** React Imports
-import { Fragment, useEffect, memo } from "react";
+import { Fragment, useEffect, memo } from "react"
+import { StyleSheetManager } from 'styled-components'
+import isPropValid from '@emotion/is-prop-valid'
 
 // ** Third Party Components
-import classnames from "classnames";
+import classnames from "classnames"
 
 // ** Store & Actions
-import { useSelector, useDispatch } from "react-redux";
+import {  useDispatch, useSelector } from "react-redux"
+
 import {
   handleContentWidth,
   handleMenuCollapsed,
-  handleMenuHidden,
-} from "@store/layout";
+  handleMenuHidden
+} from "@store/layout"
 
 // ** ThemeConfig
-import themeConfig from "@configs/themeConfig";
+import themeConfig from "@configs/themeConfig"
 
 // ** Styles
-import "animate.css/animate.css";
+import "animate.css/animate.css"
 
 const LayoutWrapper = (props) => {
   // ** Props
-  const { children, routeMeta } = props;
+  const { children, routeMeta } = props
 
   // ** Store Vars
-  const dispatch = useDispatch();
-  const store = useSelector((state) => state);
-
-  const navbarStore = store.navbar;
-  const layoutStored = store.layout.layout;
-  const contentWidth = store.layout.contentWidth;
+  const dispatch = useDispatch()
+  const navbarStore = useSelector((state) => state.navbar)
+  const layoutStored = useSelector((state) => state.layout?.layout)
+  const contentWidth = useSelector((state) => state.layout?.contentWidth)
+  const menuCollapsed = useSelector((state) => state.layout.menuCollapsed)
+  const menuHidden = useSelector((state) => state.layout.menuHidden)
+  
   //** Vars
   const appLayoutCondition =
-    (layoutStored.layout === "horizontal" && !routeMeta) ||
-    (layoutStored.layout === "horizontal" && routeMeta && !routeMeta.appLayout);
-  const Tag = appLayoutCondition ? "div" : Fragment;
+    (layoutStored?.layout === "horizontal" && !routeMeta) ||
+    (layoutStored?.layout === "horizontal" && routeMeta && !routeMeta.appLayout)
+  const Tag = appLayoutCondition ? "div" : Fragment
 
   // ** Clean Up Function
   const cleanUp = () => {
     if (routeMeta) {
       if (
         routeMeta.contentWidth &&
-        routeMeta.contentWidth === store.layout.contentWidth
+        routeMeta.contentWidth === contentWidth
       ) {
-        dispatch(handleContentWidth(themeConfig.layout.contentWidth));
+        dispatch(handleContentWidth(themeConfig.layout.contentWidth))
       }
       if (
         routeMeta.menuCollapsed &&
-        routeMeta.menuCollapsed === store.layout.menuCollapsed
+        routeMeta.menuCollapsed === menuCollapsed
       ) {
-        dispatch(handleMenuCollapsed(!store.layout.menuCollapsed));
+        dispatch(handleMenuCollapsed(!menuCollapsed))
       }
       if (
         routeMeta.menuHidden &&
-        routeMeta.menuHidden === store.layout.menuHidden
+        routeMeta.menuHidden === menuHidden
       ) {
-        dispatch(handleMenuHidden(!store.layout.menuHidden));
+        dispatch(handleMenuHidden(!menuHidden))
       }
     }
-  };
+  }
 
-  // ** ComponentDidMount
   useEffect(() => {
     if (routeMeta) {
       if (routeMeta.contentWidth) {
-        dispatch(handleContentWidth(routeMeta.contentWidth));
+        dispatch(handleContentWidth(routeMeta.contentWidth))
       }
       if (routeMeta.menuCollapsed) {
-        dispatch(handleMenuCollapsed(routeMeta.menuCollapsed));
+        dispatch(handleMenuCollapsed(routeMeta.menuCollapsed))
       }
       if (routeMeta.menuHidden) {
-        dispatch(handleMenuHidden(routeMeta.menuHidden));
+        dispatch(handleMenuHidden(routeMeta.menuHidden))
       }
     }
-    return () => cleanUp();
-  }, [routeMeta]);
+    return () => cleanUp()
+  }, [routeMeta])
 
   return (
+    <StyleSheetManager shouldForwardProp={prop => isPropValid(prop)}>
     <div
       className={classnames("app-content content overflow-hidden", {
         [routeMeta ? routeMeta.className : ""]:
           routeMeta && routeMeta.className,
-        "show-overlay": navbarStore.query.length,
+        "show-overlay": navbarStore?.query.length
       })}
     >
       <div className="content-overlay"></div>
@@ -89,7 +93,7 @@ const LayoutWrapper = (props) => {
         className={classnames({
           "content-wrapper": routeMeta && !routeMeta.appLayout,
           "content-area-wrapper": routeMeta && routeMeta.appLayout,
-          "container-xxl p-0": contentWidth === "boxed",
+          "container-xxl p-0": contentWidth === "boxed"
         })}
       >
         <Tag {...(appLayoutCondition ? { className: "content-body" } : {})}>
@@ -97,7 +101,8 @@ const LayoutWrapper = (props) => {
         </Tag>
       </div>
     </div>
-  );
-};
+    </StyleSheetManager>
+  )
+}
 
-export default memo(LayoutWrapper);
+export default memo(LayoutWrapper)
