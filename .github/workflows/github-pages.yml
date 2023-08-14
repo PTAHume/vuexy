@@ -20,5 +20,4 @@ jobs:
         git config --global user.name 'Patrick Hume'
         git config --global user.email 'patricktahume@outlook.com'
         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} 
-        cp .htaccess dist/.htaccess   
         npm run deploy
