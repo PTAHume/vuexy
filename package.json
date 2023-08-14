@@ -110,7 +110,7 @@
   "homepage": "/",
   "scripts": {
     "build": "vite build",
-    "predeploy": "cp .htaccess /.htaccess && npm run build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "start": "vite",
     "dev": "vite --port 3000",
