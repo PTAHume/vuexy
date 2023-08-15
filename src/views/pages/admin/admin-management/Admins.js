@@ -11,7 +11,9 @@ import { useDispatch } from 'react-redux'
 import PageSpinner from '@components/globalspinner/PageSpinner'
 import sanctumService from '../../../../@core/auth/sanctum/sanctumService.js'
 //lets call file for subscriibng channel websocket
-import { useSubscribeToAllAdminsList  } from './Subscription/subscribe-channel/subscribeToAllAdminsList.js'
+//import { useSubscribeToAllAdminsList  } from './Subscription/subscribe-channel/subscribeToAllAdminsList.js'
+import { useSubscribeToChannel } from '../../../../@core/auth/laravel-echo/useSubscribeToChannel'
+
 import Pusher from 'pusher-js'
 import Echo from 'laravel-echo'
 import toast from 'react-hot-toast'
@@ -139,7 +141,8 @@ const Admins = () => {
 
 
   //lets listen the channel if something changes we reflect this
-  useSubscribeToAllAdminsList(handleWebSocketError, handleWebSocketSuccess, onDataReceived)
+  //useSubscribeToAllAdminsList(handleWebSocketError, handleWebSocketSuccess, onDataReceived)
+  useSubscribeToChannel('admins', handleWebSocketError, handleWebSocketSuccess, onDataReceived)
 
 
   // ** Function to handle filter

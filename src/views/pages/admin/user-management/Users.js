@@ -5,17 +5,12 @@ import AddNewModal from './AddNewModal'
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
 import { ChevronDown, Share, Printer, FileText, File, Grid, Copy, Plus, Check } from 'react-feather'
-import { useDispatch } from 'react-redux';
-import PageSpinner from '@components/globalspinner/PageSpinner';
-import sanctumService from '../../../../@core/auth/sanctum/sanctumService.js';
-//lets call file for subscriibng channel websocket
-import { useSubscribeToAllUsersList  } from './Subscription/subscribe-channel/subscribeToAllUsersList.js';
-import Pusher from 'pusher-js';
-import Echo from 'laravel-echo';
-import toast from 'react-hot-toast';
-import Avatar from '@components/avatar';
-import { fetchuserDataSuccess } from './store/userSlice'
-
+import { useDispatch } from 'react-redux'
+import PageSpinner from '@components/globalspinner/PageSpinner'
+import sanctumService from '../../../../@core/auth/sanctum/sanctumService.js'
+import { useSubscribeToChannel } from '../../../../@core/auth/laravel-echo/useSubscribeToChannel'
+import toast from 'react-hot-toast'
+import Avatar from '@components/avatar'
 
 // ** Reactstrap Imports
 import {
@@ -43,16 +38,16 @@ const BootstrapCheckbox = forwardRef((props, ref) => (
 
 const Users = () => {
   // ** States
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([])
   const [modal, setModal] = useState(false)
   const [currentPage, setCurrentPage] = useState(0)
   const [searchValue, setSearchValue] = useState('')
   const [filteredData, setFilteredData] = useState([])
 
-  const [tableData, setTableData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const sanctum = new sanctumService();
-  const dispatch = useDispatch(); // Get the dispatch method
+  const [tableData, setTableData] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const sanctum = new sanctumService()
+  const dispatch = useDispatch() // Get the dispatch method
 
   // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal)
@@ -62,23 +57,23 @@ const Users = () => {
     if (error.response && error.response.status === 401) {
       sanctum.refreshToken()
     }
-  };
+  }
   
   const handleWebSocketSuccess = (status) => {
     // Your success handling code here
-      // console.log(status);
-  };
+       console.log(status)
+  }
 
 
   const onDataReceived = (data) => {
   //  console.log(data)
-    setIsLoading(true);
+    setIsLoading(true)
     // Assuming data.users contains the updated admin object
-    const updatedUser = data.users;
+    const updatedUser = data.users
   
     setTableData((prevTableData) => {
       // Find the index of the admin to update in the prevTableData array
-      const userIndex = prevTableData.findIndex((user) => user.id === updatedUser?.id);
+      const userIndex = prevTableData.findIndex((user) => user.id === updatedUser?.id)
      
       // If the admin is found, update it in the prevTableData array
       if (userIndex !== -1) {
@@ -86,18 +81,18 @@ const Users = () => {
         const updatedTableData = [
           ...prevTableData.slice(0, userIndex),
           updatedUser,
-          ...prevTableData.slice(userIndex + 1),
-        ];
+          ...prevTableData.slice(userIndex + 1)
+        ]
       
         // Return the updated table data
-        return updatedTableData;
+        return updatedTableData
       } else {
         // If the user is not found, return the previous state
-        return prevTableData;
+        return prevTableData
       }
-    });
+    })
     setTimeout(() => {
-      setIsLoading(false);
+      setIsLoading(false)
       toast(
         <div className='d-flex'>
           <div className='me-1'>
@@ -109,39 +104,33 @@ const Users = () => {
             <span>List Updated by Admin!</span>
           </div>
         </div>
-      );
-    }, 400);
+      )
+    }, 400)
    
-  };
+  }
   
-
-
   const refreshData = async () => {
     try {
-      setIsLoading(true);
-      const data = await getData();
-      setTableData(data);
+      setIsLoading(true)
+      const data = await getData()
+      setTableData(data)
  
-      setIsLoading(false);
+      setIsLoading(false)
     } catch (error) {
-      console.log(error);
-      setIsLoading(false);
+      console.log(error)
+      setIsLoading(false)
     }
-  };
+  }
   
-  const columns = getColumns(refreshData, dispatch);
+  const columns = getColumns(refreshData, dispatch)
   
   useEffect(() => {
-    refreshData();
-  }, []);
+    refreshData()
+  }, [])
   
 
-
-
   //lets listen the channel if something changes we reflect this
-  useSubscribeToAllUsersList(handleWebSocketError, handleWebSocketSuccess, onDataReceived);
-
-
+ useSubscribeToChannel('users', handleWebSocketError, handleWebSocketSuccess, onDataReceived)
 
   // ** Function to handle filter
   const handleFilter = e => {
@@ -158,17 +147,12 @@ const Users = () => {
           item.mobile.toLowerCase().startsWith(value.toLowerCase()) ||
           item.image.toLowerCase().startsWith(value.toLowerCase()) 
           
-
-          
         const includes =
           item.name.toLowerCase().includes(value.toLowerCase()) ||
           item.email.toLowerCase().includes(value.toLowerCase()) || 
           item.mobile.toLowerCase().startsWith(value.toLowerCase()) ||
           item.image.toLowerCase().startsWith(value.toLowerCase())
          
-
-        
-
         if (startsWith) {
           return startsWith
         } else if (!startsWith && includes) {
@@ -238,20 +222,20 @@ const Users = () => {
 
   // ** Downloads CSV
   function downloadCSV() {
-    const dataToExport = selectedRows.length > 0 ? selectedRows : tableData;
-    const link = document.createElement('a');
-    let csv = convertArrayOfObjectsToCSV(dataToExport);
-    if (csv === null) return;
+    const dataToExport = selectedRows.length > 0 ? selectedRows : tableData
+    const link = document.createElement('a')
+    let csv = convertArrayOfObjectsToCSV(dataToExport)
+    if (csv === null) return
   
-    const filename = 'export.csv';
+    const filename = 'export.csv'
   
     if (!csv.match(/^data:text\/csv/i)) {
-      csv = `data:text/csv;charset=utf-8,${csv}`;
+      csv = `data:text/csv;charset=utf-8,${csv}`
     }
   
-    link.setAttribute('href', encodeURI(csv));
-    link.setAttribute('download', filename);
-    link.click();
+    link.setAttribute('href', encodeURI(csv))
+    link.setAttribute('download', filename)
+    link.click()
   }
 
   return (

@@ -1,9 +1,9 @@
 // ** React Imports
-import ReactDOM from "react-dom";
-import { useState, useEffect, useRef } from "react";
-import { baseURL } from "../../../../utility/Utils";
+import ReactDOM from "react-dom"
+import { useState, useEffect, useRef } from "react"
+import { baseURL } from "../../../../utility/Utils"
 // ** Custom Components
-import Avatar from "@components/avatar";
+import Avatar from "@components/avatar"
 
 // ** Store & Actions
 import {
@@ -13,23 +13,23 @@ import {
   hideLoaderMoreMsg,
   setSelectedUser,
   updateChatListWithWebsocket
-} from "./store";
-import { useDispatch } from "react-redux";
-// import { useSelector } from "react-redux";
+} from "./store"
+import { useDispatch } from "react-redux"
+// import { useSelector } from "react-redux"
 // ** Third Party Components
-import classnames from "classnames";
-import PerfectScrollbar from "react-perfect-scrollbar";
+import classnames from "classnames"
+import PerfectScrollbar from "react-perfect-scrollbar"
 import {
   MessageSquare,
   Menu,
-  PhoneCall,
-  Video,
+  //PhoneCall,
+  //Video,
   Search,
   MoreVertical,
-  Mic,
+  //Mic,
   Image,
-  Send,
-} from "react-feather";
+  Send
+} from "react-feather"
 
 // ** Reactstrap Imports
 import {
@@ -42,12 +42,13 @@ import {
   DropdownMenu,
   DropdownToggle,
   InputGroupText,
-  UncontrolledDropdown,
-} from "reactstrap";
+  UncontrolledDropdown
+} from "reactstrap"
 
-import { useSubscribeToAllChatsList  } from './Subscription/subscribe-channel/subscribeToAllChatsList.js';
-import Pusher from 'pusher-js';
-import toast from 'react-hot-toast';
+// import { useSubscribeToAllChatsList  } from './Subscription/subscribe-channel/subscribeToAllChatsList.js'
+import { useSubscribeToChannel } from '../../../../@core/auth/laravel-echo/useSubscribeToChannel'
+import Pusher from 'pusher-js'
+//import toast from 'react-hot-toast'
 
 
 const ChatLog = (props) => {
@@ -57,40 +58,40 @@ const ChatLog = (props) => {
     handleUserSidebarRight,
     handleSidebar,
     store,
-    userSidebarLeft,
-  } = props;
-  const { userProfile, selectedUser, selectedChatUniqueId } = store;
+    userSidebarLeft
+  } = props
+  const { userProfile, selectedUser, selectedChatUniqueId } = store
 
   // ** Refs & Dispatch
-  const chatArea = useRef(null);
-  const dispatch = useDispatch();
+  const chatArea = useRef(null)
+  const dispatch = useDispatch()
   // ** State
-  const [msg, setMsg] = useState("");
+  const [msg, setMsg] = useState("")
 
   //lets get the skin 
-  const skin = localStorage.getItem('skin');
+  const skin = localStorage.getItem('skin')
 //console.log(skin)
   // ** Scroll to chat bottom
   const scrollToBottom = () => {
-    const chatContainer = ReactDOM.findDOMNode(chatArea.current);
-    chatContainer.scrollTop = Number.MAX_SAFE_INTEGER;
-  };
+    const chatContainer = ReactDOM.findDOMNode(chatArea.current)
+    chatContainer.scrollTop = Number.MAX_SAFE_INTEGER
+  }
 
   
 // let's assume selectedChatUniqueId is the unique id you are searching for.
 const selectedUserObject = selectedUser.find(
     (user) => user.id === selectedChatUniqueId
-);
+)
 
 //console.log(store)
-const chat_id = selectedUserObject?.data?.chat?.id; //chat id of selected chat
-const savedOldestMessage = store.oldestMessageId; //this is the redux saved oldest message id of fetched message set
-const firstFetchOldestMessage = selectedUserObject?.data?.contact?.chat?.firstMessage; // this is the oldest message id of first load
+const chat_id = selectedUserObject?.data?.chat?.id //chat id of selected chat
+const savedOldestMessage = store.oldestMessageId //this is the redux saved oldest message id of fetched message set
+const firstFetchOldestMessage = selectedUserObject?.data?.contact?.chat?.firstMessage // this is the oldest message id of first load
 
 
 // useEffect(() => {
-//   console.log("selectedUserObject state in useEffect: ", selectedUserObject);
-// }, [selectedUserObject]);
+//   console.log("selectedUserObject state in useEffect: ", selectedUserObject)
+// }, [selectedUserObject])
 
 
 const handleWebSocketError = (error) => {
@@ -98,25 +99,25 @@ const handleWebSocketError = (error) => {
   if (error.response && error.response.status === 401) {
     //sanctum.refreshToken()
   }
-};
+}
 
 const handleWebSocketSuccess = (status) => {
   // Your success handling code here
-   // console.log("success", status);
-};
+   // console.log("success", status)
+}
 
 const onDataReceived = async (data) => {
   // console.log("ondataReceived in onDataReceived: ", data.chats)
-  dispatch(updateChatListWithWebsocket(data &&  data.chats));
+  dispatch(updateChatListWithWebsocket(data &&  data.chats))
   
   const newMsg = {
     id: data.chats.newMessageData.message_id,
     chat_id: data.chats.id,
     message: data.chats.newMessageData.message,
     time: data.chats.newMessageData.time,
-    sender_id: data.chats.newMessageData.senderId,
+    sender_id: data.chats.newMessageData.senderId
     //status: formattedDate,
-  };
+  }
 //  console.log("newMsg onDataReceived: ", newMsg)
 //console.log("sss: ", selectedUser)
 await dispatch(
@@ -135,64 +136,59 @@ await dispatch(
           }
         : chat
   ))
-);
+)
 
 
-};
-//   //lets listen the channel if something changes we reflect this
-  useSubscribeToAllChatsList(handleWebSocketError, handleWebSocketSuccess, onDataReceived);
-
+}
+  //lets listen the channel if something changes we reflect this
+  //useSubscribeToAllChatsList(handleWebSocketError, handleWebSocketSuccess, onDataReceived)
+  useSubscribeToChannel('chats', handleWebSocketError, handleWebSocketSuccess, onDataReceived)
 
   useEffect(() => {
-    console.log("selectedUser state in onDataReceived: ", selectedUser); // Check if useEffect runs after state update
-  }, [selectedUser]);
-
-
-
+    console.log("selectedUser state in onDataReceived: ", selectedUser) // Check if useEffect runs after state update
+  }, [selectedUser])
 
 
   const getMoreMsgs = async () => {
     try {
-      await dispatch(showLoaderMoreMsg());
+      await dispatch(showLoaderMoreMsg())
       await dispatch(
         loadMoreMsgs({
           chatId: chat_id,
-          oldestMessageId: savedOldestMessage
-            ? savedOldestMessage
-            : firstFetchOldestMessage || null,
+          oldestMessageId: savedOldestMessage ? savedOldestMessage : firstFetchOldestMessage || null
         })
-      );
+      )
     } catch (error) {
-      console.error("Error in loadMoreMsgs:", error);
+      console.error("Error in loadMoreMsgs:", error)
     } finally {
-      dispatch(hideLoaderMoreMsg());
+      dispatch(hideLoaderMoreMsg())
     }
-  };
+  }
 
   // ** If user chat is not empty scrollToBottom
   useEffect(() => {
-    const selectedUserLen = selectedUserObject && Object.keys(selectedUserObject).length;
+    const selectedUserLen = selectedUserObject && Object.keys(selectedUserObject).length
 
     if (selectedUserLen) {
-      scrollToBottom();
+      scrollToBottom()
     }
-  }, [selectedUserObject]);
+  }, [selectedUserObject])
 
   // ** Formats chat data based on sender
   const formattedChatData = () => {
 
-    let chatLog = [];
+    let chatLog = []
     if (selectedUserObject.data.chat) {
-      chatLog = selectedUserObject.data.chat?.chat;
+      chatLog = selectedUserObject.data.chat?.chat
       // console.log("chatLog:",chatLog)
     }
 
-    const formattedChatLog = [];
-    let chatMessageSenderId = chatLog[0] ? chatLog[0].sender_id : undefined;
+    const formattedChatLog = []
+    let chatMessageSenderId = chatLog[0] ? chatLog[0].sender_id : undefined
     let msgGroup = {
       sender_id: chatMessageSenderId,
-      messages: [],
-    };
+      messages: []
+    }
     //console.log("catlog: " , chatLog )
     chatLog.forEach((msg, index) => {
       if (chatMessageSenderId === msg.sender_id) {
@@ -200,11 +196,11 @@ await dispatch(
           msg: msg.message,
           time: msg.time,
           id: msg.id,
-          status: msg.status,
-        });
+          status: msg.status
+        })
       } else {
-        chatMessageSenderId = msg.sender_id;
-        formattedChatLog.push(msgGroup);
+        chatMessageSenderId = msg.sender_id
+        formattedChatLog.push(msgGroup)
         msgGroup = {
           sender_id: msg.sender_id,
           messages: [
@@ -212,15 +208,15 @@ await dispatch(
               msg: msg.message,
               time: msg.time,
               id: msg.id,
-              status: msg.status,
+              status: msg.status
             },
           ],
-        };
+        }
       }
-      if (index === chatLog.length - 1) formattedChatLog.push(msgGroup);
-    });
-    return formattedChatLog;
-  };
+      if (index === chatLog.length - 1) formattedChatLog.push(msgGroup)
+    })
+    return formattedChatLog
+  }
 
   // ** Renders user chat
   // ** Renders user chat
@@ -236,7 +232,7 @@ await dispatch(
         <div
           key={`${item.sender_id}-${item.messages[0].id}`}
           className={classnames("chat", {
-            "chat-left": item.sender_id !== userProfile.id,
+            "chat-left": item.sender_id !== userProfile.id
           })}
         >
           <div className="chat-avatar">
@@ -245,9 +241,7 @@ await dispatch(
               imgHeight={36}
               className="box-shadow-1 cursor-pointer"
               img={
-                item.sender_id !== userProfile.id
-                  ? `${baseURL}/${selectedUserObject.data.contact.avatar}` // opponent
-                  : `${baseURL}/${userProfile.image}`
+                item.sender_id !== userProfile.id ? `${baseURL}/${selectedUserObject.data.contact.avatar}` : `${baseURL}/${userProfile.image}`
               }
             />
           </div>
@@ -256,13 +250,13 @@ await dispatch(
             {item.messages.map((chat) => {
              // console.log(chat)
               // Create a new Date object
-              const date = new Date(chat.time);
+              const date = new Date(chat.time)
 
               // Format the date
               const formattedDate = `${date.getDate()} ${date.toLocaleString(
                 "default",
                 { month: "long" }
-              )}, ${date.getFullYear()}`;
+              )}, ${date.getFullYear()}`
 
               return (
                 <div key={chat.id} className="chat-content">
@@ -271,26 +265,26 @@ await dispatch(
                     style={{
                       fontSize: "8px",
                       color: skin === '"dark"' ? "#fefe" : "#000",
-                      fontStyle: "italic",
+                      fontStyle: "italic"
                     }}
                   >
                     {/* Conditional rendering for the status and time */}
                     {chat.status ?? formattedDate}
                   </small>
                 </div>
-              );
+              )
             })}
           </div>
         </div>
-      );
-    });
-  };
+      )
+    })
+  }
 
   // ** Opens right sidebar & handles its data
   const handleAvatarClick = (obj) => {
-    handleUserSidebarRight();
-    handleUser(obj);
-  };
+    handleUserSidebarRight()
+    handleUser(obj)
+  }
 
   // ** On mobile screen open left sidebar on Start Conversation Click
   const handleStartConversation = () => {
@@ -299,35 +293,35 @@ await dispatch(
       !userSidebarLeft &&
       window.innerWidth < 992
     ) {
-      handleSidebar();
+      handleSidebar()
     }
-  };
+  }
 
   // ** Sends New Msg
   const handleSendMsg = async (e) => {
-    const min = -1;
-    const max = -100;
-    const randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
-    e.preventDefault();
+    const min = -1
+    const max = -100
+    const randomInt = Math.floor(Math.random() * (max - min + 1)) + min
+    e.preventDefault()
     if (msg.trim().length) {
-      const newDate = new Date();
+      const newDate = new Date()
       const formattedDate = `${newDate.getDate()} ${newDate.toLocaleString(
         "default",
         { month: "long" }
-      )}, ${newDate.getFullYear()}`;
+      )}, ${newDate.getFullYear()}`
       const newMsg = {
         id: randomInt,
         chat_id: selectedUserObject.data.chat.id,
         message: msg,
         time: newDate.toISOString(),
         sender_id: userProfile.id,
-        status: formattedDate,
-      };
+        status: formattedDate
+      }
       //console.log("SendMsg newMsg: ", newMsg)
-      const selectedChat = selectedUser.find(chat => chat.data.chat.unique_id === selectedChatUniqueId);
+      const selectedChat = selectedUser.find(chat => chat.data.chat.unique_id === selectedChatUniqueId)
   
-      if(selectedChat) {
-        await dispatch(sendMsg({ ...selectedChat, message: newMsg }));
+      if (selectedChat) {
+        await dispatch(sendMsg({ ...selectedChat, message: newMsg }))
        // console.log("SelectedUser in handleSendMsg: ", selectedChat)
        await dispatch(
         setSelectedUser(
@@ -345,37 +339,32 @@ await dispatch(
                 }
               : chat
         ))
-      );
-    
-     
+      )
       
       }
       //console.log("SelectedUser in handleSendMsg end of the function: ", selectedUser)
-      setMsg("");
+      setMsg("")
     }
-  };
- // console.log("selectedUser state: ", selectedUser); // Check the current state
+  }
+ // console.log("selectedUser state: ", selectedUser) // Check the current state
 
   // useEffect(() => {
-  //   console.log("selectedUser state in useEffect: ", selectedUser); // Check if useEffect runs after state update
-  // }, [selectedUser]);
+  //   console.log("selectedUser state in useEffect: ", selectedUser) // Check if useEffect runs after state update
+  // }, [selectedUser])
   
-  //console.log("Render"); // Check each re-render
+  //console.log("Render") // Check each re-render
   
 
   // ** ChatWrapper tag based on chat's length
   const ChatWrapper =
-  selectedUserObject && Object.keys(selectedUserObject).length && selectedUserObject?.data?.chat
-    ? PerfectScrollbar
-    : "div";
-
+  selectedUserObject && Object.keys(selectedUserObject).length && selectedUserObject?.data?.chat ? PerfectScrollbar : "div"
 
 
   return (
     <div className="chat-app-window">
     <div
         className={classnames("start-chat-area", {
-          "d-none": selectedUserObject && Object.keys(selectedUserObject).length,
+          "d-none": selectedUserObject && Object.keys(selectedUserObject).length
         })}
       >
 
@@ -392,7 +381,7 @@ await dispatch(
       {selectedUserObject && Object.keys(selectedUserObject).length ? (
         <div
           className={classnames("active-chat", {
-            "d-none": selectedUserObject === null,
+            "d-none": selectedUserObject === null
           })}
         >
           <div className="chat-navbar">
@@ -460,14 +449,12 @@ await dispatch(
               style={{
                 display: "block",
                 marginLeft: "auto",
-                marginRight: "auto",
+                marginRight: "auto"
               }}
               onClick={() => getMoreMsgs()}
               disabled={savedOldestMessage === "FINISHED"} // Disable button if savedOldestMessage equals "FINISHED"
             >
-              {savedOldestMessage === "FINISHED"
-                ? "No more messages"
-                : "Load More Messages"}
+              {savedOldestMessage === "FINISHED" ? "No more messages" : "Load More Messages"}
             </Button>
 
             {store.isLoadingMoreMsg ? (
@@ -501,7 +488,7 @@ await dispatch(
         </div>
       ) : null}
     </div>
-  );
-};
+  )
+}
 
-export default ChatLog;
+export default ChatLog

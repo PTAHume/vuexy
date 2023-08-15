@@ -5,16 +5,19 @@ import AddNewModal from './AddNewModal'
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
 import { ChevronDown, Share, Printer, FileText, File, Grid, Copy, Plus, Check } from 'react-feather'
-import { useDispatch } from 'react-redux';
-import PageSpinner from '@components/globalspinner/PageSpinner';
-import sanctumService from '../../../../@core/auth/sanctum/sanctumService.js';
+import { useDispatch } from 'react-redux'
+import PageSpinner from '@components/globalspinner/PageSpinner'
+import sanctumService from '../../../../@core/auth/sanctum/sanctumService.js'
 //lets call file for subscriibng channel websocket
-import { useSubscribeToAllDealsList  } from './Subscription/subscribe-channel/subscribeToAllDealsList.js';
-import Pusher from 'pusher-js';
-import Echo from 'laravel-echo';
-import toast from 'react-hot-toast';
-import Avatar from '@components/avatar';
-import dealSlice, { fetchDealDataSuccess } from './store/dealSlice'
+//import { useSubscribeToAllDealsList  } from './Subscription/subscribe-channel/subscribeToAllDealsList.js'
+
+import { useSubscribeToChannel } from '../../../../@core/auth/laravel-echo/useSubscribeToChannel'
+
+import Pusher from 'pusher-js'
+import Echo from 'laravel-echo'
+import toast from 'react-hot-toast'
+import Avatar from '@components/avatar'
+//import dealSlice, { fetchDealDataSuccess } from './store/dealSlice'
 
 
 // ** Reactstrap Imports
@@ -32,7 +35,6 @@ import {
   DropdownToggle,
   UncontrolledButtonDropdown
 } from 'reactstrap'
-import { de } from 'date-fns/locale'
 
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef((props, ref) => (
@@ -44,19 +46,19 @@ const BootstrapCheckbox = forwardRef((props, ref) => (
 
 const Deals = () => {
   // ** States
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([])
   const [modal, setModal] = useState(false)
   const [currentPage, setCurrentPage] = useState(0)
   const [searchValue, setSearchValue] = useState('')
   const [filteredData, setFilteredData] = useState([])
 
-  const [totalDeals, setTotalDeals] = useState(0);
-  const [perPage, setPerPage] = useState(10);
+  const [totalDeals, setTotalDeals] = useState(0)
+  const [perPage, setPerPage] = useState(10)
 
-  const [tableData, setTableData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const sanctum = new sanctumService();
-  const dispatch = useDispatch(); // Get the dispatch method
+  const [tableData, setTableData] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const sanctum = new sanctumService()
+  const dispatch = useDispatch() // Get the dispatch method
 
   // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal)
@@ -66,47 +68,45 @@ const Deals = () => {
     if (error.response && error.response.status === 401) {
       sanctum.refreshToken()
     }
-  };
-  
-
+  }
    
 
   const handleWebSocketSuccess = (status) => {
     // Your success handling code here
-    //  console.log(status);
-  };
+      console.log(status)
+  }
 
 
   const onDataReceived = (data) => {
    
-    setIsLoading(true);
+    setIsLoading(true)
     // Assuming data.deals contains the updated deal object
-    const updatedDeal = data.deals;
+    const updatedDeal = data.deals
   
     setTableData((prevTableData) => {
       // console.log(prevTableData)
       // Find the index of the deal to update in the prevTableData array
-      const dealIndex = prevTableData.findIndex((deal) => deal.id === updatedDeal.id);
+      const dealIndex = prevTableData.findIndex((deal) => deal.id === updatedDeal.id)
       // console.log(dealIndex)
       // If the deal is found, update it in the prevTableData array
       if (dealIndex !== -1) {
-        updatedDeal.status = updatedDeal.status === 'approved' ? 'approved' : 'pending';
+        updatedDeal.status = updatedDeal.status === 'approved' ? 'approved' : 'pending'
         // Create a new array with the updated deal
         const updatedTableData = [
           ...prevTableData.slice(0, dealIndex),
           updatedDeal,
-          ...prevTableData.slice(dealIndex + 1),
-        ];
+          ...prevTableData.slice(dealIndex + 1)
+        ]
       
         // Return the updated table data
-        return updatedTableData;
+        return updatedTableData
       } else {
         // If the admin is not found, return the previous state
-        return prevTableData;
+        return prevTableData
       }
-    });
+    })
     setTimeout(() => {
-      setIsLoading(false);
+      setIsLoading(false)
       toast(
         <div className='d-flex'>
           <div className='me-1'>
@@ -118,54 +118,54 @@ const Deals = () => {
             <span>List refreshed!</span>
           </div>
         </div>
-      );
-    }, 400);
+      )
+    }, 400)
    
-  };
+  }
   
  //lets listen the channel if something changes we reflect this
- useSubscribeToAllDealsList(handleWebSocketError, handleWebSocketSuccess, onDataReceived); 
+ //useSubscribeToAllDealsList(handleWebSocketError, handleWebSocketSuccess, onDataReceived) 
 
+
+ useSubscribeToChannel('deals', handleWebSocketError, handleWebSocketSuccess, onDataReceived)
 
  const refreshData = async (page = currentPage) => {
   try {
-    setIsLoading(true);
-    const { deals, total, itemsPerPage } = await getData(page, perPage);
-    setTableData(deals);
-    setTotalDeals(total);
-    setPerPage(itemsPerPage);
-    setIsLoading(false);
+    setIsLoading(true)
+    const { deals, total, itemsPerPage } = await getData(page, perPage)
+    setTableData(deals)
+    setTotalDeals(total)
+    setPerPage(itemsPerPage)
+    setIsLoading(false)
   } catch (error) {
-    console.log(error);
-    setIsLoading(false);
+    console.log(error)
+    setIsLoading(false)
   }
-};
+}
   
-  const columns = getColumns(refreshData, dispatch);
+  const columns = getColumns(refreshData, dispatch)
   
   useEffect(() => {
-    refreshData();
-  }, [currentPage]);
+    refreshData()
+  }, [currentPage])
   
 
   // ** Function to handle filter
   const handleFilter = async (e) => {
-    const value = e.target.value;
-    setSearchValue(value);
+    const value = e.target.value
+    setSearchValue(value)
   
     if (value.length) {
-      const { deals, total } = await getData(1, 10, value);
-      setFilteredData(deals);
-      setTotalDeals(total);
+      const { deals, total } = await getData(1, 10, value)
+      setFilteredData(deals)
+      setTotalDeals(total)
     } else {
-      const { deals, total } = await getData(1, 10);
-      setFilteredData([]); // Clear the filtered data
-      setTableData(deals);
-      setTotalDeals(total);
+      const { deals, total } = await getData(1, 10)
+      setFilteredData([]) // Clear the filtered data
+      setTableData(deals)
+      setTotalDeals(total)
       }
-  };
-  
-  
+  }
   
 
   // ** Function to handle Pagination
@@ -226,30 +226,29 @@ const Deals = () => {
 
   // ** Downloads CSV
   async function downloadCSV() {
-    let dataToExport;
+    let dataToExport
     if (selectedRows.length > 0) {
-      dataToExport = selectedRows;
+      dataToExport = selectedRows
     } else {
       // console.log(searchValue)
-      const fetchedData = await getData(1, null, searchValue);
-      dataToExport = fetchedData.deals;
+      const fetchedData = await getData(1, null, searchValue)
+      dataToExport = fetchedData.deals
     }
     
-    const link = document.createElement('a');
-    let csv = convertArrayOfObjectsToCSV(dataToExport);
-    if (csv === null) return;
+    const link = document.createElement('a')
+    let csv = convertArrayOfObjectsToCSV(dataToExport)
+    if (csv === null) return
   
-    const filename = 'export.csv';
+    const filename = 'export.csv'
   
     if (!csv.match(/^data:text\/csv/i)) {
-      csv = `data:text/csv;charset=utf-8,${csv}`;
+      csv = `data:text/csv;charset=utf-8,${csv}`
     }
   
-    link.setAttribute('href', encodeURI(csv));
-    link.setAttribute('download', filename);
-    link.click();
+    link.setAttribute('href', encodeURI(csv))
+    link.setAttribute('download', filename)
+    link.click()
   }
-  
   
 
   return (
