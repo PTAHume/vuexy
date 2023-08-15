@@ -39,6 +39,8 @@ jobs:
             cd  /home/dealmanager.co.uk/public_html # change to folder
             rm -rf  {*,.*} # clear contents
             git init . # initalise git
-            git checkout -b gh-pages # check a branch 
-            git pull https://github.com/PTAHume/vuexy.git gh-pages # pull our changes into this 
+            git remote add origin https://github.com/PTAHume/vuexy.git # set origin
+            git pull origin #pull banch data
+            git checkout gh-pages # switch to gh pages branch
+            git checkout origin/main -- .htaccess # pull ht access file across
             git status # confrim
