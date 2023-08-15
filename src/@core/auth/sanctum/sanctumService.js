@@ -570,7 +570,7 @@ export default class sanctumService {
     
 
       //websocket update admin list
-      subscribeToChat(socketId, channelName) {
+      subscribeToChatsList(socketId, channelName) {
       return axios.post(
       `${this.sanctumConfig.baseUrl}${this.sanctumConfig.subscribeChatLists}`,
       {
