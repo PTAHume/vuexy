@@ -3,7 +3,9 @@ import { useEffect } from 'react'
 import { echoInstance } from './echoService'
 
 
-export const useSubscribeToChannel = (channelName, onError, onSuccess, onDataReceived) => {
+export const useSubscribeToChannel = (channelName, onError, onSuccess, onDataReceived, args = null) => {
+
+  
   useEffect(() => {
     let channel
 
@@ -11,7 +13,8 @@ export const useSubscribeToChannel = (channelName, onError, onSuccess, onDataRec
       channel = echoInstance.private(channelName)
       console.log(`.App\\Events\\${channelName.charAt(0).toUpperCase() + channelName.slice(1)}ListUpdated`)
       channel.listen(`.App\\Events\\${channelName.charAt(0).toUpperCase() + channelName.slice(1)}ListUpdated`, (data) => {
-        onDataReceived(data)
+        console.log(data, 'ListUpdated')
+        onDataReceived(data, args)
       })
     }
 
@@ -23,5 +26,5 @@ export const useSubscribeToChannel = (channelName, onError, onSuccess, onDataRec
         //echo.disconnect()
       }
     }
-  }, [])
+  }, [onDataReceived, args])
 }

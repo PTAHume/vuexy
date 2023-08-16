@@ -45,11 +45,7 @@ import {
   UncontrolledDropdown
 } from "reactstrap"
 
-// import { useSubscribeToAllChatsList  } from './Subscription/subscribe-channel/subscribeToAllChatsList.js'
 import { useSubscribeToChannel } from '../../../../@core/auth/laravel-echo/useSubscribeToChannel'
-import Pusher from 'pusher-js'
-//import toast from 'react-hot-toast'
-
 
 const ChatLog = (props) => {
   // ** Props & Store
@@ -63,91 +59,94 @@ const ChatLog = (props) => {
   const { userProfile, selectedUser, selectedChatUniqueId } = store
 
   // ** Refs & Dispatch
-  const chatArea = useRef(null)
+  const chatArea = useRef()
   const dispatch = useDispatch()
   // ** State
   const [msg, setMsg] = useState("")
 
   //lets get the skin 
   const skin = localStorage.getItem('skin')
-//console.log(skin)
+  //console.log(skin)
   // ** Scroll to chat bottom
   const scrollToBottom = () => {
-    const chatContainer = ReactDOM.findDOMNode(chatArea.current)
+    const chatContainer = chatArea.current?._container || chatArea.current
     chatContainer.scrollTop = Number.MAX_SAFE_INTEGER
   }
 
-  
-// let's assume selectedChatUniqueId is the unique id you are searching for.
-const selectedUserObject = selectedUser.find(
+  // let's assume selectedChatUniqueId is the unique id you are searching for.
+  const selectedUserObject = selectedUser.find(
     (user) => user.id === selectedChatUniqueId
-)
+  )
 
-//console.log(store)
-const chat_id = selectedUserObject?.data?.chat?.id //chat id of selected chat
-const savedOldestMessage = store.oldestMessageId //this is the redux saved oldest message id of fetched message set
-const firstFetchOldestMessage = selectedUserObject?.data?.contact?.chat?.firstMessage // this is the oldest message id of first load
+  //console.log(store)
+  const chat_id = selectedUserObject?.data?.chat?.id //chat id of selected chat
+  const savedOldestMessage = store.oldestMessageId //this is the redux saved oldest message id of fetched message set
+  const firstFetchOldestMessage = selectedUserObject?.data?.contact?.chat?.firstMessage // this is the oldest message id of first load
 
-
-// useEffect(() => {
-//   console.log("selectedUserObject state in useEffect: ", selectedUserObject)
-// }, [selectedUserObject])
-
-
-const handleWebSocketError = (error) => {
-  // Your error handling code here
-  if (error.response && error.response.status === 401) {
-    //sanctum.refreshToken()
+  const handleWebSocketSuccess = (status) => {
+    // Your success handling code here
+    console.log("success", status)
   }
-}
 
-const handleWebSocketSuccess = (status) => {
-  // Your success handling code here
-   // console.log("success", status)
-}
-
-const onDataReceived = async (data) => {
-  // console.log("ondataReceived in onDataReceived: ", data.chats)
-  dispatch(updateChatListWithWebsocket(data &&  data.chats))
-  
-  const newMsg = {
-    id: data.chats.newMessageData.message_id,
-    chat_id: data.chats.id,
-    message: data.chats.newMessageData.message,
-    time: data.chats.newMessageData.time,
-    sender_id: data.chats.newMessageData.senderId
-    //status: formattedDate,
+  const handleWebSocketError = (error) => {
+    // Your error handling code here
+    if (error.response && error.response.status === 401) {
+      //sanctum.refreshToken()
+    }
   }
-//  console.log("newMsg onDataReceived: ", newMsg)
-//console.log("sss: ", selectedUser)
-await dispatch(
-  setSelectedUser(
-    selectedUser.map(chat => 
-      chat.data.chat.unique_id === selectedChatUniqueId
-        ? {
-            ...chat,
-            data: {
-              ...chat.data,
-              chat: {
-                ...chat.data.chat,
-                chat: [...chat.data.chat.chat, newMsg],
-              },
-            },
+
+  const dispatchSelectedUserMessage = async (dispatch, selectedUser, selectedChatUniqueId, newMsg) => {
+    await dispatch(
+      setSelectedUser(
+        selectedUser.map(chat => {
+          if (chat.data.chat.unique_id === selectedChatUniqueId) {
+            const updatedChat = {
+              ...chat,
+              data: {
+                ...chat.data,
+                chat: {
+                  ...chat.data.chat
+                }
+              }
+            }
+            const chatItem = updatedChat.data.chat.chat.find((x) => x.id === newMsg.original_id)
+            if (chatItem) {
+              updatedChat.data.chat.chat = updatedChat.data.chat.chat.map(obj => {
+                if (obj.id === newMsg.original_id) {
+                  return { ...obj, id: newMsg.id }
+                }
+                return obj
+              })
+            } else {
+              updatedChat.data.chat.chat = chat.data.chat.chat.concat([newMsg])
+            }
+            console.dir(updatedChat)
+            return updatedChat
           }
-        : chat
-  ))
-)
+          console.dir(chat)
+          return chat
+        })
+      ))
+  }
 
+  const onDataReceived = async (data, selectedUser) => {
+    // console.log("ondataReceived in onDataReceived: ", data.chats)
+    dispatch(updateChatListWithWebsocket(data?.chats))
 
-}
+    const newMsg = {
+      id: data.chats.newMessageData.message_id,
+      chat_id: data.chats.id,
+      message: data.chats.newMessageData.message,
+      sender_id: data.chats.newMessageData.senderId,
+      original_id: data.chats.newMessageData.original_id,
+      time: data.chats.newMessageData.time
+      //status: formattedDate,
+    }
+
+    await dispatchSelectedUserMessage(dispatch, selectedUser, selectedChatUniqueId, newMsg)
+  }
   //lets listen the channel if something changes we reflect this
-  //useSubscribeToAllChatsList(handleWebSocketError, handleWebSocketSuccess, onDataReceived)
-  useSubscribeToChannel('chats', handleWebSocketError, handleWebSocketSuccess, onDataReceived)
-
-  useEffect(() => {
-    console.log("selectedUser state in onDataReceived: ", selectedUser) // Check if useEffect runs after state update
-  }, [selectedUser])
-
+  useSubscribeToChannel('chats', handleWebSocketError, handleWebSocketSuccess, onDataReceived, selectedUser)
 
   const getMoreMsgs = async () => {
     try {
@@ -155,7 +154,7 @@ await dispatch(
       await dispatch(
         loadMoreMsgs({
           chatId: chat_id,
-          oldestMessageId: savedOldestMessage ? savedOldestMessage : firstFetchOldestMessage || null
+          oldestMessageId: savedOldestMessage || firstFetchOldestMessage || null
         })
       )
     } catch (error) {
@@ -209,8 +208,8 @@ await dispatch(
               time: msg.time,
               id: msg.id,
               status: msg.status
-            },
-          ],
+            }
+          ]
         }
       }
       if (index === chatLog.length - 1) formattedChatLog.push(msgGroup)
@@ -219,15 +218,8 @@ await dispatch(
   }
 
   // ** Renders user chat
-  // ** Renders user chat
   const renderChats = () => {
-    //console.log("test!!!: ")
-    return formattedChatData().map((item, index) => {
-    //  console.log("item_sender_id: ", item)
-      // console.log("userProfile.id: ", userProfile.id)
-      // console.log("selectedUser.contact.avatar: ", selectedUser.contact.avatar)
-      // console.log("userProfile.image: ", userProfile.image)
-      // console.log("selectedUser: ", selectedUser)
+    return formattedChatData().map((item) => {
       return (
         <div
           key={`${item.sender_id}-${item.messages[0].id}`}
@@ -248,7 +240,7 @@ await dispatch(
 
           <div className="chat-body">
             {item.messages.map((chat) => {
-             // console.log(chat)
+              // console.log(chat)
               // Create a new Date object
               const date = new Date(chat.time)
 
@@ -313,56 +305,47 @@ await dispatch(
         id: randomInt,
         chat_id: selectedUserObject.data.chat.id,
         message: msg,
-        time: newDate.toISOString(),
         sender_id: userProfile.id,
-        status: formattedDate
+        original_id: randomInt,
+        time: formattedDate
       }
       //console.log("SendMsg newMsg: ", newMsg)
       const selectedChat = selectedUser.find(chat => chat.data.chat.unique_id === selectedChatUniqueId)
-  
       if (selectedChat) {
-        await dispatch(sendMsg({ ...selectedChat, message: newMsg }))
-       // console.log("SelectedUser in handleSendMsg: ", selectedChat)
-       await dispatch(
-        setSelectedUser(
-          selectedUser.map(chat => 
-            chat.data.chat.unique_id === selectedChatUniqueId
-              ? {
-                  ...chat,
-                  data: {
-                    ...chat.data,
-                    chat: {
-                      ...chat.data.chat,
-                      chat: [...chat.data.chat.chat, newMsg],
-                    },
-                  },
-                }
-              : chat
-        ))
-      )
-      
+        await dispatch(sendMsg({
+          message: {
+            request: {
+              data: {
+                id: newMsg.id,
+                chat_id: newMsg.chat_id,
+                message: newMsg.message,
+                sender_id: newMsg.sender_id,
+                original_id: newMsg.original_id,
+                time: newMsg.time
+              }
+            }
+          }
+        }))
+        // console.log("SelectedUser in handleSendMsg: ", selectedChat)
+        await dispatchSelectedUserMessage(dispatch, selectedUser, selectedChatUniqueId, newMsg)
       }
       //console.log("SelectedUser in handleSendMsg end of the function: ", selectedUser)
       setMsg("")
     }
   }
- // console.log("selectedUser state: ", selectedUser) // Check the current state
-
-  // useEffect(() => {
-  //   console.log("selectedUser state in useEffect: ", selectedUser) // Check if useEffect runs after state update
-  // }, [selectedUser])
-  
-  //console.log("Render") // Check each re-render
-  
 
   // ** ChatWrapper tag based on chat's length
   const ChatWrapper =
-  selectedUserObject && Object.keys(selectedUserObject).length && selectedUserObject?.data?.chat ? PerfectScrollbar : "div"
-
+    selectedUserObject && Object.keys(selectedUserObject).length && selectedUserObject?.data?.chat ? PerfectScrollbar : "div"
+  const renderDivOrNull = (selectedUserObject, renderChats) => {
+    return selectedUserObject.data.chat ? (
+      <div className="chats">{renderChats()}</div>
+    ) : null
+  }
 
   return (
     <div className="chat-app-window">
-    <div
+      <div
         className={classnames("start-chat-area", {
           "d-none": selectedUserObject && Object.keys(selectedUserObject).length
         })}
@@ -461,9 +444,7 @@ await dispatch(
               <div id="loading-overlay" style={{ display: "flex" }}>
                 <div className="loader"></div>
               </div>
-            ) : selectedUserObject.data.chat ? (
-              <div className="chats">{renderChats()}</div>
-            ) : null}
+            ) : renderDivOrNull(selectedUserObject, renderChats)}
           </ChatWrapper>
 
           <Form className="chat-app-form" onSubmit={(e) => handleSendMsg(e)}>

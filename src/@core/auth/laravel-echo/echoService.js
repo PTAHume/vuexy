@@ -24,7 +24,7 @@ export const echoInstance = new Echo({
                    
                     const response = await sanctum[method](socketId, channel.name)
 
-                   
+                    console.log(response.data, 'echo')
                     callback(false, response.data)
                 } catch (error) {
                     callback(true, error)
