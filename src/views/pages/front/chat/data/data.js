@@ -48,7 +48,7 @@ export const getMoreMsgs = async (chat_id, oldestMessageId) => {
 export const sendChatMsg = async (obj) => {
   try {
     const responseChat = await sanctum.sendMsg(obj)
-    console.log("response of sendChatMSG :", responseChat.data)
+    //console.log("response of sendChatMSG :", responseChat.data)
     return responseChat.data
   } catch (error) {
     console.error(error)

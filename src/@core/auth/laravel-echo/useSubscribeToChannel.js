@@ -11,9 +11,9 @@ export const useSubscribeToChannel = (channelName, onError, onSuccess, onDataRec
 
     async function subscribe() {
       channel = echoInstance.private(channelName)
-      console.log(`.App\\Events\\${channelName.charAt(0).toUpperCase() + channelName.slice(1)}ListUpdated`)
+      //console.log(`.App\\Events\\${channelName.charAt(0).toUpperCase() + channelName.slice(1)}ListUpdated`)
       channel.listen(`.App\\Events\\${channelName.charAt(0).toUpperCase() + channelName.slice(1)}ListUpdated`, (data) => {
-        console.log(data, 'ListUpdated')
+        //console.log(data, 'web socket called back successfully')
         onDataReceived(data, args)
       })
     }

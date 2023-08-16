@@ -134,12 +134,11 @@ export const appChatSlice = createSlice({
 export const { showLoader, hideLoader, showLoaderMoreMsg, hideLoaderMoreMsg, setOldestMessageId, setSelectedUser, updateMessageId, updateMessageStatus, setSelectedChatUniqueId, setTemporaryMessageId } = appChatSlice.actions // Export actions
 export default appChatSlice.reducer
 
-
 export const sendMsg = createAsyncThunk(
   'appChat/sendMsg',
   async (obj, { dispatch }) => {
     try {
-      console.log("Send Message reducer:", obj)
+      //console.log("Send Message reducer:", obj)
       dispatch(setTemporaryMessageId(obj.message.id)) // Assume storeOldMessageId is an action that saves oldId in the state
       const response = await sendChatMsg(obj)
       return response

@@ -120,10 +120,10 @@ const ChatLog = (props) => {
             } else {
               updatedChat.data.chat.chat = chat.data.chat.chat.concat([newMsg])
             }
-            console.dir(updatedChat)
+            //console.dir(updatedChat)
             return updatedChat
           }
-          console.dir(chat)
+          //ouconsole.dir(chat)
           return chat
         })
       ))
