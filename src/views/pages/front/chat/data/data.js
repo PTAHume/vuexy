@@ -33,7 +33,6 @@ export const getChat = async (uniqueId) => {
   }
 }
 
-
 export const getMoreMsgs = async (chat_id, oldestMessageId) => {
   try {
     const getMoreMsgs = await sanctum.getMoreMsgs(chat_id, oldestMessageId)
@@ -44,14 +43,13 @@ export const getMoreMsgs = async (chat_id, oldestMessageId) => {
   }
 }
 
-
 export const sendChatMsg = async (obj) => {
   try {
     const responseChat = await sanctum.sendMsg(obj)
     //console.log("response of sendChatMSG :", responseChat.data)
     return responseChat.data
-  } catch (error) {
-    console.error(error)
+  } catch (er) {
+    console.error(er)
     return []
   }
 }

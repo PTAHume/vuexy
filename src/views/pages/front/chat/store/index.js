@@ -36,6 +36,12 @@ export const loadMoreMsgs = createAsyncThunk(
   }
 )
 
+const initialEnableSendMessage = () => {
+  const item = window.localStorage.getItem("EnableSendMessage1")
+  const result = JSON.parse(item ? JSON.parse(item) : 'true')
+  return result
+}
+
 export const appChatSlice = createSlice({
   name: 'appChat',
   initialState: {
@@ -48,7 +54,8 @@ export const appChatSlice = createSlice({
     oldestMessageId: null,  //the first message id in the message set. important to get the another set of message older than this
     newMessageId: null,
     selectedChatUniqueId: null,
-    temporaryMessageId: null
+    temporaryMessageId: null,
+    enableSendMessage: initialEnableSendMessage()
   },
   reducers: {
     showLoader: (state) => {
@@ -72,6 +79,10 @@ export const appChatSlice = createSlice({
     },
     setSelectedUser: (state, action) => {
       state.selectedUser = action.payload
+    },
+    setEnableSendMessage: (state, action) => {
+      state.enableSendMessage = JSON.parse(action.payload)
+      window.localStorage.setItem("EnableSendMessage", JSON.stringify(action.payload))
     },
     updateMessageId: (state, action) => {
       const { oldId, newId, NewTime } = action.payload
@@ -131,7 +142,7 @@ export const appChatSlice = createSlice({
       })
   }
 })
-export const { showLoader, hideLoader, showLoaderMoreMsg, hideLoaderMoreMsg, setOldestMessageId, setSelectedUser, updateMessageId, updateMessageStatus, setSelectedChatUniqueId, setTemporaryMessageId } = appChatSlice.actions // Export actions
+export const { showLoader, hideLoader, showLoaderMoreMsg, hideLoaderMoreMsg, setOldestMessageId, setSelectedUser, updateMessageId, updateMessageStatus, setSelectedChatUniqueId, setTemporaryMessageId, enableSendMessage, setEnableSendMessage } = appChatSlice.actions // Export actions
 export default appChatSlice.reducer
 
 export const sendMsg = createAsyncThunk(
@@ -142,7 +153,8 @@ export const sendMsg = createAsyncThunk(
       dispatch(setTemporaryMessageId(obj.message.id)) // Assume storeOldMessageId is an action that saves oldId in the state
       const response = await sendChatMsg(obj)
       return response
-    } catch (error) {
+    } catch (er) {
+      console.error(er)
       dispatch(updateMessageStatus({ messageId: obj.message.id, status: '!Error : Message was not sent' }))
       throw error
     }

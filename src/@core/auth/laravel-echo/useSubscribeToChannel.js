@@ -4,8 +4,6 @@ import { echoInstance } from './echoService'
 
 
 export const useSubscribeToChannel = (channelName, onError, onSuccess, onDataReceived, args = null) => {
-
-  
   useEffect(() => {
     let channel
 

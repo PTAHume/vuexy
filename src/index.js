@@ -16,7 +16,8 @@ import { ThemeContext } from './utility/context/ThemeColors'
 import themeConfig from './configs/themeConfig'
 
 // ** Toast
-import { Toaster } from 'react-hot-toast'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 // ** i18n
 import './configs/i18n'
@@ -38,6 +39,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 // ** React Hot Toast Styles
 import '@styles/react/libs/react-hot-toasts/react-hot-toasts.scss'
 
+
 // ** Core styles
 import './@core/assets/fonts/feather/iconfont.css'
 import './@core/scss/core.scss'
@@ -54,18 +56,20 @@ const root = createRoot(container)
 
 root.render(
   <StrictMode>
+    
   <BrowserRouter>
     <Provider store={store}>
       <Suspense fallback={<Spinner />}>
         {/* <AbilityContext.Provider value={ability}> */}
           <ThemeContext>
             <LazyApp />
-            <Toaster position={themeConfig.layout.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
+            <ToastContainer position={themeConfig.layout.toastPosition} toastClassName='react-hot-toast' />
           </ThemeContext>
         {/* </AbilityContext.Provider> */}
       </Suspense>
     </Provider>
-  </BrowserRouter></StrictMode>
+    </BrowserRouter>
+  </StrictMode>
 )
 
 // If you want your app to work offline and load faster, you can change
