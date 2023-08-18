@@ -1,4 +1,3 @@
-import toast from 'react-hot-toast'
 import { Check } from 'react-feather'
 import { useForm, Controller } from 'react-hook-form'
 import Avatar from '@components/avatar'
