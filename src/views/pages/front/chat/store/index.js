@@ -37,7 +37,7 @@ export const loadMoreMsgs = createAsyncThunk(
 )
 
 const initialEnableSendMessage = () => {
-  const item = window.localStorage.getItem("EnableSendMessage1")
+  const item = window.localStorage.getItem("EnableSendMessage")
   const result = JSON.parse(item ? JSON.parse(item) : 'true')
   return result
 }
