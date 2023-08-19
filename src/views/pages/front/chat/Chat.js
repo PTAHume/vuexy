@@ -132,23 +132,24 @@ const ChatLog = (props) => {
 
   const onDataReceived = async (data, selectedUser) => {
     console.log("ondataReceived in onDataReceived: ", data)
-    if (data.chat.rateLimitStatuses.length > 0) {
-      const hasUserGotRateLimitItem = data.chat.rateLimitStatuses.find((item) => item.user_id === userProfile.id)
-      if (hasUserGotRateLimitItem) {
-        if (hasUserGotRateLimitItem?.button === 'disabled' && enableSendMessage === true) {
-          dispatch(setEnableSendMessage(false))
-          toast.info("Too many consecutive requests made in too sort a time span! Please wait a moment before trying again, you will be notified when you can send a message again")
-          return
-        } else if (hasUserGotRateLimitItem?.button === 'enabled' && enableSendMessage === false) {
-          dispatch(setEnableSendMessage(true))
-          toast.info("You may continue sending messages agin now, please be mindful not to spam chat!")
-          return
-        }
+
+    if (data?.chat === null) return
+
+    const hasUserGotRateLimitItem = data.chat.rateLimitStatuses.find((item) => item.user_id === userProfile.id)
+    if (hasUserGotRateLimitItem) {
+      if (hasUserGotRateLimitItem?.button === 'disabled' && enableSendMessage === true) {
+        dispatch(setEnableSendMessage(false))
+        toast.info("Too many consecutive requests made in too sort a time span! Please wait a moment before trying again, you will be notified when you can send a message again")
+        return
+      } else if (hasUserGotRateLimitItem?.button === 'enabled' && enableSendMessage === false) {
+        dispatch(setEnableSendMessage(true))
+        toast.info("You may continue sending messages agin now, please be mindful not to spam chat!")
         return
       }
+      return
     }
 
-    dispatch(setEnableSendMessage(true))
+    if (data?.chat?.newMessageData === null) return
 
     dispatch(updateChatListWithWebsocket(data?.chat))
 
