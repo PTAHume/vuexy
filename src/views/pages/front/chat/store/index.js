@@ -166,10 +166,7 @@ export const updateChatListWithWebsocket = createAsyncThunk(
   async (data, { dispatch, getState }) => { // Include getState here
     try {
       const newMessageId = data.newMessageData.message_id
-      const newTime = data.newMessageData.time
-      const newTimeDate = new Date(newTime.replace(' ', 'T'))
-      const formattedDate = `${newTimeDate.getDate()} ${newTimeDate.toLocaleString('default', { month: 'long' })}, ${newTimeDate.getFullYear()}`
-
+      const newTime = new Date(data.newMessageData.time)
       //DONT FORGET IF THERE IS AN ERROR IN THE LINE THE LINES AFTER THIS WILL NOT BE PROCESSED!
       await dispatch(getChatContacts())
 
@@ -178,7 +175,7 @@ export const updateChatListWithWebsocket = createAsyncThunk(
       if (tempId) {
 
         dispatch(updateMessageId({ oldId: tempId, newId: newMessageId, NewTime: newTime }))
-        dispatch(updateMessageStatus({ messageId: newMessageId, status: formattedDate }))
+        dispatch(updateMessageStatus({ messageId: newMessageId, status: newTime }))
         //console.log('temp: ', tempId)
       }
       //return data

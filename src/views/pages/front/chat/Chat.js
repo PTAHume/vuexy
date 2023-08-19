@@ -140,13 +140,10 @@ const ChatLog = (props) => {
       if (hasUserGotRateLimitItem?.button === 'disabled' && enableSendMessage === true) {
         dispatch(setEnableSendMessage(false))
         toast.info("Too many consecutive requests made in too sort a time span! Please wait a moment before trying again, you will be notified when you can send a message again")
-        return
       } else if (hasUserGotRateLimitItem?.button === 'enabled' && enableSendMessage === false) {
         dispatch(setEnableSendMessage(true))
         toast.info("You may continue sending messages agin now, please be mindful not to spam chat!")
-        return
       }
-      return
     }
 
     if (data?.chat?.newMessageData === null) return
@@ -159,8 +156,7 @@ const ChatLog = (props) => {
       message: data.chat.newMessageData.message,
       sender_id: data.chat.newMessageData.senderId,
       original_id: data.chat.newMessageData.original_id,
-      time: data.chat.newMessageData.time
-      //status: formattedDate,
+      time: new Date(data.chat.newMessageData.time)
     }
 
     await dispatchSelectedUserMessage(dispatch, selectedUser, selectedChatUniqueId, newMsg)
@@ -265,10 +261,7 @@ const ChatLog = (props) => {
               const date = new Date(chat.time)
 
               // Format the date
-              const formattedDate = `${date.getDate()} ${date.toLocaleString(
-                "default",
-                { month: "long" }
-              )}, ${date.getFullYear()}`
+              const formattedDate = date.toLocaleString("en-GB", { hour12: true })
 
               return (
                 <div key={chat.id} className="chat-content">
@@ -317,17 +310,14 @@ const ChatLog = (props) => {
     e.preventDefault()
     if (msg.trim().length) {
       const newDate = new Date()
-      const formattedDate = `${newDate.getDate()} ${newDate.toLocaleString(
-        "default",
-        { month: "long" }
-      )}, ${newDate.getFullYear()}`
+      //const formattedDate = newDate.toLocaleString("en-GB", { hour12: true })
       const newMsg = {
         id: randomInt,
         chat_id: selectedUserObject.data.chat.id,
         message: msg,
         sender_id: userProfile.id,
         original_id: randomInt,
-        time: formattedDate
+        time: newDate
       }
       //console.log("SendMsg newMsg: ", newMsg)
       const selectedChat = selectedUser.find(chat => chat.data.chat.unique_id === selectedChatUniqueId)
