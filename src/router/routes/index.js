@@ -26,7 +26,8 @@ import EditUsers from './EditUser'
 import UserManagement from './User-management'
 import Offers from './Front/FrontendHome'
 import UserAuthenticationRoutes from './Front/UserAuthentication'
-import MyChats from './Front/MyChats';
+import MyChats from './Front/MyChats'
+import AddDeal from './Front/AddDeal'
 
 const getLayout = {
   blank: <BlankLayout />,
@@ -55,6 +56,7 @@ const Routes = [
   ...Offers,
   ...UserAuthenticationRoutes,
   ...MyChats,
+  ...AddDeal
 ]
 
 const getRouteMeta = route => {
@@ -128,4 +130,4 @@ const getRoutes = layout => {
   return AllRoutes
 }
 
-export { DefaultRoute,DefaultRouteFront, TemplateTitle, Routes, getRoutes } 
+export { DefaultRoute, DefaultRouteFront, TemplateTitle, Routes, getRoutes } 

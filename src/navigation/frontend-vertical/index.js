@@ -27,7 +27,7 @@ const navigationUser = [
           title: 'Coupons',
           icon: <Circle size={12} />,
           navLink: '/coupons'
-        },
+        }
       
       ]
     },
@@ -35,13 +35,13 @@ const navigationUser = [
       id: 'addNewOffer',
       title: 'Add New Deal',
       icon: <Home />,
-      navLink: '/add-new-deal',
+      navLink: '/add-deal'
     },
     {
       id: 'MyDeals',
       title: 'My Deals',
       icon: <Home />,
-      navLink: '/my-deals',
+      navLink: '/my-deals'
     },
    
 
@@ -52,7 +52,7 @@ const navigationUser = [
       id: 'Chats',
       title: 'My Chats',
       icon: <User />,
-      navLink: '/my-chats',
+      navLink: '/my-chats'
     },
     {
       header: 'How it works'
@@ -61,13 +61,13 @@ const navigationUser = [
       id: 'FAQ',
       title: 'FAQ',
       icon: <Home />,
-      navLink: '/faq',
+      navLink: '/faq'
     },
     {
       id: 'Support',
       title: 'Contact Us',
       icon: <Home />,
-      navLink: '/contact-us',
+      navLink: '/contact-us'
     },
     {
       header: 'Settings'
@@ -76,21 +76,21 @@ const navigationUser = [
       id: 'Profile',
       title: 'My Profile',
       icon: <Shield />,
-      navLink: '/my-profile',
+      navLink: '/my-profile'
     },
     {
       id: 'Notifications',
       title: 'Notifications',
       icon: <Shield />,
-      navLink: '/my-notifications',
+      navLink: '/my-notifications'
     },
     {
       id: 'Logout',
       title: 'Logout',
       icon: <Shield />,
-      navLink: '/logout',
-    },
-  ];
+      navLink: '/logout'
+    }
+  ]
   
-  export default navigationUser;
+  export default navigationUser
   

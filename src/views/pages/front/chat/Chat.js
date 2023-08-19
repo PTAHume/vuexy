@@ -130,7 +130,8 @@ const ChatLog = (props) => {
   }
 
   const onDataReceived = async (data, selectedUser) => {
-    // console.log("ondataReceived in onDataReceived: ", data.chats)
+     console.log("ondataReceived in onDataReceived: ", data)
+       // console.log("ondataReceived in onDataReceived: ", data.chats)
     dispatch(updateChatListWithWebsocket(data?.chats))
 
     const newMsg = {

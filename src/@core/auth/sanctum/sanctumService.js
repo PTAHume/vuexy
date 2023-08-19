@@ -321,11 +321,20 @@ export default class sanctumService {
     );
   }
 
+
+    // getcountrylist() {
+  //   return axios.get(
+  //     `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getcountries}`
+  //   );
+  // }
+
+
   getcountries() {
     return axios.get(
       `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getcountries}`
     );
   }
+
 
   getcities() {
     return axios.get(
