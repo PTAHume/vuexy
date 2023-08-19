@@ -467,7 +467,7 @@ const ChatLog = (props) => {
               <InputGroupText>
                 <Label className="attachment-icon mb-0" for="attach-doc">
                   <Image className="cursor-pointer text-secondary" size={14} />
-                  <input type="file" id="attach-doc" hidden />
+                  <input disabled type="file" id="attach-doc" hidden />
                 </Label>
               </InputGroupText>
             </InputGroup>
