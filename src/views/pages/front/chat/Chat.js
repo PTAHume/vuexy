@@ -131,7 +131,7 @@ const ChatLog = (props) => {
   }
 
   const onDataReceived = async (data, selectedUser) => {
-    console.log("ondataReceived in onDataReceived: ", data)
+    //console.log("ondataReceived in onDataReceived: ", data)
 
     if (data?.chat === null) return
 

@@ -111,6 +111,7 @@ const Login = () => {
             // ability.update(res.data.userData.ability)
 
             //we can differentiate merchant and admin here
+            window.localStorage.setItem("EnableSendMessage", JSON.stringify(true))
             navigate(getHomeRouteForLoggedInUser(resData.type));
             //navigate(getHomeRouteForLoggedInUser("admin"));
             toast((t) => (

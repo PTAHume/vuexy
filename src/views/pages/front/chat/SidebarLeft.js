@@ -62,7 +62,7 @@ const handleUserClick = async (uniqueId) => {
 
   if (!selectedChat || selectedChat.data.chat.id !== selectedItem.chat?.id) {
     try {
-     
+      window.localStorage.setItem("EnableSendMessage", JSON.stringify(true))
       await dispatch(showLoader());
       await dispatch(selectChat(selectedItem?.unique_id));
       await dispatch(setSelectedChatUniqueId(selectedItem?.unique_id));
@@ -76,7 +76,6 @@ const handleUserClick = async (uniqueId) => {
       // setActive({ chatId: selectedItem.chat.id, userId: selectedItem.id, uniqueId: selectedItem.unique_id });
     }
   } else {
-    //console.log("selectedChat:", selectedChat)
     setActive({ 
       chatId: selectedChat.data.chat.id, 
       userId: selectedChat.data.contact.id, 
