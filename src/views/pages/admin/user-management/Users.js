@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux'
 import PageSpinner from '@components/globalspinner/PageSpinner'
 import sanctumService from '../../../../@core/auth/sanctum/sanctumService.js'
 import { useSubscribeToChannel } from '../../../../@core/auth/laravel-echo/useSubscribeToChannel'
-import toast from 'react-hot-toast'
+
 import Avatar from '@components/avatar'
 
 // ** Reactstrap Imports

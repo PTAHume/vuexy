@@ -1,4 +1,4 @@
-import toast from "react-hot-toast";
+import { toast } from 'react-toastify'
 import { useForm, Controller, useFormContext } from "react-hook-form";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import {

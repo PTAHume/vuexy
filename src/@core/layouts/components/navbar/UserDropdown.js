@@ -33,7 +33,7 @@ import {
   Power
 } from "react-feather"
 
-import toast from "react-hot-toast"
+import { toast } from 'react-toastify'
 
 // ** Reactstrap Imports
 import {

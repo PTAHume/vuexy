@@ -1,9 +1,10 @@
+
 // ** React Imports
-import ReactDOM from "react-dom"
-import { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { baseURL } from "../../../../utility/Utils"
 // ** Custom Components
 import Avatar from "@components/avatar"
+import { toast } from 'react-toastify'
 
 // ** Store & Actions
 import {
@@ -12,7 +13,8 @@ import {
   showLoaderMoreMsg,
   hideLoaderMoreMsg,
   setSelectedUser,
-  updateChatListWithWebsocket
+  updateChatListWithWebsocket,
+  setEnableSendMessage
 } from "./store"
 import { useDispatch } from "react-redux"
 // import { useSelector } from "react-redux"
@@ -56,7 +58,7 @@ const ChatLog = (props) => {
     store,
     userSidebarLeft
   } = props
-  const { userProfile, selectedUser, selectedChatUniqueId } = store
+  const { userProfile, selectedUser, selectedChatUniqueId, enableSendMessage } = store
 
   // ** Refs & Dispatch
   const chatArea = useRef()
@@ -109,8 +111,7 @@ const ChatLog = (props) => {
                 }
               }
             }
-            const chatItem = updatedChat.data.chat.chat.find((x) => x.id === newMsg.original_id)
-            if (chatItem) {
+            if (updatedChat.data.chat.chat.find((x) => x.id === newMsg.original_id)) {
               updatedChat.data.chat.chat = updatedChat.data.chat.chat.map(obj => {
                 if (obj.id === newMsg.original_id) {
                   return { ...obj, id: newMsg.id }
@@ -130,24 +131,39 @@ const ChatLog = (props) => {
   }
 
   const onDataReceived = async (data, selectedUser) => {
-     console.log("ondataReceived in onDataReceived: ", data)
-       // console.log("ondataReceived in onDataReceived: ", data.chats)
-    dispatch(updateChatListWithWebsocket(data?.chats))
+    //console.log("ondataReceived in onDataReceived: ", data)
+
+    if (data?.chat === null) return
+
+    const hasUserGotRateLimitItem = data.chat.rateLimitStatuses.find((item) => item.user_id === userProfile.id)
+    if (hasUserGotRateLimitItem) {
+      if (hasUserGotRateLimitItem?.button === 'disabled' && enableSendMessage === true) {
+        dispatch(setEnableSendMessage(false))
+        toast.info("Too many consecutive requests made in too sort a time span! Please wait a moment before trying again, you will be notified when you can send a message again")
+      } else if (hasUserGotRateLimitItem?.button === 'enabled' && enableSendMessage === false) {
+        dispatch(setEnableSendMessage(true))
+        toast.info("You may continue sending messages agin now, please be mindful not to spam chat!")
+      }
+    }
+
+    if (data?.chat?.newMessageData === null) return
+
+    dispatch(updateChatListWithWebsocket(data?.chat))
 
     const newMsg = {
-      id: data.chats.newMessageData.message_id,
-      chat_id: data.chats.id,
-      message: data.chats.newMessageData.message,
-      sender_id: data.chats.newMessageData.senderId,
-      original_id: data.chats.newMessageData.original_id,
-      time: data.chats.newMessageData.time
-      //status: formattedDate,
+      id: data.chat.newMessageData.message_id,
+      chat_id: data.chat.id,
+      message: data.chat.newMessageData.message,
+      sender_id: data.chat.newMessageData.senderId,
+      original_id: data.chat.newMessageData.original_id,
+      time: new Date(data.chat.newMessageData.time)
     }
 
     await dispatchSelectedUserMessage(dispatch, selectedUser, selectedChatUniqueId, newMsg)
   }
   //lets listen the channel if something changes we reflect this
   useSubscribeToChannel('chats', handleWebSocketError, handleWebSocketSuccess, onDataReceived, selectedUser)
+
 
   const getMoreMsgs = async () => {
     try {
@@ -238,7 +254,6 @@ const ChatLog = (props) => {
               }
             />
           </div>
-
           <div className="chat-body">
             {item.messages.map((chat) => {
               // console.log(chat)
@@ -246,10 +261,7 @@ const ChatLog = (props) => {
               const date = new Date(chat.time)
 
               // Format the date
-              const formattedDate = `${date.getDate()} ${date.toLocaleString(
-                "default",
-                { month: "long" }
-              )}, ${date.getFullYear()}`
+              const formattedDate = date.toLocaleString("en-GB", { hour12: true })
 
               return (
                 <div key={chat.id} className="chat-content">
@@ -298,17 +310,14 @@ const ChatLog = (props) => {
     e.preventDefault()
     if (msg.trim().length) {
       const newDate = new Date()
-      const formattedDate = `${newDate.getDate()} ${newDate.toLocaleString(
-        "default",
-        { month: "long" }
-      )}, ${newDate.getFullYear()}`
+      //const formattedDate = newDate.toLocaleString("en-GB", { hour12: true })
       const newMsg = {
         id: randomInt,
         chat_id: selectedUserObject.data.chat.id,
         message: msg,
         sender_id: userProfile.id,
         original_id: randomInt,
-        time: formattedDate
+        time: newDate
       }
       //console.log("SendMsg newMsg: ", newMsg)
       const selectedChat = selectedUser.find(chat => chat.data.chat.unique_id === selectedChatUniqueId)
@@ -458,14 +467,15 @@ const ChatLog = (props) => {
               <InputGroupText>
                 <Label className="attachment-icon mb-0" for="attach-doc">
                   <Image className="cursor-pointer text-secondary" size={14} />
-                  <input type="file" id="attach-doc" hidden />
+                  <input disabled type="file" id="attach-doc" hidden />
                 </Label>
               </InputGroupText>
             </InputGroup>
-            <Button className="send" color="primary">
+            <Button disabled={!enableSendMessage} className="send" color="primary">
               <Send size={14} className="d-lg-none" />
               <span className="d-none d-lg-block">Send</span>
             </Button>
+
           </Form>
         </div>
       ) : null}

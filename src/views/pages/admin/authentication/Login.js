@@ -1,7 +1,8 @@
 // ** React Imports
 import { useSkin } from "@hooks/useSkin";
 import { Link, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
+import { toast } from 'react-toastify'
+
 //spinner when we press login button
 import "@styles/react/libs/spinner/spinner.scss";
 import {
@@ -110,6 +111,7 @@ const Login = () => {
             // ability.update(res.data.userData.ability)
 
             //we can differentiate merchant and admin here
+            window.localStorage.setItem("EnableSendMessage", JSON.stringify(true))
             navigate(getHomeRouteForLoggedInUser(resData.type));
             //navigate(getHomeRouteForLoggedInUser("admin"));
             toast((t) => (

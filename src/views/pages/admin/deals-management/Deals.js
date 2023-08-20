@@ -15,7 +15,7 @@ import { useSubscribeToChannel } from '../../../../@core/auth/laravel-echo/useSu
 
 import Pusher from 'pusher-js'
 import Echo from 'laravel-echo'
-import toast from 'react-hot-toast'
+
 import Avatar from '@components/avatar'
 //import dealSlice, { fetchDealDataSuccess } from './store/dealSlice'
 

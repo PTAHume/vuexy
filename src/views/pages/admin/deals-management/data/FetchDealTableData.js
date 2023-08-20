@@ -1,6 +1,5 @@
 import Avatar from '@components/avatar'
 import React, { useState } from 'react'
-import toast from 'react-hot-toast';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input } from 'reactstrap'
 import { MoreVertical, Edit, FileText, Archive, Trash } from 'react-feather'
 import { useDispatch } from 'react-redux';
