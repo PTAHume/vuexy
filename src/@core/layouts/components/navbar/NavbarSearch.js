@@ -97,6 +97,7 @@ const NavbarSearch = () => {
             grouped={true}
             placeholder="Explore Vuexy..."
             autoFocus={true}
+            id="search-input"
             onSuggestionItemClick={handleSuggestionItemClick}
             externalClick={handleExternalClick}
             clearInput={(userInput, setUserInput) =>

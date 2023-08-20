@@ -1,9 +1,9 @@
 import toast from "react-hot-toast"
 import { useForm, Controller } from "react-hook-form"
 import { useParams } from "react-router-dom"
-import {Card, FormFeedback, CardHeader, CardTitle, CardBody, Button, Form, Label, Input, Row, Col, FormGroup } from "reactstrap"
+import { Card, FormFeedback, CardHeader, CardTitle, CardBody, Button, Form, Label, Input, Row, Col, FormGroup } from "reactstrap"
 import Select from "react-select"
-import {  Fragment, useState } from "react"
+import { Fragment, useState } from "react"
 import { useDispatch, useSelector } from "react-redux" // Import useDispatch
 import sanctumService from "../../../../@core/auth/sanctum/sanctumService"
 import { fetchDealDataSuccess } from "./store/dealSlice"
@@ -19,6 +19,36 @@ import { format } from "date-fns"
 import { FixedSizeList as List } from "react-window"
 import "@styles/react/libs/flatpickr/flatpickr.scss"
 
+{ /*Virtulization of long list dropdown to prevent slow response */ }
+const CustomMenuList = (props) => {
+  const { options, children, maxHeight, getValue } = props
+  const [value] = getValue()
+  const initialOffset = options.indexOf(value) * 35
+
+  // Check if the input value doesn't match any city
+  const noOptions = inputValue && !options.some((option) => option.label.toLowerCase().includes(inputValue.toLowerCase()))
+  const adjustedHeight = noOptions ? 65 : maxHeight
+  return (
+    <List
+      height={adjustedHeight}
+      itemCount={noOptions ? 1 : children.length}
+      itemSize={35}
+      initialScrollOffset={initialOffset}
+      width="100%"
+    >
+      {({ index, style }) => (
+        <div style={style}>
+          {noOptions ? (
+            <div style={{ ...style, textAlign: 'center' }}>No Option</div>
+          ) : (
+            children[index]
+          )}
+        </div>
+      )}
+    </List>
+  )
+}
+
 
 const DealEditContainer = ({ redux }) => {
   //MOST important ones
@@ -29,42 +59,10 @@ const DealEditContainer = ({ redux }) => {
   const status_options = [
     { value: "approved", label: "Approved" },
     { value: "pending", label: "Pending" },
-    { value: "rejected", label: "Rejected" },
+    { value: "rejected", label: "Rejected" }
   ]
 
   const [inputValue, setInputValue] = useState("")
-
-
-  { /*Virtulization of long list dropdown to prevent slow response */ }
-  const CustomMenuList = (props) => {
-    const { options, children, maxHeight, getValue } = props
-    const [value] = getValue()
-    const initialOffset = options.indexOf(value) * 35
-   
-    // Check if the input value doesn't match any city
-    const noOptions = inputValue && !options.some((option) => option.label.toLowerCase().includes(inputValue.toLowerCase()))
-    const adjustedHeight = noOptions ? 65 : maxHeight
-    return (
-      <List
-        height={adjustedHeight}
-        itemCount={noOptions ? 1 : children.length}
-        itemSize={35}
-        initialScrollOffset={initialOffset}
-        width="100%"
-      >
-        {({ index, style }) => (
-          <div style={style}>
-          {noOptions ? (
-             <div style={{ ...style, textAlign: 'center' }}>No Option</div>
-          ) : (
-            children[index]
-          )}
-        </div>
-        )}
-      </List>
-    )
-  }
-  
 
   { /*Delivery types label update*/ }
   const delivery_type = [
@@ -79,15 +77,15 @@ const DealEditContainer = ({ redux }) => {
     { value: 1, label: "Active" }
   ]
 
-    { /* User Authenticated Label */ }
-    const user_authenticated = [
-      { value: 0, label: "Unauthenticated" },
-      { value: 1, label: "Authenticated" }
-    ]
+  { /* User Authenticated Label */ }
+  const user_authenticated = [
+    { value: 0, label: "Unauthenticated" },
+    { value: 1, label: "Authenticated" }
+  ]
 
   { /*lets get user data*/ }
   const users = redux.dealData[id]?.user
- 
+
   { /*lets set form data*/ }
   const {
     control,
@@ -98,7 +96,7 @@ const DealEditContainer = ({ redux }) => {
     formState: { errors }
   } = useForm()
 
-   { /*lets set countries cities and airports from redux*/ }
+  { /*lets set countries cities and airports from redux*/ }
   const countries = useSelector((state) => state.dealData.countries) //comes from FetchDealData
   const cities = useSelector((state) => state.dealData.cities) //comes from FetchDealData
   const airports = useSelector((state) => state.dealData.airports) //comes from FetchDealData
@@ -115,7 +113,7 @@ const DealEditContainer = ({ redux }) => {
     defaultUser
   } = useDefaultDropdownValues(countries, cities, airports, redux, id)
 
-    { /*lets set set the handlers for dropdown change*/ }
+  { /*lets set set the handlers for dropdown change*/ }
   const {
     handleDepartureCountryChange,
     handleArrivalCountryChange,
@@ -137,7 +135,7 @@ const DealEditContainer = ({ redux }) => {
     defaultUser
   )
 
-    { /*lets call onsubmit function*/ }
+  { /*lets call onsubmit function*/ }
   const { onSubmit, isLoading } = useFormSubmission(
     handleSubmit,
     errors,
@@ -160,8 +158,6 @@ const DealEditContainer = ({ redux }) => {
         <CardBody className="py-2 my-25">
           <Form className="mt-2 pt-50" onSubmit={handleSubmit(onSubmit)}>
             <Row>
-             
-
               <Col md="6">
                 <div className="mb-1">
                   <Label className="form-label" for="flightAsync">
@@ -169,7 +165,7 @@ const DealEditContainer = ({ redux }) => {
                   </Label>
                   <Controller
                     defaultValue={
-                      (redux.dealData && redux.dealData[id]?.flight_number) ||
+                      (redux?.dealData[id]?.flight_number) ||
                       ""
                     }
                     control={control}
@@ -202,7 +198,7 @@ const DealEditContainer = ({ redux }) => {
                   </Label>
                   <Controller
                     defaultValue={
-                      (redux.dealData && redux.dealData[id]?.price) || ""
+                      (redux?.dealData[id]?.price) || ""
                     }
                     control={control}
                     rules={{ required: "Price is required" }}
@@ -229,7 +225,7 @@ const DealEditContainer = ({ redux }) => {
                   </Label>
                   <Controller
                     defaultValue={
-                      (redux.dealData && redux.dealData[id]?.weight) || ""
+                      (redux?.dealData[id]?.weight) || ""
                     }
                     control={control}
                     rules={{
@@ -266,7 +262,7 @@ const DealEditContainer = ({ redux }) => {
                     }}
                     id="departure_countryAsync"
                     name="departure_country"
-                    defaultValue={ countries ? countries.find((country) => country.id === (redux.dealData && redux.dealData[id]?.departure_country_id)) || "" : "" }
+                    defaultValue={countries ? countries.find((country) => country.id === (redux?.dealData[id]?.departure_country_id)) || "" : ""}
                     render={({ field }) => {
                       const selectedCountry = countries?.find(
                         (country) => country.id === field.value
@@ -277,7 +273,7 @@ const DealEditContainer = ({ redux }) => {
                           options={[...(Array.isArray(countries) ? countries.map((country) => ({ value: country.id, label: country.nicename })) : [])]}
                           classNamePrefix="select"
                           theme={selectThemeColors}
-                          value={ selectedCountry ? { value: selectedCountry.id, label: selectedCountry.nicename } : null
+                          value={selectedCountry ? { value: selectedCountry.id, label: selectedCountry.nicename } : null
                           }
                           onChange={(selectedOption) => {
                             field.onChange(selectedOption.value)
@@ -308,7 +304,7 @@ const DealEditContainer = ({ redux }) => {
                     }}
                     id="arrival_countryAsync"
                     name="arrival_country"
-                    defaultValue={ countries ? countries.find((country) => country.id === (redux.dealData && redux.dealData[id]?.arrival_country_id)) || "" : ""
+                    defaultValue={countries ? countries.find((country) => country.id === (redux?.dealData[id]?.arrival_country_id)) || "" : ""
                     }
                     render={({ field }) => {
                       const selectedCountry = countries?.find(
@@ -320,7 +316,7 @@ const DealEditContainer = ({ redux }) => {
                           options={[...(Array.isArray(countries) ? countries.map((country) => ({ value: country.id, label: country.nicename })) : [])]}
                           classNamePrefix="select"
                           theme={selectThemeColors}
-                          value={ selectedCountry ? { value: selectedCountry.id, label: selectedCountry.nicename } : null
+                          value={selectedCountry ? { value: selectedCountry.id, label: selectedCountry.nicename } : null
                           }
                           onChange={(selectedOption) => {
                             field.onChange(selectedOption.value)
@@ -367,7 +363,7 @@ const DealEditContainer = ({ redux }) => {
                             }))}
                             classNamePrefix="select"
                             theme={selectThemeColors}
-                            value={ selectedCity ? { value: selectedCity.id, label: selectedCity.name } : null
+                            value={selectedCity ? { value: selectedCity.id, label: selectedCity.name } : null
                             }
                             onChange={(selectedOption) => {
                               field.onChange(selectedOption.value)
@@ -403,7 +399,7 @@ const DealEditContainer = ({ redux }) => {
                     }}
                     id="arrival_cityAsync"
                     name="arrival_city"
-                    defaultValue={ cities ? cities.find((city) => city.id === (redux.dealData && redux.dealData[id]?.arrival_city_id)) || "" : ""
+                    defaultValue={cities ? cities.find((city) => city.id === (redux?.dealData[id]?.arrival_city_id)) || "" : ""
                     }
                     render={({ field }) => {
                       const selectedCity = cities?.find(
@@ -419,7 +415,7 @@ const DealEditContainer = ({ redux }) => {
                             }))}
                             classNamePrefix="select"
                             theme={selectThemeColors}
-                            value={ selectedCity ? { value: selectedCity.id, label: selectedCity.name } : null
+                            value={selectedCity ? { value: selectedCity.id, label: selectedCity.name } : null
                             }
                             onChange={(selectedOption) => {
                               field.onChange(selectedOption.value)
@@ -457,7 +453,7 @@ const DealEditContainer = ({ redux }) => {
                     }}
                     id="departure_airportAsync"
                     name="departure_airport"
-                    defaultValue={ airports ? airports.find((airport) => airport.id === (redux.dealData && redux.dealData[id]?.departure_airport_id)) || "" : ""
+                    defaultValue={airports ? airports.find((airport) => airport.id === (redux?.dealData[id]?.departure_airport_id)) || "" : ""
                     }
                     render={({ field }) => {
                       const selectedAirport = airports?.find(
@@ -475,7 +471,7 @@ const DealEditContainer = ({ redux }) => {
                             )}
                             classNamePrefix="select"
                             theme={selectThemeColors}
-                            value={ selectedAirport ? { value: selectedAirport.id, label: selectedAirport.airport_name } : null } onChange={(selectedOption) => field.onChange(selectedOption.value)
+                            value={selectedAirport ? { value: selectedAirport.id, label: selectedAirport.airport_name } : null} onChange={(selectedOption) => field.onChange(selectedOption.value)
                             }
                             className={
                               errors.departure_airport ? "is-invalid" : ""
@@ -504,7 +500,7 @@ const DealEditContainer = ({ redux }) => {
                     }}
                     id="arrival_airportAsync"
                     name="arrival_airport"
-                    defaultValue={ airports ? airports.find((airport) => airport.id === (redux.dealData && redux.dealData[id]?.arrival_airport_id)) || "" : ""
+                    defaultValue={airports ? airports.find((airport) => airport.id === (redux?.dealData[id]?.arrival_airport_id)) || "" : ""
                     }
                     render={({ field }) => {
                       const selectedAirport = airports?.find(
@@ -520,7 +516,7 @@ const DealEditContainer = ({ redux }) => {
                             }))}
                             classNamePrefix="select"
                             theme={selectThemeColors}
-                            value={ selectedAirport ? { value: selectedAirport.id, label: selectedAirport.airport_name } : null
+                            value={selectedAirport ? { value: selectedAirport.id, label: selectedAirport.airport_name } : null
                             }
                             onChange={(selectedOption) => field.onChange(selectedOption.value)
                             }
@@ -555,7 +551,7 @@ const DealEditContainer = ({ redux }) => {
                     id="departure_dateAsync"
                     name="departure_date"
                     defaultValue={
-                      (redux.dealData && redux.dealData[id]?.departure_date) ||
+                      (redux?.dealData[id]?.departure_date) ||
                       ""
                     }
                     render={({ field }) => {
@@ -567,9 +563,8 @@ const DealEditContainer = ({ redux }) => {
                               value={field.value}
                               data-enable-time
                               id="departure-picker"
-                              className={`form-control ${
-                                errors.departure_date ? "is-invalid" : ""
-                              }`}
+                              className={`form-control ${errors.departure_date ? "is-invalid" : ""
+                                }`}
                               options={{
                                 dateFormat: "Y-m-d H:i:S",
                                 enableTime: true
@@ -609,7 +604,7 @@ const DealEditContainer = ({ redux }) => {
                     id="arrival_dateAsync"
                     name="arrival_date"
                     defaultValue={
-                      (redux.dealData && redux.dealData[id]?.arrival_date) || ""
+                      (redux?.dealData[id]?.arrival_date) || ""
                     }
                     render={({ field }) => {
                       return (
@@ -620,9 +615,8 @@ const DealEditContainer = ({ redux }) => {
                               value={field.value}
                               data-enable-time
                               id="arrival-picker"
-                              className={`form-control ${
-                                errors.arrival_date ? "is-invalid" : ""
-                              }`}
+                              className={`form-control ${errors.arrival_date ? "is-invalid" : ""
+                                }`}
                               options={{
                                 dateFormat: "Y-m-d H:i:S",
                                 enableTime: true
@@ -651,10 +645,6 @@ const DealEditContainer = ({ redux }) => {
               </Col>
             </Row>
 
-           
-
-
-
             <Row>
               <Col md="6">
                 <div className="mb-1">
@@ -665,8 +655,7 @@ const DealEditContainer = ({ redux }) => {
                     name="duty_free"
                     id="duty_freeAsync"
                     defaultValue={duty_free.find(
-                      (option) =>
-                        option.value === (redux.dealData && redux.dealData[id]?.duty_free)
+                      (option) => option.value === (redux?.dealData[id]?.duty_free)
                     )}
                     control={control}
                     rules={{ required: "Duty Free Field is required" }}
@@ -685,7 +674,6 @@ const DealEditContainer = ({ redux }) => {
                 </div>
               </Col>
 
-            
             </Row>
 
             <div className="d-flex">
@@ -710,7 +698,7 @@ const DealEditContainer = ({ redux }) => {
           </Form>
         </CardBody>
       </Card>
-      { /* <DeleteAccount id={id} /> */ }
+      { /* <DeleteAccount id={id} /> */}
     </Fragment>
   )
 }

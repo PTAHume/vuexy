@@ -20,14 +20,16 @@ const Autocomplete = forwardRef((props) => {
   const { field, errorMessage } = props
   // ** Refs
   const container = useRef(null)
-  const inputElRef = useRef(null)
+  const inputElRef = useRef(null)//useRef(props.id ?? null)
   const suggestionsListRef = useRef(null)
+
   // const {showLoading} = props
   // ** States
   const [focused, setFocused] = useState(false)
   const [activeSuggestion, setActiveSuggestion] = useState(0)
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [userInput, setUserInput] = useState(props.value ? props.value : "")
+  const [validSelection, setValidSelection] = useState(false)
 
   // ** Vars
   const navigate = useNavigate()
@@ -39,16 +41,17 @@ const Autocomplete = forwardRef((props) => {
     setActiveSuggestion(0)
     setShowSuggestions(false)
     setUserInput(selectedItem[props.filterKey])
-  
+    setValidSelection(!!selectedItem[props.filterKey])
+    //console.log("onSuggestionItemClick ", val, selectedItem[props.filterKey])
     // Add this line to call onSelectSuggestion prop
     if (props.onSelectSuggestion) {
       props.onSelectSuggestion(selectedItem)
     }
-  
+
     if (url !== undefined && url !== null) {
       navigate(url)
     }
-  
+
     if (props.onSuggestionClick) {
       props.onSuggestionClick(url, e)
     }
@@ -65,60 +68,20 @@ const Autocomplete = forwardRef((props) => {
     setActiveSuggestion(0)
     setShowSuggestions(true)
     setUserInput(userInput)
-    if (e.target.value < 1) {
+    if (e.target.value?.trim() < 1) {
       setShowSuggestions(false)
+    }
+    const selectedItem = filteredData.find((item) => item.nicename?.toLowerCase() === userInput.toLowerCase())
+    if (selectedItem) {
+      setValidSelection(true)
+    } else {
+      setValidSelection(false)
     }
   }
 
   // ** Input Click Event
   const onInputClick = (e) => {
     e.stopPropagation()
-  }
-
-  // ** Input's Keydown Event
-  const onKeyDown = (e) => {
-    const filterKey = props.filterKey
-    const suggestionList = suggestionsListRef.current
-
-    // ** User pressed the up arrow
-    if (e.keyCode === 38 && activeSuggestion !== 0) {
-      setActiveSuggestion(activeSuggestion - 1)
-
-      if (
-        e.target.value.length > -1 &&
-        suggestionList !== null &&
-        activeSuggestion <= filteredData.length / 2
-      ) {
-        suggestionList.scrollTop = 0
-      }
-    } else if (e.keyCode === 40 && activeSuggestion < filteredData.length - 1) {
-      // ** User pressed the down arrow
-      setActiveSuggestion(activeSuggestion + 1)
-
-      if (
-        e.target.value.length > -1 &&
-        suggestionList !== null &&
-        activeSuggestion >= filteredData.length / 2
-      ) {
-        suggestionList.scrollTop = suggestionList.scrollHeight
-      }
-    } else if (e.keyCode === 27) {
-      // ** User Pressed ESC
-      setShowSuggestions(false)
-      setUserInput("")
-    } else if (e.keyCode === 13 && showSuggestions) {
-      // ** User Pressed ENTER
-      onSuggestionItemClick(filteredData[activeSuggestion].link, e)
-      setUserInput(filteredData[activeSuggestion][filterKey])
-      setShowSuggestions(false)
-    } else {
-      return
-    }
-
-    // ** Custom Keydown Event
-    if (props.onKeyDown !== undefined && props.onKeyDown !== null) {
-      props.onKeyDown(e, userInput)
-    }
   }
 
   // ** Function To Render Grouped Suggestions
@@ -128,7 +91,7 @@ const Autocomplete = forwardRef((props) => {
     const renderSuggestion = (item, i) => {
       if (!customRender) {
         const suggestionURL =
-          item.link !== undefined && item.link !== null ? item.link : null
+        item.link !== undefined && item.link !== null ? item.link : null
         return (
           <li
             className={classnames("suggestion-item", {
@@ -141,8 +104,7 @@ const Autocomplete = forwardRef((props) => {
             }}
           >
             {item[filterKey]}
-          </li>
-        )
+          </li>)
       } else if (customRender) {
         return customRender(
           item,
@@ -166,14 +128,14 @@ const Autocomplete = forwardRef((props) => {
   // ** Function To Render Ungrouped Suggestions
   const renderUngroupedSuggestions = () => {
     const { filterKey, suggestions, customRender, suggestionLimit } = props
-  
+
     filteredData = []
     const sortSingleData = suggestions
       .filter((i) => {
         if (i[filterKey]) {
           const startCondition = i[filterKey]
-              .toLowerCase()
-              .startsWith(userInput.toLowerCase()),
+            .toLowerCase()
+            .startsWith(userInput.toLowerCase()),
             includeCondition = i[filterKey]
               .toLowerCase()
               .includes(userInput.toLowerCase())
@@ -189,13 +151,13 @@ const Autocomplete = forwardRef((props) => {
       })
       .slice(0, suggestionLimit)
     filteredData.push(...sortSingleData)
-  
+
     if (props.loading && userInput) {
       return (
         <li className="suggestion-item loading-text">Loading...</li>
       )
     }
-    
+
     if (errorMessage) {
       return (
         <li className="suggestion-item error-message">
@@ -260,8 +222,8 @@ const Autocomplete = forwardRef((props) => {
         const sortData = suggestion.data
           .filter((i) => {
             const startCondition = i[filterKey]
-                .toLowerCase()
-                .startsWith(userInput.toLowerCase()),
+              .toLowerCase()
+              .startsWith(userInput.toLowerCase()),
               includeCondition = i[filterKey]
                 .toLowerCase()
                 .includes(userInput.toLowerCase())
@@ -312,6 +274,10 @@ const Autocomplete = forwardRef((props) => {
     if (textInput !== null && props.autoFocus) {
       inputElRef.current.focus()
     }
+   
+    if (props.value !== userInput && props.value === '' && validSelection) {
+      setUserInput(props.value)
+    }
 
     // ** If user has passed default suggestions & focus then show default suggestions
     if (props.defaultSuggestions && focused) {
@@ -327,7 +293,7 @@ const Autocomplete = forwardRef((props) => {
     if (props.onSuggestionsShown && showSuggestions) {
       props.onSuggestionsShown(userInput)
     }
-  }, [setShowSuggestions, focused, userInput, showSuggestions, props])
+  }, [setShowSuggestions, focused, userInput, showSuggestions, props, validSelection])
 
   // ** On External Click Close The Search & Call Passed Function
   useOnClickOutside(container, () => {
@@ -356,27 +322,30 @@ const Autocomplete = forwardRef((props) => {
 
   return (
     <div className="autocomplete-container" ref={container}>
-   <input
-   
-  type="text"
-  onChange={(e) => {
-    onChange(e)
-    if (props.onChange) {
-      props.onChange(e)
-    }
-    if (field) {
-      field.onChange(e)
-    }
-  }}
-  value={field && field.value !== undefined ? field.value : userInput}
-        className={`autocomplete-search ${
-          props.className ? props.className : ""
-        }`}
+      <input
+        type="text"
+        onChange={(e) => {
+          onChange(e)
+          if (props.onChange) {
+            props.onChange(e)
+          }
+          if (field) {
+            field.onChange(e)
+          }
+        }}
+        value={field?.value !== undefined ? field.value : userInput}
+        className={`autocomplete-search ${props.className ? props.className : ""}`}
         placeholder={props.placeholder}
         onClick={onInputClick}
         ref={inputElRef}
+        id={props.id}
+        name={props.id}
         onFocus={() => setFocused(true)}
-        autoFocus={props.autoFocus}
+        autoComplete={props.autocomplete || 'on'}
+        disabled={props.disabled}
+        list={`autocomplete${props.autocomplete || 'on'}`}
+        aria-autocomplete={props.autocomplete === 'off' ? 'none' : 'inline'}
+        autoFocus={props.autoFocus ?? "on"}
         onBlur={(e) => {
           if (props.onBlur) props.onBlur(e)
           setFocused(false)
@@ -405,5 +374,9 @@ Autocomplete.propTypes = {
   onSuggestionsShown: PropTypes.func,
   onSuggestionItemClick: PropTypes.func,
   filterKey: PropTypes.string.isRequired,
-  suggestions: PropTypes.array.isRequired
+  suggestions: PropTypes.array.isRequired,
+  autocomplete: PropTypes.string,
+  id: PropTypes.string.isRequired,
+  disabled: PropTypes.bool,
+  value: PropTypes.any
 }

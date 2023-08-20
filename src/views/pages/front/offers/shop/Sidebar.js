@@ -282,6 +282,8 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                       className="form-control"
                       filterKey="name"
                       suggestionLimit={5}
+                      autocomplete="off"
+                      id="departure_city"
                       placeholder="Type a city name..."
                       onSelectSuggestion={(suggestion) => {
                         field.onChange(suggestion.id);
@@ -317,7 +319,7 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                         setFilterKey("departureCity");
                         setErrorMessage(""); // Clear the error message
                       }}
-                      autocomplete="off" // Add this lin
+                    // Add this lin
                     />
                   )}
                 />
@@ -346,7 +348,9 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                       )}
                       className="form-control"
                       filterKey="airport_name"
-                      suggestionLimit={5}
+                      suggestionLimit={5} a
+                      utocomplete="off"
+                      id="departure_airport"
                       placeholder="Type a airport name..."
                       onSelectSuggestion={(suggestion) => {
                         field.onChange(suggestion.id);
@@ -384,7 +388,6 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                         setFilterKey("departureAirports");
                         setErrorMessage(""); // Clear the error message
                       }}
-                      autocomplete="off" // Add this lin
                     />
                   )}
                 />
@@ -412,6 +415,8 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                       errorMessage={errorMessage}
                       filterKey="nicename"
                       suggestionLimit={5}
+                      autocomplete="off"
+                      id="arrival_country"
                       placeholder="Type a country name..."
                       onSelectSuggestion={(suggestion) => {
                         field.onChange(suggestion.id);
@@ -447,7 +452,6 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                         setFilterKey("arrivalCountry");
                         setErrorMessage(""); // Clear the error message
                       }}
-                      autocomplete="off" // Add this lin
                     />
                   )}
                 />
@@ -473,6 +477,8 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                       className="form-control"
                       filterKey="name"
                       suggestionLimit={5}
+                      autocomplete="off"
+                      id="arrival_city"
                       placeholder="Type a city name..."
                       onSelectSuggestion={(suggestion) => {
                         field.onChange(suggestion.id);
@@ -508,7 +514,6 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                         setFilterKey("arrivalCity");
                         setErrorMessage(""); // Clear the error message
                       }}
-                      autocomplete="off" // Add this lin
                     />
                   )}
                 />
@@ -535,6 +540,8 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                       className="form-control"
                       filterKey="airport_name"
                       suggestionLimit={5}
+                      autocomplete="off"
+                      id="arrival_airport"
                       placeholder="Type a airport name..."
                       onSelectSuggestion={(suggestion) => {
                         field.onChange(suggestion.id);
@@ -564,7 +571,6 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                         setFilterKey("arrivalAirports");
                         setErrorMessage(""); // Clear the error message
                       }}
-                      autocomplete="off" // Add this lin
                     />
                   )}
                 />

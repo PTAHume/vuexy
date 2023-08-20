@@ -183,6 +183,7 @@ const NavbarBookmarks = (props) => {
                 }
                 filterKey="title"
                 autoFocus={true}
+                id={store.key}
                 defaultSuggestions
                 suggestionLimit={!value.length ? store.bookmarks.length : 6}
                 placeholder="Search..."
