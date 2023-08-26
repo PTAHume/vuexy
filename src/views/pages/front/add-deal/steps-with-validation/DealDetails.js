@@ -1,5 +1,4 @@
-import ReactDOM from "react-dom"
-import { Fragment, useState, useEffect, useRef } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { isObjEmpty } from '@utils'
 import * as yup from 'yup'
 import { useDispatch, useSelector } from "react-redux"
@@ -8,11 +7,16 @@ import { ArrowLeft, ArrowRight } from 'react-feather'
 import { yupResolver } from '@hookform/resolvers/yup'
 import AutoComplete from "@components/autocomplete"
 import { Card, CardBody, Form, Label, Row, Col, Button } from 'reactstrap'
-import useGetSuggestionsByFilterKey from "../hooks/useGetSuggestionsbyFilterKey"
-import useDebouncedFetchCountries from "../hooks/debouncedFetchCountries"
-
-
+import useGetSuggestionsByFilterKey from "../../hooks/useGetSuggestionsbyFilterKey"
+import useDebouncedFetchCountries from "../../hooks/debouncedFetchCountries"
+import moment from "moment"
+import Flatpickr from "react-flatpickr"
+import "flatpickr/dist/themes/dark.css"
+import "@styles/react/libs/flatpickr/flatpickr.scss"
+import './CustomSelectValidation.scss'
 import {
+  setDepartureDate,
+  setArrivalDate,
   setDepartureCountry,
   setArrivalCountry,
   setDepartureCity,
@@ -43,64 +47,94 @@ const DealDetails = ({ stepper }) => {
   const { filterKey, setFilterKey, getSuggestionsByFilterKey } =
     useGetSuggestionsByFilterKey(suggestions)
 
+  const dateValidation = (arrivalDate, departureDate) => {
+    if (arrivalDate && departureDate) {
+      return moment(departureDate).isSameOrAfter(arrivalDate)
+    }
+    return true
+  }
+
   const SignupSchema = yup.object().shape({
     departure_country: yup.string().required('Departure Country is required'),
     departure_city: yup.string().required('Departure City is required'),
     departure_airport: yup.string().required('Departure Airport is required'),
     arrival_country: yup.string().required('Arrival Country is required'),
     arrival_city: yup.string().required('Arrival City is required'),
-    arrival_airport: yup.string().required('Arrival Airport is required')
+    arrival_airport: yup.string().required('Arrival Airport is required'),
+    departure_date: yup.date()
+      .required("Departure Date Time is required")
+      .transform((value, originalValue) => {
+        return originalValue ? moment(originalValue).toDate() : value
+      }).typeError("Departure Date Time is required")
+      .min(new Date(), "Start Date must be later than today"),
+    arrival_date: yup.date()
+      .required("Arrival Date Time is required")
+      .transform((value, originalValue) => {
+        return originalValue ? moment(originalValue).toDate() : value
+      })
+      .test('departure-after-arrival', 'End date must be after start date', function (value) {
+        const arrivalDate = this.parent.departure_date
+        return dateValidation(arrivalDate, value)
+      })
   })
 
 
-  const { control, reset, setValue, setError, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(SignupSchema)
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(SignupSchema),
+    shouldFocusError: false
   })
 
   {
     /*Ok lets get the redux variables for country,city and airorts */
   }
   const departure_country_id = useSelector(
-    (state) => state.ecommerce?.departure_country_id
+    (state) => state.useDealData?.departure_country_id
   )
   const departure_city_id = useSelector(
-    (state) => state.ecommerce?.departure_city_id
+    (state) => state.useDealData?.departure_city_id
   )
   const arrival_country_id = useSelector(
-    (state) => state.ecommerce?.arrival_country_id
+    (state) => state.useDealData?.arrival_country_id
   )
   const arrival_city_id = useSelector(
-    (state) => state.ecommerce?.arrival_city_id
+    (state) => state.useDealData?.arrival_city_id
   )
   const departure_airport_id = useSelector(
-    (state) => state.ecommerce?.departure_airport_id
+    (state) => state.useDealData?.departure_airport_id
   )
   const arrival_airport_id = useSelector(
-    (state) => state.ecommerce?.departure_airport_id
+    (state) => state.useDealData?.departure_airport_id
   )
-
+  const departureDate = useSelector(
+    (state) => {
+      return state.useDealData?.departureDate ?? ""
+    }
+  )
+  const arrivalDate = useSelector(
+    (state) => {
+      return state.useDealData?.arrivalDate ?? ""
+    }
+  )
   const departureCity = useSelector(
     (state) => {
-      return state.ecommerce?.departureCity ?? ""
+      return state.useDealData?.departureCity ?? ""
     }
   )
   const departureAirport = useSelector(
     (state) => {
-      return state.ecommerce?.departureAirport ?? ""
+      return state.useDealData?.departureAirport ?? ""
     }
   )
-
   const arrivalCity = useSelector(
     (state) => {
-      return state.ecommerce?.arrivalCity ?? ""
+      return state.useDealData?.arrivalCity ?? ""
     }
   )
   const arrivalAirport = useSelector(
     (state) => {
-      return state.ecommerce?.arrivalAirport ?? ""
+      return state.useDealData?.arrivalAirport ?? ""
     }
   )
-
 
   const { debouncedFetchCountries } = useDebouncedFetchCountries(
     searchQuery,
@@ -144,6 +178,94 @@ const DealDetails = ({ stepper }) => {
       <Card>
         <CardBody>
           <Form onSubmit={handleSubmit(onSubmit)}>
+            <Row>
+              <Col md='6' className='mb-1'>
+                {/* Departure Date */}
+                <Label className="form-label" for="departure_date">
+                  Departure Date
+                </Label>
+                <div className="date-input-group">
+                  <Controller
+                    control={control}
+                    id="departure_dateAsync"
+                    name="departure_date"
+                    render={({ field }) => {
+                      return (
+                        <div>
+                          <Flatpickr
+                            {...field}
+                            value={field.value || departureDate || ""}
+                            data-enable-time
+                            placeholder='Departure Date & Time'
+                            id="departure-picker"
+                            options={{
+                              dateFormat: "Y-m-d H:i",
+                              enableTime: true
+                            }}
+                            className={`form-control ${errors.departure_date ? "is-invalid" : ""
+                              }`}
+                            onChange={(dateObj, dateString) => {
+                              dispatch(setDepartureDate(dateString)) 
+                              field.onChange(dateString)
+                            }}
+                          />
+                        </div>
+                      )
+                    }}
+                    autocomplete="off" // Add this lin
+                  />
+               
+                  {errors.departure_date && (
+                    <div className="text-danger">
+                      {errors.departure_date.message}
+                    </div>
+                  )}
+                </div>
+                <br />
+              </Col>
+              <Col md='6' className='mb-1'>
+                {/* Arrival Date */}
+                <Label className="form-label" for="arrival_date">
+                  Arrival Date
+                </Label>
+                <div className="date-input-group">
+                  <Controller
+                    control={control}
+                    id="arrival_dateAsync"
+                    name="arrival_date"
+                    render={({ field }) => {
+                      return (
+                        <div>
+                          <Flatpickr
+                            {...field}
+                            value={field.value || arrivalDate || ""}
+                            data-enable-time
+                            id="arrival-picker"
+                            placeholder='Arrival Date & Time'
+                            options={{
+                              dateFormat: "Y-m-d H:i",
+                              enableTime: true
+                            }}
+                            className={`form-control ${errors.arrival_date ? "is-invalid" : ""
+                              }`}
+                            onChange={(dateObj, dateString) => {
+                              dispatch(setArrivalDate(dateString)) 
+                              field.onChange(dateString)
+                            }}
+                          />
+                        </div>
+                      )
+                    }}
+                    autocomplete="off" // Add this
+                  />
+                  {errors.arrival_date && (
+                    <div className="text-danger">
+                      {errors.arrival_date.message}
+                    </div>
+                  )}
+                </div>
+              </Col>
+            </Row>
             <Row>
               <Col md='6' className='mb-1'>
                 {/* Country */}
@@ -261,7 +383,7 @@ const DealDetails = ({ stepper }) => {
                           setEnableArrivalCity(false)
                           dispatch(setArrivalAirport(''))
                           dispatch(setArrivalAirportId(0))
-                          setEnableArrivalAirport(false)                          
+                          setEnableArrivalAirport(false)
                         } else {
                           // Check if the typed value matches any of the available suggestions
                           const matchedSuggestion = getSuggestionsByFilterKey(
@@ -294,12 +416,12 @@ const DealDetails = ({ stepper }) => {
                     />
                   )}
                 />
-                <br />
                 {errors.arrival_country && (
                   <div className="text-danger">
                     {errors.arrival_country.message}
                   </div>
                 )}
+                <br />
               </Col>
             </Row>
 
@@ -570,8 +692,8 @@ const DealDetails = ({ stepper }) => {
                     {errors.arrival_airport.message}
                   </div>
                 )}
-              </Col></Row>
-
+              </Col>
+            </Row>
 
             <br />
             <div className="d-flex justify-content-between">

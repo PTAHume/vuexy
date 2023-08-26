@@ -1,37 +1,11 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import data, { getFilteredProducts } from "../data/data"
+import { createSlice } from "@reduxjs/toolkit"
 
-export const getProducts = createAsyncThunk(
-  "Offers/getOffers",
-  async (params) => {
-    const filteredProducts = getFilteredProducts(params)
-    return filteredProducts
-  }
-)
-
-export const OffersSlice = createSlice({
-  name: "offersSlice",
+export const dealsSlice = createSlice({
+  name: "dealsSlice",
   initialState: {
-    params: {
-      perPage: 9,
-      q: "",
-      sortBy: "featured",
-      page: 1,
-      minPrice: null,
-      maxPrice: null,
-      delivery_type: null,
-      departure_date: null,
-      arrival_date: null,
-      arrival_airport: null,
-      arrival_city: null,
-      arrival_country: null,
-      departure_airport: null,
-      departure_city: null,
-      departure_country: null,
-      weight: null
-    },
-    products: data.products,
-    totalProducts: data.products?.length,
+    deliveryType: null,
+    departureDate: null,
+    arrivalDate: null,
     departureCountry: null,
     departureCity: null,
     arrivalCountry: null,
@@ -45,19 +19,18 @@ export const OffersSlice = createSlice({
     arrival_city_id: null,
     arrival_airport_id: null,
     weight: null,
-    pages: {}, // Change this line
-    isLoading: true, // Add this line
-    sortedProducts: {} // Add this line
+    isLoading: true
   },
   reducers: {
-    setPages: (state, action) => {
-      const { page, data } = action.payload
-      state.pages = {
-        ...state.pages,
-        [page]: data
-      }
+    setDeliveryType: (state, action) => {
+      state.deliveryType = action.payload
     },
-
+    setDepartureDate: (state, action) => {
+      state.departureDate = action.payload
+    },
+    setArrivalDate: (state, action) => {
+      state.arrivalDate = action.payload
+    },
     setDepartureCountry: (state, action) => {
       state.departureCountry = action.payload
     },
@@ -97,34 +70,37 @@ export const OffersSlice = createSlice({
     setWeight: (state, action) => {
       state.weight = action.payload
     },
-    updateParams: (state, action) => {
-      state.params = action.payload
-    },
     showLoader: (state) => {
       state.isLoading = true
     },
     hideLoader: (state) => {
       state.isLoading = false
     },
-    clearPages: (state) => {
-      state.pages = {}
-    },
-    clearSortedProducts: (state) => {
-      state.sortedProducts = {}
+    dealDataSucceeded: (state) => {
+      state.deliveryType = null
+      state.departureDate = null
+      state.arrivalDate = null
+      state.departureCountry = null
+      state.departureCity = null
+      state.arrivalCountry = null
+      state.arrivalCity = null
+      state.departureAirport = null
+      state.arrivalAirport = null
+      state.departure_country_id = null
+      state.departure_airport_id = null
+      state.arrival_airport_id = null
+      state.departure_city_id = null
+      state.arrival_country_id = null
+      state.arrival_city_id = null
+      state.weight = null
     }
-  },
-  extraReducers: (builder) => {
-    builder.addCase(getProducts.fulfilled, (state, action) => {
-      const sortBy = action.payload.params.sortBy
-      state.sortedProducts[sortBy] = action.payload.products
-      state.params = action.payload.params
-      state.pages[action.payload.params.page] = action.payload.products
-      state.totalProducts = action.payload.total
-    })
   }
 })
 
 export const {
+  setDeliveryType,
+  setDepartureDate,
+  setArrivalDate,
   setDepartureCountry,
   setDepartureCountryId,
   setDepartureCityId,
@@ -141,11 +117,8 @@ export const {
   setWeight,
   showLoader,
   hideLoader,
-  setPages,
-  updateParams,
-  clearPages,
-  clearSortedProducts
-} = OffersSlice.actions
+  dealDataSucceeded
+} = dealsSlice.actions
 
 
-export default OffersSlice.reducer
+export default dealsSlice.reducer

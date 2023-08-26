@@ -11,7 +11,7 @@ const AddDeal = [
     path: '/add-deal',
     meta: {
       className: 'ecommerce-application',
-      publicRoute: true
+      privateRoute: true
     }
   }
  

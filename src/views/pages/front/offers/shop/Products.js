@@ -1,6 +1,6 @@
 // ** React Imports
 import { Fragment } from "react";
-import { OffersSlice } from "../store";
+import { offersSlice } from "../store";
 // ** Product components
 import ProductCards from "./ProductCards";
 import ProductsHeader from "./ProductsHeader";
@@ -41,7 +41,7 @@ const ProductsPage = (props) => {
       if (store.pages[targetPage]) {
         // Update the page number in the store
         dispatch(
-          OffersSlice.actions.updateParams({
+          offersSlice.actions.updateParams({
             ...store.params,
             page: targetPage,
           })
@@ -59,7 +59,7 @@ const ProductsPage = (props) => {
 
         // Dispatch setPages with the new page data
         dispatch(
-          OffersSlice.actions.setPages({
+          offersSlice.actions.setPages({
             page: targetPage,
             data: result.payload.products,
           })

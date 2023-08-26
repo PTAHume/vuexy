@@ -1,4 +1,4 @@
-import sanctumService from "../../../../../@core/auth/sanctum/sanctumService"
+import sanctumService from "./../../../../../@core/auth/sanctum/sanctumService"
 const sanctum = new sanctumService()
 
 export const fetchUsers = async (user_id) => {

@@ -4,11 +4,10 @@ import { Fragment, useState, useEffect } from "react";
 // ** Shop Components
 import Sidebar from "./Sidebar";
 import Products from "./Products";
-import { getProducts } from "../store";
+import { showLoader, hideLoader, getProducts } from "../store";
 // ** Custom Components
 import Breadcrumbs from "@components/breadcrumbs";
 import "@styles/react/libs/spinner/spinner.scss";
-import { showLoader, hideLoader } from "../store"; // Import the actions
 // ** Store & Actions
 import { useDispatch, useSelector } from "react-redux";
 

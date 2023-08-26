@@ -364,7 +364,7 @@ const UserEditContainer = ({ redux }) => {
                   (option) =>
                     option.value ===
                     (redux.userData && parseInt(redux.userData[id]?.status, 10))
-                )}
+                )}z
                 render={({ field }) => (
                   <Select
                     options={options}

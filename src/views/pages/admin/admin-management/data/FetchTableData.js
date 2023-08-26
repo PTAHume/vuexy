@@ -1,5 +1,5 @@
 import Avatar from '@components/avatar'
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input } from 'reactstrap'
 import { MoreVertical, Edit, FileText, Archive, Trash } from 'react-feather'
 import { updateAdminStatus } from '../store/updateAdminStatus'
@@ -13,9 +13,8 @@ const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'seco
 const sanctum = new sanctumService()
 
 // ** Table Zero Config Column
-
-const getColumns = (refreshData, dispatch) =>
-  [
+const getColumn = (refreshData, dispatch) => {
+  return [
     {
       name: 'ID',
       sortable: true,
@@ -72,19 +71,19 @@ const getColumns = (refreshData, dispatch) =>
         const handleStatusChange = async () => {
           try {
             const newStatus = checked ? 0 : 1
-
             // Dispatch the Redux action
             const prom = dispatch(updateAdminStatus({ adminId: row.id, status: newStatus }))
-            toast.promise(prom, {
+             toast.promise(prom, {
               pending: "Updating the Status...",
               success: () => {
-                  setChecked(!checked)
-                  return "Saved successfully!"
-                },
+                setChecked(!checked)
+                toast.dismiss()
+                return "Saved successfully!"
+              },
               error: (error) => {
-                  console.log(error)
-                  return "Error updating!"
-                }
+                console.log(error)
+                return "Error updating!"
+              }
             })
           } catch (error) {
             console.log(error)
@@ -156,7 +155,7 @@ const getColumns = (refreshData, dispatch) =>
       }
     }
   ]
-
+}
 
 const getData = async () => {
 
@@ -170,8 +169,7 @@ const getData = async () => {
   }
 }
 
-
 export {
-  getColumns,
-  getData
+  getData,
+  getColumn
 }

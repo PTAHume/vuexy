@@ -1,6 +1,6 @@
 import { Fragment, useState, forwardRef, useEffect } from 'react'
 import '@styles/react/libs/tables/react-dataTable-component.scss'
-import { getColumns, getData } from './data/FetchDealTableData'
+import { getColumn }  from './data/FetchDealTableData'
 import AddNewModal from './AddNewModal'
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
@@ -120,13 +120,8 @@ const Deals = () => {
         </div>
       )
     }, 400)
-   
   }
   
- //lets listen the channel if something changes we reflect this
- //useSubscribeToAllDealsList(handleWebSocketError, handleWebSocketSuccess, onDataReceived) 
-
-
  useSubscribeToChannel('deals', handleWebSocketError, handleWebSocketSuccess, onDataReceived)
 
  const refreshData = async (page = currentPage) => {

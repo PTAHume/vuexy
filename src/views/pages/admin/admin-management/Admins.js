@@ -1,24 +1,19 @@
 import { Fragment, useState, forwardRef, useEffect } from 'react'
 import '@styles/react/libs/tables/react-dataTable-component.scss'
-import { getColumns, getData } from './data/FetchTableData'
+import { getColumn, getData } from './data/FetchTableData'
 import AddNewModal from './AddNewModal'
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
 import { StyleSheetManager } from 'styled-components'
 import isPropValid from '@emotion/is-prop-valid'
-import { ChevronDown, Share, Printer, FileText, File, Grid, Copy, Plus, Check } from 'react-feather'
+import { ChevronDown, Share, Printer, FileText, Plus, Check } from 'react-feather'
 import { useDispatch } from 'react-redux'
 import PageSpinner from '@components/globalspinner/PageSpinner'
 import sanctumService from '../../../../@core/auth/sanctum/sanctumService.js'
-//lets call file for subscriibng channel websocket
-//import { useSubscribeToAllAdminsList  } from './Subscription/subscribe-channel/subscribeToAllAdminsList.js'
 import { useSubscribeToChannel } from '../../../../@core/auth/laravel-echo/useSubscribeToChannel'
 import { toast } from 'react-toastify'
-import Pusher from 'pusher-js'
-import Echo from 'laravel-echo'
 
 import Avatar from '@components/avatar'
-//import { fetchAdminDataSuccess } from './store/adminSlice'
 
 
 // ** Reactstrap Imports
@@ -102,6 +97,7 @@ const Admins = () => {
     })
     setTimeout(() => {
       setIsLoading(false)
+      toast.dismiss()
       toast(
         <StyleSheetManager shouldForwardProp={prop => isPropValid(prop)}>
         <div className='d-flex'>
@@ -132,8 +128,8 @@ const Admins = () => {
       setIsLoading(false)
     }
   }
-  
-  const columns = getColumns(refreshData, dispatch)
+
+  const columns = getColumn(refreshData, dispatch)
   
   useEffect(() => {
     refreshData()
@@ -150,7 +146,6 @@ const Admins = () => {
     const value = e.target.value
     let updatedData = []
     setSearchValue(value)
-
 
     if (value.length) {
       updatedData = tableData.filter(item => {

@@ -536,6 +536,13 @@ export default class sanctumService {
     )
   }
 
+  addDeal(data) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.addDealDetail}`,
+      data
+    )
+  }
+
   sendMsg(obj) {
     return axios.post(
       `${this.sanctumConfig.baseUrl}${this.sanctumConfig.sendMsg}`,

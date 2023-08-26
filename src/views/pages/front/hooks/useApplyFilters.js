@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { setWeight } from "../store";
+import { setWeight } from "../offers/store"
 import { useValidation } from "./useValidation";
 
 export const useApplyFilters = (

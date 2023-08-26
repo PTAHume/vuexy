@@ -1,25 +1,21 @@
-import Avatar from '@components/avatar'
 import React, { useState } from 'react'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input } from 'reactstrap'
 import { MoreVertical, Edit, FileText, Archive, Trash } from 'react-feather'
-import { useDispatch } from 'react-redux';
-import { updateDealStatus } from '../store/updateDealStatus';
+import { updateDealStatus } from '../store/updateDealStatus'
 import { Link } from 'react-router-dom'
-import sanctumService from '../../../../../@core/auth/sanctum/sanctumService';
-
+import sanctumService from '../../../../../@core/auth/sanctum/sanctumService'
 
 // ** Vars
-const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary']
-
-const sanctum = new sanctumService();
+//const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary']
+const sanctum = new sanctumService()
 
 // ** Table Zero Config Column
-const getColumns = (refreshData , dispatch) => [
+const getColumn = (refreshData, dispatch) => [
   {
     name: 'ID',
     sortable: true,
     maxWidth: '100px',
-    selector: row => row.id,
+    selector: row => row.id
   },
   {
     name: 'User',
@@ -28,12 +24,12 @@ const getColumns = (refreshData , dispatch) => [
     cell: row => (
       <div>
         <div style={{ marginTop: '30px' }}>
-          {row.user_name}  
+          {row.user_name}
         </div>
       </div>
     )
   },
-  
+
   {
     name: 'Departure',
     sortable: true,
@@ -76,25 +72,25 @@ const getColumns = (refreshData , dispatch) => [
       </div>
     )
   },
-  
+
   {
     name: 'Type',
     sortable: true,
     minWidth: '80px',
     cell: row => {
-        switch (row.delivery_type) {
-          case "hand_luggage":
-            return "Hand Luggage";
+      switch (row.delivery_type) {
+        case "hand_luggage":
+          return "Hand Luggage"
 
-            case "baggage":
-              return "Baggage";
+        case "baggage":
+          return "Baggage"
 
-              case "dcoument":
-                return "Document";
-          default:
-            return "";
+        case "dcoument":
+          return "Document"
+        default:
+          return ""
+      }
     }
-   }
   },
 
   {
@@ -105,9 +101,9 @@ const getColumns = (refreshData , dispatch) => [
     cell: row => (
       <div>
         <div style={{ marginTop: '15px' }}>
-          {row.weight}  
+          {row.weight}
         </div>
-       
+
       </div>
     )
   },
@@ -134,18 +130,18 @@ const getColumns = (refreshData , dispatch) => [
   },
 
   {
-    name: 'Status',  
+    name: 'Status',
     sortable: true,
     minWidth: '153px',
     selector: row => row.status,
     cell: row => {
-      const [status, setStatus] = useState(row.status);
-      const [checked, setChecked] = useState(status === "approved");
-  
+      const [status, setStatus] = useState(row.status)
+      const [checked, setChecked] = useState(status === "approved")
+
       const handleStatusChange = async () => {
         try {
-          const newStatus = checked ? "pending" : "approved";
-  
+          const newStatus = checked ? "pending" : "approved"
+
           // Dispatch the Redux action
           toast.promise(
             dispatch(updateDealStatus({ dealId: row.id, status: newStatus })),
@@ -153,29 +149,26 @@ const getColumns = (refreshData , dispatch) => [
               position: "bottom-left",
               loading: "Updating the Status...",
               success: () => {
-                setChecked(!checked);
-                setStatus(newStatus); // Update the status state variable
-                return "Saved successfully!";
+                setChecked(!checked)
+                setStatus(newStatus) // Update the status state variable
+                return "Saved successfully!"
               },
               error: (error) => {
-                console.log(error);
-                return "Error updating!";
-              },
+                console.log(error)
+                return "Error updating!"
+              }
             }
-          );
+          )
         } catch (error) {
-          console.log(error);
-          return "Invalid Data!";
+          console.log(error)
+          return "Invalid Data!"
         }
-      };
-  
-      
-      
-  
+      }
+
       return (
         <div className='form-switch form-check-primary'>
-          
-            <Input
+
+          <Input
             type='switch'
             name='icon-primary'
             id='icon-primary'
@@ -183,27 +176,27 @@ const getColumns = (refreshData , dispatch) => [
             onChange={() => setChecked(!checked)}
             onClick={handleStatusChange}
           />
-          <div style={{marginTop: '-1.4rem'}}>{checked ? "Active" : "InActive"}</div>
-      </div>
-      );
-    },
-  }, 
+          <div style={{ marginTop: '-1.4rem' }}>{checked ? "Active" : "InActive"}</div>
+        </div>
+      )
+    }
+  },
   {
     name: 'Actions',
     allowOverflow: true,
     cell: (row) => {
       const handleDelete = async () => {
         try {
-          await sanctum.deleteDeal(row.id);
+          await sanctum.deleteDeal(row.id)
           // Show a success message or update the UI to remove the deleted item
-          console.log("Deal deleted successfully");
+          console.log("Deal deleted successfully")
           // Refresh the data
-          refreshData();
+          refreshData()
         } catch (error) {
-          console.log(error);
+          console.log(error)
           // Show an error message or handle the error as needed
         }
-      };
+      }
       return (
         <div className='d-flex'>
           <UncontrolledDropdown>
@@ -211,17 +204,18 @@ const getColumns = (refreshData , dispatch) => [
               <MoreVertical size={15} />
             </DropdownToggle>
             <DropdownMenu end>
-            <DropdownItem tag={Link} to={`${row.id}/edit`} className='w-100'>
-              <FileText size={15} />
-              <span className='align-middle ms-50'>Details</span>
-            </DropdownItem>
+              <DropdownItem tag={Link} to={`${row.id}/edit`} className='w-100'>
+                <FileText size={15} />
+                <span className='align-middle ms-50'>Details</span>
+              </DropdownItem>
               <DropdownItem tag='a' href='/' className='w-100' onClick={e => e.preventDefault()}>
                 <Archive size={15} />
                 <span className='align-middle ms-50'>Archive</span>
               </DropdownItem>
-              <DropdownItem tag='a' href='/' className='w-100'  onClick={e => {e.preventDefault();
-                  handleDelete(row.id);
-                 }}>
+              <DropdownItem tag='a' href='/' className='w-100' onClick={e => {
+                e.preventDefault()
+                handleDelete(row.id)
+              }}>
                 <Trash size={15} />
                 <span className='align-middle ms-50'>Delete</span>
               </DropdownItem>
@@ -234,35 +228,27 @@ const getColumns = (refreshData , dispatch) => [
       )
     }
   }
-  
-  
 
-];
+]
 
 const getData = async (page = 1, perPage = 10, search = '') => {
   // Adjust the page number to start from 1
-  const adjustedPage = page > 0 ? page : 0;
+  const adjustedPage = page > 0 ? page : 0
 
   try {
-   
-    const response = await sanctum.getDealsData(adjustedPage, perPage, search);
-    const deals = response.data.slice(0, -1);
-    const pagination = response.data[response.data.length - 1].pagination;
-    const total = pagination.total;
-    const itemsPerPage = pagination.perPage;
-    return { deals, total, itemsPerPage };
+
+    const response = await sanctum.getDealsData(adjustedPage, perPage, search)
+    const deals = response.data.slice(0, -1)
+    const pagination = response.data[response.data.length - 1].pagination
+    const total = pagination.total
+    const itemsPerPage = pagination.perPage
+    return { deals, total, itemsPerPage }
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
-};
+}
 
-
-
-
-
-
-
-export  {
-  getColumns,
+export {
+  getColumn,
   getData
 }

@@ -1,8 +1,5 @@
-import { useRTL } from "@hooks/useRTL";
-import wNumb from "wnumb";
-import classnames from "classnames";
-import sanctumService from "../../../../../@core/auth/sanctum/sanctumService";
-import AutoComplete from "@components/autocomplete";
+import classnames from "classnames"
+import AutoComplete from "@components/autocomplete"
 import {
   Card,
   CardBody,
@@ -11,8 +8,8 @@ import {
   Input,
   Button,
   Label,
-  Form,
-} from "reactstrap";
+  Form
+} from "reactstrap"
 import {
   setDepartureCountry,
   setArrivalCountry,
@@ -25,65 +22,82 @@ import {
   setDepartureCityId,
   setArrivalCountryId,
   setArrivalCityId,
-  setArrivalAirportId,
-} from "../store";
-import "@styles/react/libs/noui-slider/noui-slider.scss";
-import { selectThemeColors } from "@utils";
-import { useForm, Controller } from "react-hook-form";
-import Flatpickr from "react-flatpickr";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { getFrontSidebarData } from "../data/data";
-import "flatpickr/dist/themes/dark.css";
-import "@styles/react/libs/flatpickr/flatpickr.scss";
-import { debounce } from "lodash";
-import Select, { components } from "react-select";
-import { useDispatch, useSelector } from "react-redux";
-import useClearIndicator from "../hooks/useClearIndicator";
-import useGetSuggestionsByFilterKey from "../hooks/useGetSuggestionsbyFilterKey";
-import useDebouncedFetchCountries from "../hooks/debouncedFetchCountries";
-import { useValidation } from "../hooks/useValidation";
-import { useApplyFilters } from "../hooks/useApplyFilters";
-import useResetFields from "../hooks/useResetFields";
+  setArrivalAirportId
+} from "../store"
+import "@styles/react/libs/noui-slider/noui-slider.scss"
+import { selectThemeColors } from "@utils"
+import { useForm, Controller } from "react-hook-form"
+import Flatpickr from "react-flatpickr"
+import { useState, useEffect } from "react"
+import "flatpickr/dist/themes/dark.css"
+import "@styles/react/libs/flatpickr/flatpickr.scss"
+import Select from "react-select"
+import { useDispatch, useSelector } from "react-redux"
+import useClearIndicator from "../../hooks/useClearIndicator"
+import useGetSuggestionsByFilterKey from "../../hooks/useGetSuggestionsbyFilterKey"
+import useDebouncedFetchCountries from "../../hooks/debouncedFetchCountries"
+import { useApplyFilters } from "../../hooks/useApplyFilters"
+import useResetFields from "../../hooks/useResetFields"
 
 {
   /*Lets create related constants here */
 }
 const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
-  const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [errorMessage, setErrorMessage] = useState("");
-  const ClearIndicator = useClearIndicator;
+  const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [suggestions, setSuggestions] = useState([])
+  const [errorMessage, setErrorMessage] = useState("")
+  const ClearIndicator = useClearIndicator
   const { filterKey, setFilterKey, getSuggestionsByFilterKey } =
-    useGetSuggestionsByFilterKey(suggestions);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+    useGetSuggestionsByFilterKey(suggestions)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [enableDepartureCity, setEnableDepartureCity] = useState(false)
+  const [enableDepartureAirport, setEnableDepartureAirport] = useState(false)
+  const [enableArrivalCity, setEnableArrivalCity] = useState(false)
+  const [enableArrivalAirport, setEnableArrivalAirport] = useState(false)
 
-  {
-    /*Ok lets get the redux variables for country,city and airorts */
-  }
   const departure_country_id = useSelector(
     (state) => state.ecommerce?.departure_country_id
-  );
+  )
   const departure_city_id = useSelector(
     (state) => state.ecommerce?.departure_city_id
-  );
+  )
   const arrival_country_id = useSelector(
     (state) => state.ecommerce?.arrival_country_id
-  );
+  )
   const arrival_city_id = useSelector(
     (state) => state.ecommerce?.arrival_city_id
-  );
+  )
   const departure_airport_id = useSelector(
     (state) => state.ecommerce?.departure_airport_id
-  );
+  )
   const arrival_airport_id = useSelector(
     (state) => state.ecommerce?.departure_airport_id
-  );
+  )
 
-  {
-    /*Lets call the related debounce function as a hook  */
-  }
+  const departureCity = useSelector(
+    (state) => {
+      return state.ecommerce?.departureCity ?? ""
+    }
+  )
+  const departureAirport = useSelector(
+    (state) => {
+      return state.ecommerce?.departureAirport ?? ""
+    }
+  )
+
+  const arrivalCity = useSelector(
+    (state) => {
+      return state.ecommerce?.arrivalCity ?? ""
+    }
+  )
+  const arrivalAirport = useSelector(
+    (state) => {
+      return state.ecommerce?.arrivalAirport ?? ""
+    }
+  )
+
   const { debouncedFetchCountries } = useDebouncedFetchCountries(
     searchQuery,
     filterKey,
@@ -96,25 +110,25 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
     setSuggestions,
     setIsLoading,
     setErrorMessage
-  );
+  )
 
   //lets add some rules for fields
-  const [departureCountryInput, setDepartureCountryInput] = useState("");
-  const [departureCityInput, setDepartureCityInput] = useState("");
-  const [departureAirportInput, setDepartureAirportInput] = useState("");
-  const [arrivalCountryInput, setArrivalCountryInput] = useState("");
-  const [arrivalCityInput, setArrivalCityInput] = useState("");
-  const [arrivalAirportInput, setArrivalAirportInput] = useState("");
+  const [departureCountryInput, setDepartureCountryInput] = useState("")
+  const [departureCityInput, setDepartureCityInput] = useState("")
+  const [departureAirportInput, setDepartureAirportInput] = useState("")
+  const [arrivalCountryInput, setArrivalCountryInput] = useState("")
+  const [arrivalCityInput, setArrivalCityInput] = useState("")
+  const [arrivalAirportInput, setArrivalAirportInput] = useState("")
 
   useEffect(() => {
     if (searchQuery === "") {
-      setSuggestions([]);
-      setIsLoading(false);
+      setSuggestions([])
+      setIsLoading(false)
     } else {
-      setIsLoading(true);
-      debouncedFetchCountries(searchQuery, filterKey);
+      setIsLoading(true)
+      debouncedFetchCountries(searchQuery, filterKey)
     }
-  }, [searchQuery, filterKey, debouncedFetchCountries]);
+  }, [searchQuery, filterKey, debouncedFetchCountries])
 
   {
     /*Delivery type value and label */
@@ -122,8 +136,8 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
   const delivery_type = [
     { value: "hand_luggage", label: "Hand Luggage" },
     { value: "baggage", label: "Baggage" },
-    { value: "document", label: "Document" },
-  ];
+    { value: "document", label: "Document" }
+  ]
 
   const {
     reset,
@@ -131,15 +145,15 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
     setError,
     setValue,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
+    formState: { errors }
+  } = useForm()
 
   const { applyFilters } = useApplyFilters(
     handleApplyFilters,
     setIsSubmitting,
     getSuggestionsByFilterKey,
     setError
-  );
+  )
 
   const {
     departureCountryKey,
@@ -148,8 +162,7 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
     arrivalCountryKey,
     arrivalCityKey,
     arrivalAirportKey,
-
-    handleReset,
+    handleReset
   } = useResetFields(
     reset,
     setError,
@@ -160,17 +173,17 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
     setArrivalCountryInput,
     setArrivalCityInput,
     setArrivalAirportInput
-  );
+  )
 
-  const [departurePicker, setDeparturePicker] = useState(null);
-  const [arrivalPicker, setArrivalPicker] = useState(null);
+  const [departurePicker, setDeparturePicker] = useState(null)
+  const [arrivalPicker, setArrivalPicker] = useState(null)
 
   return (
     <div className="sidebar-detached sidebar-left">
       <div className="sidebar">
         <div
           className={classnames("sidebar-shop", {
-            show: sidebarOpen,
+            show: sidebarOpen
           })}
         >
           <Row>
@@ -181,8 +194,7 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
           <Card>
             <CardBody>
               <Form
-                onSubmit={handleSubmit((data) =>
-                  applyFilters(
+                onSubmit={handleSubmit((data) => applyFilters(
                     data,
                     departure_country_id,
                     departureCityInput,
@@ -207,54 +219,65 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                   // defaultValue={reduxStore?.departureCountry}
                   defaultValue=""
                   render={({ field }) => (
+
                     <AutoComplete
                       {...field}
-                      key={departureCountryKey} // Add this line
                       loading={isLoading} // Change this line
-                      suggestions={getSuggestionsByFilterKey(
-                        "departureCountry"
-                      )}
+                      suggestions={getSuggestionsByFilterKey("departureCountry")}
                       className="form-control"
                       errorMessage={errorMessage}
                       filterKey="nicename"
                       suggestionLimit={5}
+                      id="departure_country"
+                      autocomplete="off"
                       placeholder="Type a country name..."
                       onSelectSuggestion={(suggestion) => {
-                        field.onChange(suggestion.id);
-                        dispatch(setDepartureCountryId(suggestion.id)); // Update the Redux store with the selected country ID
-                        dispatch(setDepartureCountry(suggestion.nicename));
+                        field.onChange(suggestion.id)
+                        dispatch(setDepartureCountryId(suggestion.id)) // Update the Redux store with the selected country ID
+                        dispatch(setDepartureCountry(suggestion.nicename))
+                        setEnableDepartureCity(true)
                       }}
                       onChange={(event) => {
-                        setSearchQuery(event.target.value);
-                        setDepartureCountryInput(event.target.value);
+                        setSearchQuery(event.target.value)
+                        //setDepartureCountryInput(event.target.value)
 
                         if (event.target.value === "") {
-                          field.onChange(""); // Update the field value if the input is empty
-                          dispatch(setDepartureCountryId(null));
-                        
+                          field.onChange("") // Update the field value if the input is empty                     
+                          dispatch(setDepartureCountryId(null))
+                          dispatch(setDepartureCity(''))
+                          dispatch(setDepartureCityId(0))
+                          setEnableDepartureCity(false)
+                          dispatch(setDepartureAirport(''))
+                          dispatch(setDepartureAirportId(0))
+                          setEnableDepartureAirport(false)
                         } else {
+
                           // Check if the typed value matches any of the available suggestions
                           const matchedSuggestion = getSuggestionsByFilterKey(
                             "departureCountry"
                           ).find(
-                            (suggestion) =>
-                              suggestion.nicename.toLowerCase() ===
+                            (suggestion) => suggestion.nicename.toLowerCase() ===
                               event.target.value.toLowerCase()
-                          );
+                          )
 
                           if (matchedSuggestion) {
-                            field.onChange(matchedSuggestion.id);
-                            dispatch(
-                              setDepartureCountryId(matchedSuggestion.id)
-                            );
+                            field.onChange(matchedSuggestion.id)
+                            dispatch(setDepartureCountryId(matchedSuggestion.id))
+                            setEnableDepartureCity(true)
                           } else {
                             // Clear the previously selected value if the typed value doesn't match any suggestions
-                            field.onChange("");
-                            dispatch(setDepartureCountryId(null));
+                            field.onChange("")
+                            dispatch(setDepartureCountryId(null))
+                            dispatch(setDepartureCity(''))
+                            dispatch(setDepartureCityId(0))
+                            setEnableDepartureCity(false)
+                            dispatch(setDepartureAirport(''))
+                            dispatch(setDepartureAirportId(0))
+                            setEnableDepartureAirport(false)
                           }
                         }
-                        setFilterKey("departureCountry");
-                        setErrorMessage(""); // Clear the error message
+                        setFilterKey("departureCountry")
+                        setErrorMessage("") // Clear the error message
                       }}
                     />
                   )}
@@ -275,58 +298,64 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                   defaultValue=""
                   render={({ field }) => (
                     <AutoComplete
-                      key={departureCityKey} // Add this line
                       {...field}
                       loading={isLoading}
                       suggestions={getSuggestionsByFilterKey("departureCity")}
                       className="form-control"
                       filterKey="name"
                       suggestionLimit={5}
-                      autocomplete="off"
                       id="departure_city"
+                      autocomplete="off"
+                      disabled={!enableDepartureCity}
+                      value={departureCity}
                       placeholder="Type a city name..."
                       onSelectSuggestion={(suggestion) => {
-                        field.onChange(suggestion.id);
-                        dispatch(setDepartureCityId(suggestion.id)); // Update the Redux store with the selected city ID
-                        dispatch(setDepartureCity(suggestion.name));
+                        field.onChange(suggestion.id)
+                        dispatch(setDepartureCityId(suggestion.id)) // Update the Redux store with the selected city ID
+                        dispatch(setDepartureCity(suggestion.name))
+                        setEnableDepartureAirport(true)
                       }}
                       onChange={(event) => {
-                        setDepartureCityInput(event.target.value);
-                        setSearchQuery(event.target.value);
+                        //setDepartureCityInput(event.target.value)
+                        setSearchQuery(event.target.value)
                         if (event.target.value === "") {
-                          field.onChange(""); // Update the field value if the input is empty
-                          dispatch(setDepartureCityId(null));
+                          field.onChange("") // Update the field value if the input is empty
+                          dispatch(setDepartureCityId(null))
+                          dispatch(setDepartureAirport(''))
+                          dispatch(setDepartureAirportId(0))
+                          setEnableDepartureAirport(false)
                         } else {
                           // Check if the typed value matches any of the available suggestions
                           const matchedSuggestion = getSuggestionsByFilterKey(
                             "departureCity"
                           ).find(
-                            (suggestion) =>
-                              suggestion.name.toLowerCase() ===
+                            (suggestion) => suggestion.name.toLowerCase() ===
                               event.target.value.toLowerCase()
-                          );
+                          )
 
                           if (matchedSuggestion) {
-                            field.onChange(matchedSuggestion.id);
-                            dispatch(setDepartureCityId(matchedSuggestion.id));
+                            field.onChange(matchedSuggestion.id)
+                            dispatch(setDepartureCityId(matchedSuggestion.id))
+                            setEnableDepartureAirport(true)
                           } else {
                             // Clear the previously selected value if the typed value doesn't match any suggestions
-                            field.onChange("");
-                            dispatch(setDepartureCityId(null));
+                            field.onChange("")
+                            dispatch(setDepartureCityId(null))
+                            dispatch(setDepartureAirport(''))
+                            dispatch(setDepartureAirportId(0))
+                            setEnableDepartureAirport(false)
                           }
                         }
 
-                        setFilterKey("departureCity");
-                        setErrorMessage(""); // Clear the error message
+                        setFilterKey("departureCity")
+                        setErrorMessage("") // Clear the error message
                       }}
-                    // Add this lin
+
                     />
                   )}
                 />
                 {errors.departure_city && (
-                  <div className="text-danger">
-                    {errors.departure_city.message}
-                  </div>
+                  <div className="text-danger">{errors.departure_city.message}</div>
                 )}
 
                 <br />
@@ -340,53 +369,49 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                   defaultValue=""
                   render={({ field }) => (
                     <AutoComplete
-                      key={departureAirportKey} // Add this line
                       {...field}
                       loading={isLoading}
-                      suggestions={getSuggestionsByFilterKey(
-                        "departureAirports"
-                      )}
+                      suggestions={getSuggestionsByFilterKey("departureAirports")}
                       className="form-control"
                       filterKey="airport_name"
-                      suggestionLimit={5} a
-                      utocomplete="off"
+                      suggestionLimit={5}
                       id="departure_airport"
+                      autocomplete="off"
+                      disabled={!enableDepartureAirport}
+                      value={departureAirport}
                       placeholder="Type a airport name..."
                       onSelectSuggestion={(suggestion) => {
-                        field.onChange(suggestion.id);
-                        dispatch(setDepartureAirportId(suggestion.id)); // Update the Redux store with the selected airport ID
-                        dispatch(setDepartureAirport(suggestion.airport_name));
+                        field.onChange(suggestion.id)
+                        dispatch(setDepartureAirportId(suggestion.id)) // Update the Redux store with the selected airport ID
+                        dispatch(setDepartureAirport(suggestion.airport_name))
                       }}
                       onChange={(event) => {
-                        setDepartureAirportInput(event.target.value);
-                        setSearchQuery(event.target.value);
+                        //  setDepartureAirportInput(event.target.value)
+                        setSearchQuery(event.target.value)
                         if (event.target.value === "") {
-                          field.onChange(""); // Update the field value if the input is empty
-                          dispatch(setDepartureAirportId(null));
+                          field.onChange("") // Update the field value if the input is empty
+                          dispatch(setDepartureAirportId(null))
                         } else {
                           // Check if the typed value matches any of the available suggestions
                           const matchedSuggestion = getSuggestionsByFilterKey(
                             "departureAirports"
                           ).find(
-                            (suggestion) =>
-                              suggestion.airport_name.toLowerCase() ===
+                            (suggestion) => suggestion.airport_name.toLowerCase() ===
                               event.target.value.toLowerCase()
-                          );
+                          )
 
                           if (matchedSuggestion) {
-                            field.onChange(matchedSuggestion.id);
-                            dispatch(
-                              setDepartureAirportId(matchedSuggestion.id)
-                            );
+                            field.onChange(matchedSuggestion.id)
+                            dispatch(setDepartureAirportId(matchedSuggestion.id))
                           } else {
                             // Clear the previously selected value if the typed value doesn't match any suggestions
-                            field.onChange("");
-                            dispatch(setDepartureAirportId(null));
+                            field.onChange("")
+                            dispatch(setDepartureAirportId(null))
                           }
                         }
 
-                        setFilterKey("departureAirports");
-                        setErrorMessage(""); // Clear the error message
+                        setFilterKey("departureAirports")
+                        setErrorMessage("") // Clear the error message
                       }}
                     />
                   )}
@@ -407,7 +432,6 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                   defaultValue=""
                   render={({ field }) => (
                     <AutoComplete
-                      key={arrivalCountryKey} // Add this line
                       {...field}
                       loading={isLoading} // Change this line
                       suggestions={getSuggestionsByFilterKey("arrivalCountry")}
@@ -415,42 +439,55 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                       errorMessage={errorMessage}
                       filterKey="nicename"
                       suggestionLimit={5}
-                      autocomplete="off"
                       id="arrival_country"
+                      autocomplete="off"
                       placeholder="Type a country name..."
                       onSelectSuggestion={(suggestion) => {
-                        field.onChange(suggestion.id);
-                        dispatch(setArrivalCountryId(suggestion.id)); // Update the Redux store with the selected country ID
-                        dispatch(setArrivalCountry(suggestion.nicename));
+                        field.onChange(suggestion.id)
+                        dispatch(setArrivalCountryId(suggestion.id)) // Update the Redux store with the selected country ID
+                        dispatch(setArrivalCountry(suggestion.nicename))
+                        setEnableArrivalCity(true)
                       }}
                       onChange={(event) => {
-                        setArrivalCountryInput(event.target.value);
-                        setSearchQuery(event.target.value);
+                        //  setArrivalCountryInput(event.target.value)
+                        setSearchQuery(event.target.value)
                         if (event.target.value === "") {
-                          field.onChange(""); // Update the field value if the input is empty
-                          dispatch(setArrivalCountryId(null));
+                          field.onChange("") // Update the field value if the input is empty
+                          dispatch(setArrivalCountryId(null))
+                          dispatch(setArrivalCity(''))
+                          dispatch(setArrivalCityId(0))
+                          setEnableArrivalCity(false)
+                          dispatch(setArrivalAirport(''))
+                          dispatch(setArrivalAirportId(0))
+                          setEnableArrivalAirport(false)
                         } else {
                           // Check if the typed value matches any of the available suggestions
                           const matchedSuggestion = getSuggestionsByFilterKey(
                             "arrivalCountry"
                           ).find(
-                            (suggestion) =>
-                              suggestion.nicename.toLowerCase() ===
+                            (suggestion) => suggestion.nicename.toLowerCase() ===
                               event.target.value.toLowerCase()
-                          );
+                          )
 
                           if (matchedSuggestion) {
-                            field.onChange(matchedSuggestion.id);
-                            dispatch(setArrivalCountryId(matchedSuggestion.id));
+                            field.onChange(matchedSuggestion.id)
+                            dispatch(setArrivalCountryId(matchedSuggestion.id))
+                            setEnableArrivalCity(true)
                           } else {
                             // Clear the previously selected value if the typed value doesn't match any suggestions
-                            field.onChange("");
-                            dispatch(setArrivalCountryId(null));
+                            field.onChange("")
+                            dispatch(setArrivalCountryId(null))
+                            dispatch(setArrivalCity(''))
+                            dispatch(setArrivalCityId(0))
+                            setEnableArrivalCity(false)
+                            dispatch(setArrivalAirport(''))
+                            dispatch(setArrivalAirportId(0))
+                            setEnableArrivalCity(false)
                           }
                         }
 
-                        setFilterKey("arrivalCountry");
-                        setErrorMessage(""); // Clear the error message
+                        setFilterKey("arrivalCountry")
+                        setErrorMessage("") // Clear the error message
                       }}
                     />
                   )}
@@ -470,57 +507,63 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                   defaultValue=""
                   render={({ field }) => (
                     <AutoComplete
-                      key={arrivalCityKey} // Add this line
                       {...field}
                       loading={isLoading}
                       suggestions={getSuggestionsByFilterKey("arrivalCity")}
                       className="form-control"
                       filterKey="name"
                       suggestionLimit={5}
-                      autocomplete="off"
                       id="arrival_city"
+                      value={arrivalCity}
+                      autocomplete="off"
+                      disabled={!enableArrivalCity}
                       placeholder="Type a city name..."
                       onSelectSuggestion={(suggestion) => {
-                        field.onChange(suggestion.id);
-                        dispatch(setArrivalCityId(suggestion.id));
-                        dispatch(setArrivalCity(suggestion.name));
+                        field.onChange(suggestion.id)
+                        dispatch(setArrivalCityId(suggestion.id))
+                        dispatch(setArrivalCity(suggestion.name))
+                        setEnableArrivalAirport(true)
                       }}
                       onChange={(event) => {
-                        setArrivalCityInput(event.target.value);
-                        setSearchQuery(event.target.value);
+                        //  setArrivalCityInput(event.target.value)
+                        setSearchQuery(event.target.value)
                         if (event.target.value === "") {
-                          field.onChange(""); // Update the field value if the input is empty
-                          dispatch(setArrivalCityId(null));
+                          field.onChange("") // Update the field value if the input is empty
+                          dispatch(setArrivalCityId(null))
+                          dispatch(setArrivalAirport(''))
+                          dispatch(setArrivalAirportId(0))
+                          setEnableArrivalAirport(false)
                         } else {
                           // Check if the typed value matches any of the available suggestions
                           const matchedSuggestion = getSuggestionsByFilterKey(
                             "arrivalCity"
                           ).find(
-                            (suggestion) =>
-                              suggestion.name.toLowerCase() ===
+                            (suggestion) => suggestion.name.toLowerCase() ===
                               event.target.value.toLowerCase()
-                          );
+                          )
 
                           if (matchedSuggestion) {
-                            field.onChange(matchedSuggestion.id);
-                            dispatch(setArrivalCityId(matchedSuggestion.id));
+                            field.onChange(matchedSuggestion.id)
+                            dispatch(setArrivalCityId(matchedSuggestion.id))
+                            setEnableArrivalAirport(true)
                           } else {
                             // Clear the previously selected value if the typed value doesn't match any suggestions
-                            field.onChange("");
-                            dispatch(setArrivalCityId(null));
+                            field.onChange("")
+                            dispatch(setArrivalCityId(null))
+                            dispatch(setArrivalAirport(''))
+                            dispatch(setArrivalAirportId(0))
+                            setEnableArrivalAirport(false)
                           }
                         }
 
-                        setFilterKey("arrivalCity");
-                        setErrorMessage(""); // Clear the error message
+                        setFilterKey("arrivalCity")
+                        setErrorMessage("") // Clear the error message
                       }}
                     />
                   )}
                 />
                 {errors.arrival_city && (
-                  <div className="text-danger">
-                    {errors.arrival_city.message}
-                  </div>
+                  <div className="text-danger">{errors.arrival_city.message}</div>
                 )}
                 <br />
 
@@ -533,43 +576,43 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                   defaultValue=""
                   render={({ field }) => (
                     <AutoComplete
-                      key={arrivalAirportKey} // Add this line
                       {...field}
                       loading={isLoading}
                       suggestions={getSuggestionsByFilterKey("arrivalAirports")}
                       className="form-control"
                       filterKey="airport_name"
                       suggestionLimit={5}
-                      autocomplete="off"
                       id="arrival_airport"
+                      value={arrivalAirport}
+                      autocomplete="off"
+                      disabled={!enableArrivalAirport}
                       placeholder="Type a airport name..."
                       onSelectSuggestion={(suggestion) => {
-                        field.onChange(suggestion.id);
-                        dispatch(setArrivalAirportId(suggestion.id)); // Update the Redux store with the selected airport ID
-                        dispatch(setArrivalAirport(suggestion.airport_name));
-                        setArrivalAirportInput(suggestion.airport_name); // Add this line
+                        field.onChange(suggestion.id)
+                        dispatch(setArrivalAirportId(suggestion.id)) // Update the Redux store with the selected airport ID
+                        dispatch(setArrivalAirport(suggestion.airport_name))
+                        // setArrivalAirportInput(suggestion.airport_name) // Add this line
                       }}
                       onChange={(event) => {
-                        setArrivalAirportInput(event.target.value);
-                        setSearchQuery(event.target.value);
+                        // setArrivalAirportInput(event.target.value)
+                        setSearchQuery(event.target.value)
                         const matchedSuggestion = getSuggestionsByFilterKey(
                           "arrivalAirports"
                         ).find(
-                          (suggestion) =>
-                            suggestion.airport_name.toLowerCase() ===
+                          (suggestion) => suggestion.airport_name.toLowerCase() ===
                             event.target.value.toLowerCase()
-                        );
+                        )
 
                         if (matchedSuggestion) {
-                          field.onChange(matchedSuggestion.id);
-                          dispatch(setArrivalAirportId(matchedSuggestion.id));
+                          field.onChange(matchedSuggestion.id)
+                          dispatch(setArrivalAirportId(matchedSuggestion.id))
                         } else {
-                          field.onChange("");
-                          dispatch(setArrivalAirportId(null));
+                          field.onChange("")
+                          dispatch(setArrivalAirportId(null))
                         }
 
-                        setFilterKey("arrivalAirports");
-                        setErrorMessage(""); // Clear the error message
+                        setFilterKey("arrivalAirports")
+                        setErrorMessage("") // Clear the error message
                       }}
                     />
                   )}
@@ -614,7 +657,7 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                     // Find the selected option object based on the field value
                     const selectedOption = delivery_type.find(
                       (option) => option.value === field.value
-                    );
+                    )
                     return (
                       <Select
                         options={delivery_type}
@@ -623,15 +666,15 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                         {...field}
                         value={field.value ? selectedOption : null}
                         onChange={(selectedOption) => {
-                          field.onChange(selectedOption?.value);
+                          field.onChange(selectedOption?.value)
                         }}
                         isClearable // Add this line
                         components={{ ClearIndicator }} // Add this line
                         onClearValue={() => {
-                          field.onChange(""); // Clear the selected value
+                          field.onChange("") // Clear the selected value
                         }}
                       />
-                    );
+                    )
                   }}
                   autocomplete="off" // Add this lin
                 />
@@ -656,32 +699,20 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                             id="departure-picker"
                             options={{
                               dateFormat: "Y-m-d H:i",
-                              enableTime: true,
+                              enableTime: true
                             }}
-                            className={`form-control ${
-                              errors.departure_date ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${errors.departure_date ? "is-invalid" : ""
+                              }`}
                             onChange={(dateObj, dateString) => {
-                              setDeparturePicker(dateString);
-                              field.onChange(dateString);
+                              setDeparturePicker(dateString)
+                              field.onChange(dateString)
                             }}
                           />
                         </div>
-                      );
+                      )
                     }}
                     autocomplete="off" // Add this lin
                   />
-                  {departurePicker && (
-                    <button
-                      className="date-clear-button"
-                      onClick={() => {
-                        setDeparturePicker("");
-                        setValue("departure_date", "");
-                      }}
-                    >
-                      X
-                    </button>
-                  )}
                 </div>
                 <br />
 
@@ -704,32 +735,20 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
                             id="arrival-picker"
                             options={{
                               dateFormat: "Y-m-d H:i",
-                              enableTime: true,
+                              enableTime: true
                             }}
-                            className={`form-control ${
-                              errors.arrival_date ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${errors.arrival_date ? "is-invalid" : ""
+                              }`}
                             onChange={(dateObj, dateString) => {
-                              setArrivalPicker(dateString);
-                              field.onChange(dateString);
+                              setArrivalPicker(dateString)
+                              field.onChange(dateString)
                             }}
                           />
                         </div>
-                      );
+                      )
                     }}
                     autocomplete="off" // Add this
                   />
-                  {arrivalPicker && (
-                    <button
-                      className="date-clear-button"
-                      onClick={() => {
-                        setArrivalPicker("");
-                        setValue("arrival_date", "");
-                      }}
-                    >
-                      X
-                    </button>
-                  )}
                 </div>
 
                 {/* Price */}
@@ -800,7 +819,7 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar
