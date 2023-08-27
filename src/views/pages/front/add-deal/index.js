@@ -29,9 +29,9 @@ const WizardHorizontal = () => {
       content: <DealDetails stepper={stepper} />
     },
     {
-      id: 'social-links',
-      title: 'Social Links',
-      subtitle: 'Add Social Links',
+      id: 'baggage-info',
+      title: 'Baggage Info',
+      subtitle: 'Enter Your Baggage Info.',
       content: <BaggageInfo stepper={stepper} />
     }
   ]

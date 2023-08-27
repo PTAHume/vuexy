@@ -60,7 +60,12 @@ const DealDetails = ({ stepper }) => {
     departure_airport: yup.string().required('Departure Airport is required'),
     arrival_country: yup.string().required('Arrival Country is required'),
     arrival_city: yup.string().required('Arrival City is required'),
-    arrival_airport: yup.string().required('Arrival Airport is required'),
+    arrival_airport: yup.string().required('Arrival Airport is required')
+      .test('departure_airport',
+        'Arrival Airport can not be the same as the Departure Airport', function (value) {
+          const departureAirport = this.parent.departure_airport
+          return departureAirport !== value
+      }),
     departure_date: yup.date()
       .required("Departure Date Time is required")
       .transform((value, originalValue) => {

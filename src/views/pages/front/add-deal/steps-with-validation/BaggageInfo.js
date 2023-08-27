@@ -114,7 +114,7 @@ const BaggageInfo = ({ stepper }) => {
             <div className="d-flex flex-column">
               <h6>Form Submitted!</h6>
               <div></div>
-              <span>You have successfully updated the Deal details!</span>
+              <span>You have successfully added the new dea!</span>
             </div>
           </div>
         )
