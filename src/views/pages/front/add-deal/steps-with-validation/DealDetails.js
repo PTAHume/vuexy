@@ -230,7 +230,7 @@ const DealDetails = ({ stepper }) => {
                 </div>
                 <br />
               </Col>
-              <Col md='6' style={{ cursor: 'crosshair' }} className='mb-1'>
+              <Col md='6' className='mb-1'>
                 {/* Arrival Date */}
                 <Label className="form-label" for="arrival_date">
                   Arrival Date
