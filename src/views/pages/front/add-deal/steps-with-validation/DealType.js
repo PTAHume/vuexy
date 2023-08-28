@@ -15,7 +15,7 @@ import "@styles/react/libs/flatpickr/flatpickr.scss"
 
 const DealType = ({ stepper }) => {
   const [selectedDeal, setSelectedDeal] = useState(null)
-  const [showWarning, setShowWarning] = useState(false)
+  const [baggageType, setBaggageType] = useState(null)
   const dispatch = useDispatch()
   const dealOptions = [
     { name: 'Airline Baggage Delivery', value: 0, disabled: false },
@@ -29,7 +29,6 @@ const DealType = ({ stepper }) => {
     { value: "document", label: "Document" }
   ]
   const handleDealSelection = (dealType) => {
-    setShowWarning(false)
     setSelectedDeal(selectedDeal === dealType ? null : dealType.value)
   }
   const SignupSchema = yup.object().shape({
@@ -58,7 +57,7 @@ const DealType = ({ stepper }) => {
               block
               disabled={deal.disabled}
               onClick={() => handleDealSelection(deal)}
-            >
+              >
               {deal.name}
             </Button>
             {selectedDeal === 0 && deal.value === 0 &&
@@ -84,6 +83,7 @@ const DealType = ({ stepper }) => {
                         value={field.value ? selectedOption : null}
                         onChange={(selectedOption) => {
                           field.onChange(selectedOption.value)
+                          setBaggageType(selectedOption.value)
                           dispatch(setDeliveryType(selectedOption.value))
                         }}
                       />
@@ -98,13 +98,12 @@ const DealType = ({ stepper }) => {
         ))}
       </Row>
       <div className='d-flex justify-content-end'>
-        <Button type="submit" color="primary" className="btn-next" disabled={selectedDeal === null || !isObjEmpty(errors)}>
+        <Button type="submit" color="primary" className="btn-next" disabled={selectedDeal === null || (selectedDeal !== null && baggageType === null)}>
           <span className="align-middle d-sm-inline-block d-none">Next</span>
           <ArrowRight size={14} className="align-middle ms-sm-25 ms-0"></ArrowRight>
         </Button>
       </div>
-
-    </Form >
+    </Form>
   )
 }
 

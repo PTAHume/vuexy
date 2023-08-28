@@ -6,11 +6,13 @@ import { useForm, Controller } from 'react-hook-form'
 import { ArrowLeft, ArrowRight } from 'react-feather'
 import { yupResolver } from '@hookform/resolvers/yup'
 import AutoComplete from "@components/autocomplete"
-import { Card, CardBody, Form, Label, Row, Col, Button } from 'reactstrap'
+import { Card, CardBody, Form, Label, Row, Col, Button, Alert } from 'reactstrap'
 import useGetSuggestionsByFilterKey from "../../hooks/useGetSuggestionsbyFilterKey"
 import useDebouncedFetchCountries from "../../hooks/debouncedFetchCountries"
 import moment from "moment"
 import Flatpickr from "react-flatpickr"
+//import rangePlugin from 'flatpickr/dist/plugins/rangePlugin'
+import confirmDatePlugin from 'flatpickr/dist/plugins/confirmDate/confirmDate'
 import "flatpickr/dist/themes/dark.css"
 import "@styles/react/libs/flatpickr/flatpickr.scss"
 import './CustomSelectValidation.scss'
@@ -57,14 +59,15 @@ const DealDetails = ({ stepper }) => {
   const SignupSchema = yup.object().shape({
     departure_country: yup.string().required('Departure Country is required'),
     departure_city: yup.string().required('Departure City is required'),
-    departure_airport: yup.string().required('Departure Airport is required'),
+    departure_airport: yup.string().required('Departure Airport is required')
+      .test('departure-airport-required', 'Departure Airport is required', function (value) {
+        return value?.length > 0 &&  departure_airport?.value.length > 0 
+    }),
     arrival_country: yup.string().required('Arrival Country is required'),
     arrival_city: yup.string().required('Arrival City is required'),
     arrival_airport: yup.string().required('Arrival Airport is required')
-      .test('departure_airport',
-        'Arrival Airport can not be the same as the Departure Airport', function (value) {
-          const departureAirport = this.parent.departure_airport
-          return departureAirport !== value
+      .test('arrival-airport-required', 'Arrival Airport is required', function (value) {
+        return value?.length > 0 && arrival_airport?.value.length > 0
       }),
     departure_date: yup.date()
       .required("Departure Date Time is required")
@@ -83,15 +86,12 @@ const DealDetails = ({ stepper }) => {
       })
   })
 
-
+  const [showArrivalAirportWarning, setShowArrivalAirportWarning] = useState(false)
+  const [showDepartureAirportWarning, setShowDepartureAirportWarning] = useState(false)
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(SignupSchema),
     shouldFocusError: false
   })
-
-  {
-    /*Ok lets get the redux variables for country,city and airorts */
-  }
   const departure_country_id = useSelector(
     (state) => state.useDealData?.departure_country_id
   )
@@ -205,21 +205,23 @@ const DealDetails = ({ stepper }) => {
                             id="departure-picker"
                             options={{
                               dateFormat: "Y-m-d H:i",
-                              enableTime: true
+                              enableTime: true,
+                              plugins: [new confirmDatePlugin({})]
                             }}
                             className={`form-control ${errors.departure_date ? "is-invalid" : ""
                               }`}
                             onChange={(dateObj, dateString) => {
-                              dispatch(setDepartureDate(dateString)) 
+                              dispatch(setDepartureDate(dateString))
                               field.onChange(dateString)
                             }}
                           />
+
                         </div>
                       )
                     }}
                     autocomplete="off" // Add this lin
                   />
-               
+
                   {errors.departure_date && (
                     <div className="text-danger">
                       {errors.departure_date.message}
@@ -228,7 +230,7 @@ const DealDetails = ({ stepper }) => {
                 </div>
                 <br />
               </Col>
-              <Col md='6' className='mb-1'>
+              <Col md='6' style={{ cursor: 'crosshair' }} className='mb-1'>
                 {/* Arrival Date */}
                 <Label className="form-label" for="arrival_date">
                   Arrival Date
@@ -249,12 +251,13 @@ const DealDetails = ({ stepper }) => {
                             placeholder='Arrival Date & Time'
                             options={{
                               dateFormat: "Y-m-d H:i",
-                              enableTime: true
+                              enableTime: true,
+                              plugins: [new confirmDatePlugin({})]
                             }}
                             className={`form-control ${errors.arrival_date ? "is-invalid" : ""
                               }`}
                             onChange={(dateObj, dateString) => {
-                              dispatch(setArrivalDate(dateString)) 
+                              dispatch(setArrivalDate(dateString))
                               field.onChange(dateString)
                             }}
                           />
@@ -411,7 +414,7 @@ const DealDetails = ({ stepper }) => {
                             setEnableArrivalCity(false)
                             dispatch(setArrivalAirport(''))
                             dispatch(setArrivalAirportId(0))
-                            setEnableArrivalCity(false)
+                            setEnableArrivalAirport(false)
                           }
                         }
 
@@ -581,11 +584,13 @@ const DealDetails = ({ stepper }) => {
                 <Controller
                   control={control}
                   name="departure_airport"
+                  id="departure_airport"
                   // defaultValue={reduxStore?.departureAirport}
                   defaultValue=""
                   render={({ field }) => (
                     <AutoComplete
                       {...field}
+
                       loading={isLoading}
                       suggestions={getSuggestionsByFilterKey("departureAirports")}
                       className="form-control"
@@ -597,12 +602,21 @@ const DealDetails = ({ stepper }) => {
                       value={departureAirport}
                       placeholder="Type a airport name..."
                       onSelectSuggestion={(suggestion) => {
+                        setShowDepartureAirportWarning(false)
+                        setShowArrivalAirportWarning(false)
                         field.onChange(suggestion.id)
                         dispatch(setDepartureAirportId(suggestion.id)) // Update the Redux store with the selected airport ID
                         dispatch(setDepartureAirport(suggestion.airport_name))
+                        if (arrival_airport?.value === suggestion.airport_name) {
+                          dispatch(setArrivalAirport(''))
+                          dispatch(setArrivalAirportId(0))
+                          setShowDepartureAirportWarning(true)
+                          arrival_airport.value = ''
+                        }
                       }}
                       onChange={(event) => {
-                        //  setDepartureAirportInput(event.target.value)
+                        setShowDepartureAirportWarning(false)
+                        setShowArrivalAirportWarning(false)
                         setSearchQuery(event.target.value)
                         if (event.target.value === "") {
                           field.onChange("") // Update the field value if the input is empty
@@ -619,6 +633,12 @@ const DealDetails = ({ stepper }) => {
                           if (matchedSuggestion) {
                             field.onChange(matchedSuggestion.id)
                             dispatch(setDepartureAirportId(matchedSuggestion.id))
+                            if (arrival_airport?.value === matchedSuggestion.airport_name) {
+                              dispatch(setArrivalAirport(''))
+                              dispatch(setArrivalAirportId(0))
+                              setShowDepartureAirportWarning(true)
+                              arrival_airport.value = ''
+                            }
                           } else {
                             // Clear the previously selected value if the typed value doesn't match any suggestions
                             field.onChange("")
@@ -636,6 +656,9 @@ const DealDetails = ({ stepper }) => {
                   <div className="text-danger">
                     {errors.departure_airport.message}
                   </div>
+                )}
+                {showDepartureAirportWarning && (
+                  <div class="text-danger">Departure Airport can not be the same as the Arrival Airport </div>
                 )}
                 <br />
               </Col>
@@ -663,13 +686,24 @@ const DealDetails = ({ stepper }) => {
                       disabled={!enableArrivalAirport}
                       placeholder="Type a airport name..."
                       onSelectSuggestion={(suggestion) => {
+                        setShowDepartureAirportWarning(false)
+                        setShowArrivalAirportWarning(false)
                         field.onChange(suggestion.id)
                         dispatch(setArrivalAirportId(suggestion.id)) // Update the Redux store with the selected airport ID
                         dispatch(setArrivalAirport(suggestion.airport_name))
-                        // setArrivalAirportInput(suggestion.airport_name) // Add this line
+
+                        if (departure_airport?.value === suggestion.airport_name) {
+                          setShowArrivalAirportWarning(true)
+                          dispatch(setDepartureAirport(''))
+                          dispatch(setDepartureAirportId(0))  
+                          departure_airport.value = ''
+                        } 
+
                       }}
                       onChange={(event) => {
-                        // setArrivalAirportInput(event.target.value)
+                        setShowDepartureAirportWarning(false)
+                        setShowArrivalAirportWarning(false)
+
                         setSearchQuery(event.target.value)
                         const matchedSuggestion = getSuggestionsByFilterKey(
                           "arrivalAirports"
@@ -681,6 +715,14 @@ const DealDetails = ({ stepper }) => {
                         if (matchedSuggestion) {
                           field.onChange(matchedSuggestion.id)
                           dispatch(setArrivalAirportId(matchedSuggestion.id))
+
+                          if (departure_airport?.value === matchedSuggestion.airport_name) {
+                            setShowArrivalAirportWarning(true)
+                            dispatch(setDepartureAirport(''))
+                            dispatch(setDepartureAirportId(0))
+                            departure_airport.value = ''
+                          }
+
                         } else {
                           field.onChange("")
                           dispatch(setArrivalAirportId(null))
@@ -696,6 +738,9 @@ const DealDetails = ({ stepper }) => {
                   <div className="text-danger">
                     {errors.arrival_airport.message}
                   </div>
+                )}
+                {showArrivalAirportWarning && (
+                   <div class="text-danger"> Arrival Airport can not be the same as the Departure Airport </div>
                 )}
               </Col>
             </Row>
