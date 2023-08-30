@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify'
-import { useForm, Controller, useFormContext } from "react-hook-form"
-import { useParams, useLocation, useNavigate } from "react-router-dom"
+import { useForm, Controller } from "react-hook-form"
+import { useParams } from "react-router-dom"
 import {
   Card,
   FormFeedback,
@@ -16,33 +16,23 @@ import {
   FormGroup
 } from "reactstrap"
 import Select from "react-select"
-import { Fragment } from "react"
+import { Fragment, useState } from "react"
 import { useDispatch, useSelector } from "react-redux" // Import useDispatch
 import sanctumService from "../../../../@core/auth/sanctum/sanctumService"
-import { fetchDealDataSuccess, setLoadingDeal } from "./store/dealSlice"
+import { fetchDealDataSuccess } from "./store/dealSlice"
 import { selectThemeColors } from "@utils"
 import "@styles/react/libs/spinner/spinner.scss"
-import useFormDefaults from "./hooks/useFormDefaults"
-import useDropdownHandlers from "./hooks/useDropdownHandlers"
-import useFormSubmission from "./hooks/useFormSubmission"
-import DeleteDeal from "./DeleteDeal"
-import useDefaultDropdownValues from "./hooks/useDefaultDropdownValues"
+import useFormDefaults from "../hooks/useFormDefaults"
+import useDropdownHandlers from "../hooks/useDropdownHandlers"
+import useFormSubmission from "../hooks/useFormSubmission"
+import DealDelete from "./DeleteDeal"
+import useDefaultDropdownValues from "../hooks/useDefaultDropdownValues"
 import Flatpickr from "react-flatpickr"
 import { format } from "date-fns"
 import { FixedSizeList as List } from "react-window"
 import "@styles/react/libs/flatpickr/flatpickr.scss"
-import { useState } from "react"
-import AutoSizer from 'react-virtualized-auto-sizer'
-
-// import axios, { all } from "axios"
-// import getCsrfToken from "@src/auth/sanctum/csrf"
-// import Pusher from "pusher-js"
-// import Echo from "laravel-echo"
-// import { getHomeRouteForLoggedInUser } from "@utils"
 
 const DealEditContainer = ({ redux }) => {
-  //MOST important ones
-  const navigate = useNavigate()
   const dispatch = useDispatch() // Get the dispatch method
   const sanctum = new sanctumService()
   const { id } = useParams() //this comes from URL
@@ -55,8 +45,6 @@ const DealEditContainer = ({ redux }) => {
 
   const [inputValue, setInputValue] = useState("")
 
-
-  { /*Virtulization of long list dropdown to prevent slow response */ }
   const CustomMenuList = (props) => {
     const { options, children, maxHeight, getValue } = props
     const [value] = getValue()
@@ -65,7 +53,7 @@ const DealEditContainer = ({ redux }) => {
     // Check if the input value doesn't match any city
     const noOptions = inputValue && !options.some((option) => option.label.toLowerCase().includes(inputValue.toLowerCase()))
     const adjustedHeight = noOptions ? 65 : maxHeight
-    return (
+    render(
       <List
         height={adjustedHeight}
         itemCount={noOptions ? 1 : children.length}
@@ -87,31 +75,24 @@ const DealEditContainer = ({ redux }) => {
   }
 
 
-  { /*Delivery types label update*/ }
   const delivery_type = [
     { value: "hand_luggage", label: "Hand Luggage" },
     { value: "baggage", label: "Baggage" },
     { value: "document", label: "Document" }
   ]
 
-  { /* Duty Free Label */ }
   const duty_free = [
     { value: 0, label: "Inactive" },
     { value: 1, label: "Active" }
   ]
 
-  { /* User Authenticated Label */ }
   const user_authenticated = [
     { value: 0, label: "Unauthenticated" },
     { value: 1, label: "Authenticated" }
   ]
 
-  { /*lets get user data*/ }
-  const users = redux.dealData[id]?.user
 
-  { /*lets set form data*/ }
   const {
-    reset,
     control,
     setValue,
     setError,
@@ -120,15 +101,12 @@ const DealEditContainer = ({ redux }) => {
     formState: { errors }
   } = useForm()
 
-  { /*lets set countries cities and airports from redux*/ }
   const countries = useSelector((state) => state.dealData.countries) //comes from FetchDealData
   const cities = useSelector((state) => state.dealData.cities) //comes from FetchDealData
   const airports = useSelector((state) => state.dealData.airports) //comes from FetchDealData
 
-  { /*lets set set the values for initial load*/ }
   useFormDefaults(setValue, watch, countries, cities, redux, id, airports)
 
-  { /*lets set set the dependent values for dropdown change*/ }
   const {
     defaultDepartureCountry,
     defaultDepartureCity,
@@ -137,13 +115,11 @@ const DealEditContainer = ({ redux }) => {
     defaultUser
   } = useDefaultDropdownValues(countries, cities, airports, redux, id)
 
-  { /*lets set set the handlers for dropdown change*/ }
   const {
     handleDepartureCountryChange,
     handleArrivalCountryChange,
     handleDepartureCityChange,
     handleArrivalCityChange,
-    handleUserChange,
     filteredDepartureCities,
     filteredArrivalCities,
     filteredDepartureAirports,
@@ -159,7 +135,6 @@ const DealEditContainer = ({ redux }) => {
     defaultUser
   )
 
-  { /*lets call onsubmit function*/ }
   const { onSubmit, isLoading } = useFormSubmission(
     handleSubmit,
     errors,
@@ -171,8 +146,6 @@ const DealEditContainer = ({ redux }) => {
     toast,
     setError
   )
-
-  { /*lets start to the form fields*/ }
   return (
     <Fragment>
       <Card>
@@ -184,95 +157,12 @@ const DealEditContainer = ({ redux }) => {
             <Row>
               <Col md="6">
                 <div className="mb-1">
-                  <Label className="form-label" for="UserIdAsync">
-                    User
-                  </Label>
-                  <Controller
-                    defaultValue={
-                      (redux?.dealData[id]?.user_id) || ""
-                    }
-                    control={control}
-                    rules={{
-                      required: "Username is required"
-                    }}
-                    id="UserIDAsync"
-                    name="user_id"
-                    render={({ field }) => {
-                      const selectedUser = users?.find(
-                        (user) => user.id === field.value
-                      )
-
-                      return (
-                        <Select
-                          options={[
-                            ...(Array.isArray(users) ? users.map((user) => ({
-                              value: user.id,
-                              label: user.name
-                            })) : [])
-                          ]}
-                          classNamePrefix="select"
-                          theme={selectThemeColors}
-                          value={
-                            selectedUser ? {
-                              value: selectedUser.id,
-                              label: selectedUser.name
-                            } : null
-                          }
-                          onChange={(selectedOption) => {
-                            field.onChange(selectedOption.value)
-                            handleUserChange(selectedOption.value)
-                          }}
-                        />
-                      )
-                    }}
-                  />
-                  {errors.user_id && (
-                    <FormFeedback>{errors.user_id.message}</FormFeedback>
-                  )}
-                </div>
-              </Col>
-
-              <Col md="6">
-                <div className="mb-1">
-                  <Label className="form-label" for="flightAsync">
-                    Flight
-                  </Label>
-                  <Controller
-                    defaultValue={
-                      (redux?.dealData[id]?.flight_number) ||
-                      ""
-                    }
-                    control={control}
-                    rules={{
-                      required: "Flight is required"
-                    }}
-                    id="flightAsync"
-                    name="flight_number"
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        placeholder="Flight"
-                        type="text"
-                        invalid={errors.flight && true}
-                      />
-                    )}
-                  />
-                  {errors.flight && (
-                    <FormFeedback>{errors.flight.message}</FormFeedback>
-                  )}
-                </div>
-              </Col>
-            </Row>
-
-            <Row>
-              <Col md="6">
-                <div className="mb-1">
                   <Label className="form-label" for="priceAsync">
                     Price
                   </Label>
                   <Controller
                     defaultValue={
-                      (redux?.dealData[id]?.price) || ""
+                      (redux.dealData && redux.dealData[id]?.price) || ""
                     }
                     control={control}
                     rules={{ required: "Price is required" }}
@@ -299,7 +189,7 @@ const DealEditContainer = ({ redux }) => {
                   </Label>
                   <Controller
                     defaultValue={
-                      (redux?.dealData[id]?.weight) || ""
+                      (redux.dealData && redux.dealData[id]?.weight) || ""
                     }
                     control={control}
                     rules={{
@@ -339,8 +229,7 @@ const DealEditContainer = ({ redux }) => {
                     defaultValue={
                       countries ? countries.find(
                         (country) => country.id ===
-                          (redux.dealData &&
-                            redux.dealData[id]?.departure_country_id)
+                          (redux?.dealData[id]?.departure_country_id)
                       ) || "" : ""
                     }
                     render={({ field }) => {
@@ -395,9 +284,7 @@ const DealEditContainer = ({ redux }) => {
                     name="arrival_country"
                     defaultValue={
                       countries ? countries.find(
-                        (country) => country.id ===
-                          (redux.dealData &&
-                            redux.dealData[id]?.arrival_country_id)
+                        (country) => country.id === (redux?.dealData[id]?.arrival_country_id)
                       ) || "" : ""
                     }
                     render={({ field }) => {
@@ -416,10 +303,7 @@ const DealEditContainer = ({ redux }) => {
                           classNamePrefix="select"
                           theme={selectThemeColors}
                           value={
-                            selectedCountry ? {
-                              value: selectedCountry.id,
-                              label: selectedCountry.nicename
-                            } : null
+                            selectedCountry ? { value: selectedCountry.id, label: selectedCountry.nicename } : null
                           }
                           onChange={(selectedOption) => {
                             field.onChange(selectedOption.value)
@@ -467,10 +351,7 @@ const DealEditContainer = ({ redux }) => {
                             classNamePrefix="select"
                             theme={selectThemeColors}
                             value={
-                              selectedCity ? {
-                                value: selectedCity.id,
-                                label: selectedCity.name
-                              } : null
+                              selectedCity ? { value: selectedCity.id, label: selectedCity.name } : null
                             }
                             onChange={(selectedOption) => {
                               field.onChange(selectedOption.value)
@@ -507,11 +388,7 @@ const DealEditContainer = ({ redux }) => {
                     id="arrival_cityAsync"
                     name="arrival_city"
                     defaultValue={
-                      cities ? cities.find(
-                        (city) => city.id ===
-                          (redux.dealData &&
-                            redux.dealData[id]?.arrival_city_id)
-                      ) || "" : ""
+                      cities ? cities.find((city) => city.id === (redux?.dealData[id]?.arrival_city_id)) || "" : ""
                     }
                     render={({ field }) => {
                       const selectedCity = cities?.find(
@@ -528,10 +405,7 @@ const DealEditContainer = ({ redux }) => {
                             classNamePrefix="select"
                             theme={selectThemeColors}
                             value={
-                              selectedCity ? {
-                                value: selectedCity.id,
-                                label: selectedCity.name
-                              } : null
+                              selectedCity ? { value: selectedCity.id, label: selectedCity.name } : null
                             }
                             onChange={(selectedOption) => {
                               field.onChange(selectedOption.value)
@@ -570,11 +444,7 @@ const DealEditContainer = ({ redux }) => {
                     id="departure_airportAsync"
                     name="departure_airport"
                     defaultValue={
-                      airports ? airports.find(
-                        (airport) => airport.id ===
-                          (redux.dealData &&
-                            redux.dealData[id]?.departure_airport_id)
-                      ) || "" : ""
+                      airports ? airports.find((airport) => airport.id === (redux?.dealData[id]?.departure_airport_id)) || "" : ""
                     }
                     render={({ field }) => {
                       const selectedAirport = airports?.find(
@@ -592,11 +462,7 @@ const DealEditContainer = ({ redux }) => {
                             )}
                             classNamePrefix="select"
                             theme={selectThemeColors}
-                            value={
-                              selectedAirport ? {
-                                value: selectedAirport.id,
-                                label: selectedAirport.airport_name
-                              } : null
+                            value={selectedAirport ? { value: selectedAirport.id, label: selectedAirport.airport_name } : null
                             }
                             onChange={(selectedOption) => field.onChange(selectedOption.value)
                             }
@@ -628,10 +494,7 @@ const DealEditContainer = ({ redux }) => {
                     id="arrival_airportAsync"
                     name="arrival_airport"
                     defaultValue={
-                      airports ? airports.find(
-                        (airport) => airport.id ===
-                          (redux.dealData &&
-                            redux.dealData[id]?.arrival_airport_id)
+                      airports ? airports.find((airport) => airport.id === (redux?.dealData[id]?.arrival_airport_id)
                       ) || "" : ""
                     }
                     render={({ field }) => {
@@ -649,10 +512,7 @@ const DealEditContainer = ({ redux }) => {
                             classNamePrefix="select"
                             theme={selectThemeColors}
                             value={
-                              selectedAirport ? {
-                                value: selectedAirport.id,
-                                label: selectedAirport.airport_name
-                              } : null
+                              selectedAirport ? { value: selectedAirport.id, label: selectedAirport.airport_name } : null
                             }
                             onChange={(selectedOption) => field.onChange(selectedOption.value)
                             }
@@ -739,8 +599,7 @@ const DealEditContainer = ({ redux }) => {
                     }}
                     id="arrival_dateAsync"
                     name="arrival_date"
-                    defaultValue={
-                      (redux?.dealData[id]?.arrival_date) || ""
+                    defaultValue={(redux?.dealData[id]?.arrival_date) || ""
                     }
                     render={({ field }) => {
                       return (
@@ -791,8 +650,7 @@ const DealEditContainer = ({ redux }) => {
                     name="delivery_type"
                     id="delivery_typeAsync"
                     defaultValue={delivery_type.find(
-                      (option) => option.value ===
-                        (redux?.dealData[id]?.delivery_type)
+                      (option) => option.value === (redux?.dealData[id]?.delivery_type)
                     )}
                     control={control}
                     rules={{ required: "Delivery Type is required" }}
@@ -821,8 +679,7 @@ const DealEditContainer = ({ redux }) => {
                     control={control}
                     name="status"
                     defaultValue={status_options.find(
-                      (option) => option.value ===
-                        (redux?.dealData[id]?.status)
+                      (option) => option.value === (redux?.dealData[id]?.status)
                     )}
                     render={({ field }) => (
                       <Select
@@ -839,8 +696,6 @@ const DealEditContainer = ({ redux }) => {
                 </div>
               </Col>
             </Row>
-
-
             <Row>
               <Col md="6">
                 <div className="mb-1">
@@ -851,8 +706,7 @@ const DealEditContainer = ({ redux }) => {
                     name="duty_free"
                     id="duty_freeAsync"
                     defaultValue={duty_free.find(
-                      (option) => option.value ===
-                        (redux?.dealData[id]?.duty_free)
+                      (option) => option.value === (redux?.dealData[id]?.duty_free)
                     )}
                     control={control}
                     rules={{ required: "Duty Free Field is required" }}
@@ -871,48 +725,22 @@ const DealEditContainer = ({ redux }) => {
                 </div>
               </Col>
 
-              <Col md="6">
-                <div className="mb-1">
-                  <Label className="form-label" for="user_authenticatedAsync">
-                    User Authentication
-                  </Label>
-                  <Controller
-                    id="react-select"
-                    control={control}
-                    name="user_authenticated"
-                    defaultValue={user_authenticated.find(
-                      (option) => option.value ===
-                        (redux?.dealData[id]?.user_authenticated)
-                    )}
-                    render={({ field }) => (
-                      <Select
-                        options={user_authenticated}
-                        classNamePrefix="select"
-                        theme={selectThemeColors}
-                        {...field}
-                      />
-                    )}
-                  />
-                  {errors.user_authenticated && (
-                    <FormFeedback>{errors.user_authenticated.message}</FormFeedback>
-                  )}
-                </div>
+              <Col md="6 d-flex align-items-center justify-content-center">
+
+                <Button
+                  block
+                  color="primary"
+                  disabled={isLoading}
+                  type="submit"
+                  className='d-flex'
+                >
+                  Submit
+                </Button>
+
               </Col>
             </Row>
 
-            <div className="d-flex">
-              <Button
-                className="me-1"
-                color="primary"
-                disabled={isLoading}
-                type="submit"
-              >
-                Submit
-              </Button>
-              {/* <Button outline color='secondary' type='reset' onClick={handleReset}>
-                              Reset
-                            </Button> */}
-            </div>
+
             <div
               id="loading-overlay"
               style={{ display: isLoading ? "flex" : "none" }}
@@ -922,7 +750,7 @@ const DealEditContainer = ({ redux }) => {
           </Form>
         </CardBody>
       </Card>
-      <DeleteDeal id={id} />
+      <DealDelete id={id} />
     </Fragment>
   )
 }

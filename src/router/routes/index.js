@@ -28,6 +28,8 @@ import Offers from './Front/FrontendHome'
 import UserAuthenticationRoutes from './Front/UserAuthentication'
 import MyChats from './Front/MyChats'
 import AddDeal from './Front/AddDeal'
+import MyDeals from './Front/MyDeals'
+import EditMyDeals from './Front/EditDeal'
 
 const getLayout = {
   blank: <BlankLayout />,
@@ -56,7 +58,9 @@ const Routes = [
   ...Offers,
   ...UserAuthenticationRoutes,
   ...MyChats,
-  ...AddDeal
+  ...AddDeal,
+  ...MyDeals,
+  ...EditMyDeals
 ]
 
 const getRouteMeta = route => {

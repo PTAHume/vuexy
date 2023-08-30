@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { debounce } from "lodash";
-import { getFrontSidebarData } from "../data/data";
+import { getFrontSidebarData } from "../offers/data/data";
 
 const useDebouncedFetchCountries = (
     searchQuery,

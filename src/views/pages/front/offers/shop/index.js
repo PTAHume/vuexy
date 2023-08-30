@@ -1,26 +1,26 @@
 // ** React Imports
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react"
 
 // ** Shop Components
-import Sidebar from "./Sidebar";
-import Products from "./Products";
-import { showLoader, hideLoader, getProducts } from "../store";
+import Sidebar from "./Sidebar"
+import Products from "./Products"
+import { hideLoader, getProducts } from "../store"
 // ** Custom Components
-import Breadcrumbs from "@components/breadcrumbs";
-import "@styles/react/libs/spinner/spinner.scss";
+import Breadcrumbs from "@components/breadcrumbs"
+import "@styles/react/libs/spinner/spinner.scss"
 // ** Store & Actions
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux"
 
 // ** Styles
-import "@styles/react/apps/app-ecommerce.scss";
+import "@styles/react/apps/app-ecommerce.scss"
 
 const Shop = () => {
   // ** States
-  const [activeView, setActiveView] = useState("list");
-  const [appliedSidebarFilters, setAppliedSidebarFilters] = useState({}); // Add this line
+  const [activeView, setActiveView] = useState("list")
+  const [appliedSidebarFilters, setAppliedSidebarFilters] = useState({}) // Add this line
   // ** Vars
-  const dispatch = useDispatch();
-  const store = useSelector((state) => state.ecommerce);
+  const dispatch = useDispatch()
+  const store = useSelector((state) => state.ecommerce)
 
   // ** Get products
   useEffect(() => {
@@ -29,25 +29,25 @@ const Shop = () => {
         q: "",
         sortBy: "featured",
         perPage: 9,
-        page: 1,
+        page: 1
       })
     ).then(() => {
-      dispatch(hideLoader());
-    });
-  }, [dispatch]);
+      dispatch(hideLoader())
+    })
+  }, [dispatch])
 
   const handleApplyFilters = (data) => {
-    setAppliedSidebarFilters(data); // Add this line
+    setAppliedSidebarFilters(data) // Add this line
     dispatch(
       getProducts({
         ...store.params,
         ...data,
         page: 1,
         perPage: 9,
-        sortBy: "featured",
+        sortBy: "featured"
       })
-    );
-  };
+    )
+  }
 
   return (
     <Fragment>
@@ -73,6 +73,6 @@ const Shop = () => {
         </>
       )}
     </Fragment>
-  );
-};
-export default Shop;
+  )
+}
+export default Shop

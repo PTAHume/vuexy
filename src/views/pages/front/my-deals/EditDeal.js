@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import DealEditContainer from './DealEditContainer'
 import FetchDealData from './data/FetchDealData'
 
-const EditMyDeals = () => {
+const EditUserDeals = () => {
   //get all data saved in redux
   const deal = useSelector((state) => state.dealData)
 
@@ -15,9 +15,9 @@ const EditMyDeals = () => {
   const showLoader = loading || loadingCountries || loadingCities || loadingAirports
   return (
     <div>
-      <FetchDealData dataVersion={deal?.version}  />
+      <FetchDealData dataVersion={deal?.version} />
       {showLoader ? (
-        <div id='loading-overlay' style={{ display:  'flex'}}>
+        <div id='loading-overlay' style={{ display: 'flex' }}>
           <div className='loader'></div>
         </div>
       ) : (
@@ -27,4 +27,4 @@ const EditMyDeals = () => {
   )
 }
 
-export default EditMyDeals
+export default EditUserDeals

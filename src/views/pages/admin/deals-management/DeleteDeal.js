@@ -7,8 +7,7 @@ import sanctumService from '../../../../@core/auth/sanctum/sanctumService'
 import '@styles/base/plugins/extensions/ext-component-sweet-alerts.scss'
 import { useNavigate } from 'react-router-dom'
 import { getHomeRouteForLoggedInUser } from '@utils'
-import { useState } from 'react'
-import { setLoading } from './store/dealSlice'
+import { setLoadingDeal } from './store/dealSlice'
 import { useDispatch } from 'react-redux'
 
 const defaultValues = {
@@ -17,11 +16,11 @@ const defaultValues = {
 
 const MySwal = withReactContent(Swal)
 
-const DeleteDeal = ({id}) => {
+const DeleteDeal = ({ id }) => {
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const sanctum = new sanctumService();
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const sanctum = new sanctumService()
   const {
     control,
     setError,
@@ -32,7 +31,7 @@ const DeleteDeal = ({id}) => {
   const handleConfirmDelete = async () => {
     const result = await MySwal.fire({
       title: 'Are you sure?',
-      text: 'Are you sure you would like to deactivate your account?',
+      text: 'Are you sure you would like to delete the deal?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it!',
@@ -45,9 +44,9 @@ const DeleteDeal = ({id}) => {
 
     if (result.value) {
       try {
-        dispatch(setLoading(true));
-        await sanctum.deleteDeal(id);
-        dispatch(setLoading(false));
+        dispatch(setLoadingDeal(true))
+        await sanctum.deleteDeal(id)
+        dispatch(setLoadingDeal(false))
         MySwal.fire({
           icon: 'success',
           title: 'Deleted!',
@@ -57,15 +56,15 @@ const DeleteDeal = ({id}) => {
           }
         })
 
-       navigate(getHomeRouteForLoggedInUser());
-       
+        navigate(getHomeRouteForLoggedInUser())
+
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     } else if (result.dismiss === MySwal.DismissReason.cancel) {
       MySwal.fire({
         title: 'Cancelled',
-        text: 'Deactivation Cancelled!!',
+        text: 'Deletion Cancelled!!',
         icon: 'error',
         customClass: {
           confirmButton: 'btn btn-success'
@@ -85,13 +84,13 @@ const DeleteDeal = ({id}) => {
   return (
     <Card>
       <CardHeader className='border-bottom'>
-        <CardTitle tag='h4'>Delete Account</CardTitle>
+        <CardTitle tag='h4'>Delete Deal</CardTitle>
       </CardHeader>
       <CardBody className='py-2 my-25'>
         <Alert color='warning'>
-          <h4 className='alert-heading'>Are you sure you want to delete your account?</h4>
+          <h4 className='alert-heading'>Are you sure you want to delete a deal?</h4>
           <div className='alert-body fw-normal'>
-            Once you delete your account, there is no going back. Please be certain.
+            Once you delete your deal, there is no going back. Please be certain.
           </div>
         </Alert>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -115,14 +114,14 @@ const DeleteDeal = ({id}) => {
                 'text-danger': errors && errors.confirmCheckbox
               })}
             >
-              I confirm my account deactivation
+              I confirm to delete the deal
             </Label>
             {errors && errors.confirmCheckbox && (
-              <FormFeedback>Please confirm that you want to delete account</FormFeedback>
+              <FormFeedback>Please confirm that you want to delete a deal</FormFeedback>
             )}
           </div>
           <div className='mt-1'>
-            <Button color='danger'>Deactivate Account</Button>
+            <Button color='danger'>Delete Deal</Button>
           </div>
         </Form>
       </CardBody>
@@ -131,4 +130,3 @@ const DeleteDeal = ({id}) => {
 }
 
 export default DeleteDeal
-

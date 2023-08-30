@@ -237,7 +237,8 @@ const getData = async (page = 1, perPage = 10, search = '') => {
 
   try {
 
-    const response = await sanctum.getDealsData(adjustedPage, perPage, search)
+    //const response = await sanctum.getDealsData(adjustedPage, perPage, search)
+    const response = await sanctum.getUserDeals(adjustedPage, perPage, search)
     const deals = response.data.slice(0, -1)
     const pagination = response.data[response.data.length - 1].pagination
     const total = pagination.total

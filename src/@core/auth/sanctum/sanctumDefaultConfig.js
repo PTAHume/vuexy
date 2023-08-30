@@ -48,7 +48,7 @@ export default {
   pusherUserAuth: "api/admin/update-user-details/",
   getUserData: "api/admin/getuserdata/",
   updateUserStatus: "api/admin/updateuserstatus/",
-  getAllUserData: "api/admin/getuserdata",
+  getAdminAllUserData: "api/admin/getuserdata",
   //######################## FRONT end MANAGEMENT ############################/
   frontLogin: "api/front/login",
   frontLogout: "api/front/logout",
@@ -62,5 +62,7 @@ export default {
   sendMsg: "api/front/sendMsg",
   getMoreMsgs: "api/front/getMoreMsgs/",
   addDealDetail: "api/front/addNewDeal",
-  subscribeChatLists: "api/front/subscribe-chat-list"
+  subscribeChatLists: "api/front/subscribe-chat-list",
+  getUserDeals: "api/front/listuserdeals",
+  getAllUserData: "api/front/getAllData"
 }

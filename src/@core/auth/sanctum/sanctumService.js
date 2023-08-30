@@ -295,6 +295,12 @@ export default class sanctumService {
     )
   }
 
+  async getUserDeals(page, perPage, search) {
+    return axios.get(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserDeals}?page=${page}&perPage=${perPage}&//arch=${search}`
+    )
+  }
+
 
   //status change in deals list page
   async updateDealStatus(adminId, status) {
@@ -311,9 +317,13 @@ export default class sanctumService {
       `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getdealdata}${id}`
     )
   }
+  getUserDealData(id) {
+    return axios.get(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserDeals}/${id}`
+    )
+  }
 
-
-    // getcountrylist() {
+  // getcountrylist() {
   //   return axios.get(
   //     `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getcountries}`
   //   );
@@ -345,6 +355,11 @@ export default class sanctumService {
     )
   }
 
+  async getAllUserData() {
+    return axios.get(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getAllUserData}`
+    )
+  }
   //*************USERS */
   //when you press submit in admin editing page
   updateUser(data) {
@@ -365,13 +380,6 @@ export default class sanctumService {
       `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteUser}${id}`
     )
   }
-
-  getAllUserData() {
-    return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getAllUserData}`
-    )
-  }
-
 
   getuserData(id) {
     return axios.get(

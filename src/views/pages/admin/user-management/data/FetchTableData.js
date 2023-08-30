@@ -156,7 +156,7 @@ const getColumns = (refreshData,  dispatch) => [
 const getData = async () => {
 
   try {
-    const response = await sanctum.getAllUserData()
+    const response = await sanctum.getAdminAllUserData()
     const userData = response.data
     //  console.log(response)
     return userData
