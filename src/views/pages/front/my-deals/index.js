@@ -6,8 +6,6 @@ import DataTable from 'react-data-table-component'
 import { ChevronDown, Share, Printer, Plus } from 'react-feather'
 import { useDispatch } from 'react-redux'
 import PageSpinner from '@components/globalspinner/PageSpinner'
-//import sanctumService from '../../../../@core/auth/sanctum/sanctumService.js'
-//import { useSubscribeToChannel } from '../../../../@core/auth/laravel-echo/useSubscribeToChannel'
 
 import {
   Row,

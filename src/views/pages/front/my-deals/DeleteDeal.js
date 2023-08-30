@@ -7,7 +7,7 @@ import sanctumService from '../../../../@core/auth/sanctum/sanctumService'
 import '@styles/base/plugins/extensions/ext-component-sweet-alerts.scss'
 import { useNavigate } from 'react-router-dom'
 import { getHomeRouteForLoggedInUser } from '@utils'
-import { setLoadingDeal } from './store/dealSlice'
+import { setLoadingDeal } from './store'
 import { useDispatch } from 'react-redux'
 
 const defaultValues = {

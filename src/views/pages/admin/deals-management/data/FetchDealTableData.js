@@ -85,7 +85,7 @@ const getColumns = (refreshData, dispatch) => [
         case "baggage":
           return "Baggage"
 
-        case "dcoument":
+        case "document":
           return "Document"
         default:
           return ""

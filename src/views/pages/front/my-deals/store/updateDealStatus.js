@@ -1,18 +1,18 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import sanctumService from '../../../../../@core/auth/sanctum/sanctumService'
-import {dealSlice} from './dealSlice'
+import {editDealsSlice} from '.'
 
 
 const sanctum = new sanctumService()
 export const updateDealStatus = createAsyncThunk(
-  'admin/updateDealStatus',
+  'front/updateDealStatus',
   async ({ dealId, status }, { dispatch }) => {
     try {
       // Update the status using sanctum.updateAdminStatus()
-      await sanctum.updateDealStatus(dealId, status)
+      //await sanctum.updateDealStatus(dealId, status)
 
       // Update the Redux store with the new status
-      dispatch(dealSlice.actions.updateDealStatus({ dealId, status }))
+      dispatch(editDealsSlice.actions.updateDealStatus({ dealId, status }))
 
       // Return the new status
       return status

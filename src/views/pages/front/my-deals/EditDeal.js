@@ -5,7 +5,7 @@ import FetchDealData from './data/FetchDealData'
 
 const EditUserDeals = () => {
   //get all data saved in redux
-  const deal = useSelector((state) => state.dealData)
+  const deal = useSelector((state) => state.useEditDealData)
 
   //loading while fetching a data
   const loading = deal?.loading

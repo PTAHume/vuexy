@@ -19,7 +19,7 @@ import Select from "react-select"
 import { Fragment, useState } from "react"
 import { useDispatch, useSelector } from "react-redux" // Import useDispatch
 import sanctumService from "../../../../@core/auth/sanctum/sanctumService"
-import { fetchDealDataSuccess } from "./store/dealSlice"
+import { fetchDealDataSuccess } from "./store"
 import { selectThemeColors } from "@utils"
 import "@styles/react/libs/spinner/spinner.scss"
 import useFormDefaults from "../hooks/useFormDefaults"
@@ -86,12 +86,6 @@ const DealEditContainer = ({ redux }) => {
     { value: 1, label: "Active" }
   ]
 
-  const user_authenticated = [
-    { value: 0, label: "Unauthenticated" },
-    { value: 1, label: "Authenticated" }
-  ]
-
-
   const {
     control,
     setValue,
@@ -101,9 +95,9 @@ const DealEditContainer = ({ redux }) => {
     formState: { errors }
   } = useForm()
 
-  const countries = useSelector((state) => state.dealData.countries) //comes from FetchDealData
-  const cities = useSelector((state) => state.dealData.cities) //comes from FetchDealData
-  const airports = useSelector((state) => state.dealData.airports) //comes from FetchDealData
+  const countries = useSelector((state) => state.useEditDealData.countries) //comes from FetchDealData
+  const cities = useSelector((state) => state.useEditDealData.cities) //comes from FetchDealData
+  const airports = useSelector((state) => state.useEditDealData.airports) //comes from FetchDealData
 
   useFormDefaults(setValue, watch, countries, cities, redux, id, airports)
 
@@ -228,8 +222,7 @@ const DealEditContainer = ({ redux }) => {
                     name="departure_country"
                     defaultValue={
                       countries ? countries.find(
-                        (country) => country.id ===
-                          (redux?.dealData[id]?.departure_country_id)
+                        (country) => country.id === (redux?.dealData[id]?.departure_country_id)
                       ) || "" : ""
                     }
                     render={({ field }) => {
