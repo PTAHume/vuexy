@@ -1,28 +1,27 @@
 // ** React Imports
-import { useSkin } from "@hooks/useSkin";
-import { Link, useNavigate } from "react-router-dom";
+import { useSkin } from "@hooks/useSkin"
+import { Link, useNavigate } from "react-router-dom"
 import { toast } from 'react-toastify'
 
 //spinner when we press login button
-import "@styles/react/libs/spinner/spinner.scss";
+import "@styles/react/libs/spinner/spinner.scss"
 import {
   Facebook,
   Twitter,
   Mail,
   GitHub,
-  HelpCircle,
   Coffee,
-  X,
-} from "react-feather";
-import useSanctum from "@sanctum/useSanctum";
-import Avatar from "@components/avatar";
+  X
+} from "react-feather"
+import useSanctum from "@sanctum/useSanctum"
+import Avatar from "@components/avatar"
 
 // ** Custom Components
-import InputPasswordToggle from "@components/input-password-toggle";
-import { getHomeRouteForLoggedInUser } from "@utils";
+import InputPasswordToggle from "@components/input-password-toggle"
+import { getHomeRouteForLoggedInUser } from "@utils"
 
 // ** Actions
-import { handleFrontLogin } from "./store/FrontAuthentication";
+import { handleFrontLogin } from "./store/FrontAuthentication"
 
 // ** Reactstrap Imports
 import {
@@ -34,19 +33,19 @@ import {
   Label,
   Input,
   Button,
-  FormFeedback,
-} from "reactstrap";
+  FormFeedback
+} from "reactstrap"
 
 // ** Illustrations Imports
-import illustrationsLight from "@src/assets/images/pages/login-v2.svg";
-import illustrationsDark from "@src/assets/images/pages/login-v2-dark.svg";
+import illustrationsLight from "@src/assets/images/pages/login-v2.svg"
+import illustrationsDark from "@src/assets/images/pages/login-v2-dark.svg"
 
 // ** Styles
-import "@styles/react/pages/page-authentication.scss";
-import { useDispatch } from "react-redux";
-import { useForm, Controller } from "react-hook-form";
+import "@styles/react/pages/page-authentication.scss"
+import { useDispatch } from "react-redux"
+import { useForm, Controller } from "react-hook-form"
 
-import { useState } from "react";
+import { useState } from "react"
 
 const ToastContent = ({ t, name, role }) => {
   return (
@@ -69,85 +68,85 @@ const ToastContent = ({ t, name, role }) => {
         </span>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Login = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { skin } = useSkin();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { skin } = useSkin()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const {
     control,
     setError,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
       loginEmail: "",
-      password: "",
-    },
-  });
+      password: ""
+    }
+  })
 
   const onSubmit = (data) => {
-    setIsSubmitting(true);
+    setIsSubmitting(true)
     if (
       Object.values(data).every((field) => field.length > 0) &&
       Object.keys(errors).length === 0
     ) {
       useSanctum()
-        .sanctum.frontLogin({ email: data.loginEmail, password: data.password })
+        .sanctum.loginUser({ email: data.loginEmail, password: data.password })
         .then((res) => {
           const resData = {
             ...res.data.userData,
             accessToken: res.data.accessToken,
-            refreshToken: res.data.refreshToken,
-          };
+            refreshToken: res.data.refreshToken
+          }
           if (res.data.code === 201) {
-            setIsSubmitting(false);
-            
-            dispatch(handleFrontLogin(resData));
+            setIsSubmitting(false)
+
+            dispatch(handleFrontLogin(resData))
             // ability.update(res.data.userData.ability)
 
             //we can differentiate merchant and admin here
-            navigate(getHomeRouteForLoggedInUser());
-            //navigate(getHomeRouteForLoggedInUser("admin"));
+            navigate(getHomeRouteForLoggedInUser())
+            //navigate(getHomeRouteForLoggedInUser("admin"))
             toast((t) => (
               <ToastContent
                 t={t}
                 role={resData.name}
                 name={resData.name || "Somebody"}
               />
-            ));
+            ))
           } else if (res.data.code === 422) {
-            setIsSubmitting(false);
-            const errors = res.data.errors;
+            setIsSubmitting(false)
+            const errors = res.data.errors
 
             if (errors.email) {
               setError("loginEmail", {
                 type: "manual",
-                message: errors.email ? errors.email : "",
-              });
+                message: errors.email ? errors.email : ""
+              })
             } else if (errors.password) {
               setError("password", {
                 type: "manual",
-                message: errors.password ? errors.password : "",
-              });
+                message: errors.password ? errors.password : ""
+              })
             } else {
               //we are sending this in any other cases - for example null accesstoken
               setError("loginEmail", {
                 type: "manual",
-                message: errors[0] ? errors[0] : "Something went wrong",
-              });
+                message: errors[0] ? errors[0] : "Something went wrong"
+              })
             }
           }
         })
-        .catch(errors);
+        .catch(errors)
     }
-  };
+  }
 
-  const source = skin === "dark" ? illustrationsDark : illustrationsLight;
+  const source = skin === "dark" ? illustrationsDark : illustrationsLight
 
   return (
     <div className="auth-wrapper auth-cover">
@@ -254,8 +253,8 @@ const Login = () => {
                     required: "Email is required",
                     pattern: {
                       value: /^\S+@\S+$/i,
-                      message: "Invalid email address",
-                    },
+                      message: "Invalid email address"
+                    }
                   }}
                   render={({ field }) => (
                     <Input
@@ -285,7 +284,7 @@ const Login = () => {
                   name="password"
                   control={control}
                   rules={{
-                    required: "Password is required",
+                    required: "Password is required"
                   }}
                   render={({ field }) => (
                     <InputPasswordToggle
@@ -349,7 +348,7 @@ const Login = () => {
         </Col>
       </Row>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

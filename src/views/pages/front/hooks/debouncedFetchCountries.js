@@ -1,6 +1,6 @@
-import { useState, useRef, useCallback } from "react";
-import { debounce } from "lodash";
-import { getFrontSidebarData } from "../offers/data/data";
+import { useState, useRef, useCallback } from "react"
+import { debounce } from "lodash"
+import { getFrontSidebarData } from "../offers/data/data"
 
 const useDebouncedFetchCountries = (
     searchQuery,
@@ -15,12 +15,12 @@ const useDebouncedFetchCountries = (
     setIsLoading,
     setErrorMessage
   ) => {
-    const lastRequestTimestamp = useRef(null);
+    const lastRequestTimestamp = useRef(null)
   
     const debouncedFetchCountries = useCallback(
       debounce(async (searchQuery) => {
-        const requestTimestamp = Date.now();
-        lastRequestTimestamp.current = requestTimestamp;
+        const requestTimestamp = Date.now()
+        lastRequestTimestamp.current = requestTimestamp
   
         try {
           const SidebarSearchData = await getFrontSidebarData(
@@ -32,13 +32,13 @@ const useDebouncedFetchCountries = (
             arrival_city_id,
             departure_airport_id,
             arrival_airport_id
-          );
+          )
   
           if (SidebarSearchData.error) {
             if (SidebarSearchData.error.status === 429) {
-              setIsLoading(false);
-              setErrorMessage("Too many requests, try again in a bit.");
-              return;
+              setIsLoading(false)
+              setErrorMessage("Too many requests, try again in a bit.")
+              return
             }
           }
   
@@ -47,31 +47,31 @@ const useDebouncedFetchCountries = (
               case "departureCountry":
                 setSuggestions({
                   departureCountries: SidebarSearchData || [],
-                });
-                break;
+                })
+                break
               case "departureCity":
-                setSuggestions({ departureCities: SidebarSearchData || [] });
-                break;
+                setSuggestions({ departureCities: SidebarSearchData || [] })
+                break
               case "departureAirports":
                 setSuggestions({
                   departureAirports: SidebarSearchData || [],
-                });
-                break;
+                })
+                break
               case "arrivalCountry":
-                setSuggestions({ arrivalCountries: SidebarSearchData || [] });
-                break;
+                setSuggestions({ arrivalCountries: SidebarSearchData || [] })
+                break
               case "arrivalCity":
-                setSuggestions({ arrivalCities: SidebarSearchData || [] });
-                break;
+                setSuggestions({ arrivalCities: SidebarSearchData || [] })
+                break
               case "arrivalAirports":
                 setSuggestions({
                   arrivalAirports: SidebarSearchData || [],
-                });
+                })
             }
-            setIsLoading(false);
+            setIsLoading(false)
           }
         } catch (error) {
-          console.error("Something went wrong:", error);
+          console.error("Something went wrong:", error)
         }
       }, 50),
       [
@@ -87,10 +87,10 @@ const useDebouncedFetchCountries = (
         setIsLoading,
         setErrorMessage,
       ]
-    );
+    )
   
-    return { debouncedFetchCountries };
-  };
+    return { debouncedFetchCountries }
+  }
   
-  export default useDebouncedFetchCountries;
+  export default useDebouncedFetchCountries
   

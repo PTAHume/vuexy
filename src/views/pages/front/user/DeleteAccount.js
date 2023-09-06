@@ -7,7 +7,7 @@ import sanctumService from '../../../../@core/auth/sanctum/sanctumService'
 import '@styles/base/plugins/extensions/ext-component-sweet-alerts.scss'
 import { useNavigate } from 'react-router-dom'
 import { getHomeRouteForLoggedInUser } from '@utils'
-import { setLoading } from './store/adminSlice'
+import { setLoading } from './store/userSlice'
 import { useDispatch } from 'react-redux'
 
 const defaultValues = {
@@ -16,7 +16,7 @@ const defaultValues = {
 
 const MySwal = withReactContent(Swal)
 
-const DeleteAccount = ({id}) => {
+const DeleteAccount = ({ id }) => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -31,7 +31,7 @@ const DeleteAccount = ({id}) => {
   const handleConfirmDelete = async () => {
     const result = await MySwal.fire({
       title: 'Are you sure?',
-      text: 'Are you sure you would like to deactivate your account?',
+      text: 'Are you sure you would like to deactivate  account?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it!',
@@ -45,19 +45,19 @@ const DeleteAccount = ({id}) => {
     if (result.value) {
       try {
         dispatch(setLoading(true))
-        await sanctum.deleteAdmin(id)
+        await sanctum.deleteUserAccount(id)
         dispatch(setLoading(false))
         MySwal.fire({
           icon: 'success',
           title: 'Deleted!',
-          text: 'Your account has been deactivated.',
+          text: 'Account has been deactivated.',
           customClass: {
             confirmButton: 'btn btn-success'
           }
         })
 
-       navigate(getHomeRouteForLoggedInUser())
-       
+        navigate(getHomeRouteForLoggedInUser())
+
       } catch (error) {
         console.log(error)
       }

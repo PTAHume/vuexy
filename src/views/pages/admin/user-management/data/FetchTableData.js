@@ -108,9 +108,9 @@ const getColumns = (refreshData,  dispatch) => [
     name: 'Actions',
     allowOverflow: true,
     cell: (row) => {
-      const handleDelete = async () => {
+      const handleDelete = async (id) => {
         try {
-          await sanctum.deleteUser(row.id)
+          await sanctum.deleteAdminUser(row.id)
           // Show a success message or update the UI to remove the deleted item
           console.log("User deleted successfully")
           // Refresh the data
@@ -156,7 +156,7 @@ const getColumns = (refreshData,  dispatch) => [
 const getData = async () => {
 
   try {
-    const response = await sanctum.getAdminAllUserData()
+    const response = await sanctum.getAdminUserData()
     const userData = response.data
     //  console.log(response)
     return userData

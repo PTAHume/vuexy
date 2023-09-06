@@ -14,7 +14,7 @@ export const fetchUsers = async (user_id) => {
 
 export const fetchChatContacts = async () => {
   try {
-    const response = await sanctum.getChatContacts()
+    const response = await sanctum.getUserChatContacts()
     //console.log("selectUser", response.data)
     return response.data
   } catch (error) {
@@ -25,7 +25,7 @@ export const fetchChatContacts = async () => {
 
 export const getChat = async (uniqueId) => {
   try {
-    const responseChat = await sanctum.getChat(uniqueId)
+    const responseChat = await sanctum.getUserChat(uniqueId)
     return responseChat.data
   } catch (error) {
     console.error(error)
@@ -35,7 +35,7 @@ export const getChat = async (uniqueId) => {
 
 export const getMoreMsgs = async (chat_id, oldestMessageId) => {
   try {
-    const getMoreMsgs = await sanctum.getMoreMsgs(chat_id, oldestMessageId)
+    const getMoreMsgs = await sanctum.getUserMoreMsgs(chat_id, oldestMessageId)
     return getMoreMsgs.data
   } catch (error) {
     console.error(error)
@@ -45,7 +45,7 @@ export const getMoreMsgs = async (chat_id, oldestMessageId) => {
 
 export const sendChatMsg = async (obj) => {
   try {
-    const responseChat = await sanctum.sendMsg(obj)
+    const responseChat = await sanctum.sendUserMsg(obj)
     //console.log("response of sendChatMSG :", responseChat.data)
     return responseChat.data
   } catch (er) {

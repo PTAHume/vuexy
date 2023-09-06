@@ -7,7 +7,6 @@ import sanctumService from '../../../../@core/auth/sanctum/sanctumService'
 import '@styles/base/plugins/extensions/ext-component-sweet-alerts.scss'
 import { useNavigate } from 'react-router-dom'
 import { getHomeRouteForLoggedInUser } from '@utils'
-import { useState } from 'react'
 import { setLoading } from './store/userSlice'
 import { useDispatch } from 'react-redux'
 
@@ -19,9 +18,9 @@ const MySwal = withReactContent(Swal)
 
 const DeleteAccount = ({id}) => {
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const sanctum = new sanctumService();
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const sanctum = new sanctumService()
   const {
     control,
     setError,
@@ -45,9 +44,9 @@ const DeleteAccount = ({id}) => {
 
     if (result.value) {
       try {
-        dispatch(setLoading(true));
-        await sanctum.deleteUser(id);
-        dispatch(setLoading(false));
+        dispatch(setLoading(true))
+        await sanctum.deleteAdminUser(id)
+        dispatch(setLoading(false))
         MySwal.fire({
           icon: 'success',
           title: 'Deleted!',
@@ -57,10 +56,10 @@ const DeleteAccount = ({id}) => {
           }
         })
 
-       navigate(getHomeRouteForLoggedInUser());
+       navigate(getHomeRouteForLoggedInUser())
        
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     } else if (result.dismiss === MySwal.DismissReason.cancel) {
       MySwal.fire({

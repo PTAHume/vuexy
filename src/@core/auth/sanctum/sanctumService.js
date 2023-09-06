@@ -22,14 +22,17 @@ export default class sanctumService {
       sanctumService.interceptorsSetup = true
     }
   }
+  // #################### MISC API CALL'S #####################################
+  baseurl() {
+    //this is for the urls where we cant come here to sanctum DONT CONFUSE with baseUrl in config
+    return this.sanctumConfig.baseUrl.replace(/\s/g, "")
+  }
 
-  // REMOVE all and forward to Login Page
   clearStorageAndRedirect(config) {
     localStorage.removeItem("userData") //  we delete admin localstorage
     localStorage.removeItem("frontUserData") // we delete front user details
     localStorage.removeItem(config.storageTokenKeyName)
     localStorage.removeItem(config.storageRefreshTokenKeyName)
-    //window.location.href = "/admin/login"
     window.location.href = "/login"
   }
 
@@ -125,22 +128,18 @@ export default class sanctumService {
     return localStorage.getItem(this.sanctumConfig.storageTokenKeyName)
   }
 
-  authorizaRequest(id, socketId, channelName) {
+  setToken(value) {
+    localStorage.setItem(this.sanctumConfig.storageTokenKeyName, value)
+  }
+
+  refreshToken() {
     return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.pusherAuth}${id}`,
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.refreshEndpoint}`,
       {
-        socket_id: socketId,
-        channel_name: channelName
+        refreshToken: this.getRefreshToken()
       }
     )
   }
-
-  getAdminData(id) {
-    return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getadmindata}${id}`
-    )
-  }
-
   getRefreshToken() {
     const refreshToken = localStorage.getItem(
       this.sanctumConfig.storageRefreshTokenKeyName
@@ -159,38 +158,8 @@ export default class sanctumService {
     return refreshToken.replace(/"/g, "")
   }
 
-  adminLogout() {
-    const refreshToken = this.getRefreshToken()
-    const accessToken = this.getToken()
-
-    // If refresh token is not present, remove the local storage items and resolve the promise with an error
-    if (!refreshToken && !accessToken) {
-      localStorage.removeItem("userData")
-      localStorage.removeItem(this.sanctumConfig.storageTokenKeyName)
-      localStorage.removeItem(this.sanctumConfig.storageRefreshTokenKeyName)
-      return Promise.resolve({
-        data: { code: "no_refresh_token", message: "Refresh token not found." }
-      })
-    }
-
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.logoutEndpoint}`
-    )
-  }
-
-  setToken(value) {
-    localStorage.setItem(this.sanctumConfig.storageTokenKeyName, value)
-  }
-
   setRefreshToken(value) {
     localStorage.setItem(this.sanctumConfig.storageRefreshTokenKeyName, value)
-  }
-
-  login(...args) {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.loginEndpoint}`,
-      ...args
-    )
   }
 
   register(...args) {
@@ -200,62 +169,22 @@ export default class sanctumService {
     )
   }
 
-  refreshToken() {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.refreshEndpoint}`,
-      {
-        refreshToken: this.getRefreshToken()
-      }
-    )
-  }
-
-  getData() {
-    return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getData}`
-    )
-  }
-
-  //status change in admins list page
-  async updateAdminStatus(adminId, status) {
-    // we can use async and await here.
-    const response = await axios.put(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateAdminStatus}${adminId}`,
-      { status }
-    )
-    return response.data
-  }
-
-  baseurl() {
-    //this is for the urls where we cant come here to sanctum DONT CONFUSE with baseUrl in config
-    return this.sanctumConfig.baseUrl.replace(/\s/g, "")
-  }
-
-  //*****************ADMIN MANAGEMENT  ************************************/
-  //when you press submit in admin editing page
-  updateAdmin(data) {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateAdminDetail
-      }${data.get("id")}`,
-      data,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data"
+  // #################### ADMINISTRATOR API CALL'S #####################################
+  updateAdminDetails(data = null, id = null, socketId = null, channelName = null) {
+    if (data) {
+      return axios.post(
+        `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateAdminDetails
+        }/${data.get("id")}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
         }
-      }
-    )
-  }
-
-  deleteAdmin(id) {
+      )
+    }
     return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteAdmin}${id}`
-    )
-  }
-
-  ///**********************************WEBSOCKET *********************/
-  //websocket update admin list
-  subscribeToAdminsList(socketId, channelName) {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.subscribeAdminLists}`,
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateAdminDetails}/${id}`,
       {
         socket_id: socketId,
         channel_name: channelName
@@ -263,189 +192,217 @@ export default class sanctumService {
     )
   }
 
-  //***********************DEALS **************************************/
-  //websocket update deal list
-  subscribeToDealsList(socketId, channelName) {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.subscribeDealLists}`,
-      {
-        socket_id: socketId,
-        channel_name: channelName
-      }
-    )
+  // ##  GETS ##
+  getAdminData(id = null) {
+    let url = `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getAdminData}`
+    if (id) {
+      url += `/${id}`
+    }
+    return axios.get(url)
   }
 
-  deleteDeal(id) {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteDeal}${id}`
-    )
-  }
-
-  //when you press submit in deal editing page
-  updateDeal(data, id) {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateDealDetail}${id}`,
-      data
-    )
-  }
-
-  async getDealsData(page, perPage, search) {
+  async getAdminDealData(id = null, page = null, perPage = null, search = null) {
+    if (id) {
+      return axios.get(
+        `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getAdminDealData}/${id}`
+      )
+    }
+    page = page || 0
+    perPage = perPage || 5
+    search = search || ''
     return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getDealsData}?page=${page}&perPage=${perPage}&search=${search}`
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getAdminDealData}?page=${page}&perPage=${perPage}&search=${search}`
     )
   }
 
-  async getUserDeals(page, perPage, search) {
+  async getAdminAllData() {
     return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserDeals}?page=${page}&perPage=${perPage}&//arch=${search}`
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getAdminAllData}`
     )
   }
 
-
-  //status change in deals list page
-  async updateDealStatus(adminId, status) {
-    // we can use async and await here.
-    const response = await axios.put(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateDealStatus}${adminId}`,
-      { status }
-    )
-    return response.data
+  getAdminUserData(id = null) {
+    let url = `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getAdminUserData}`
+    if (id) {
+      url += `/${id}`
+    }
+    return axios.get(url)
   }
 
-  getDealData(id) {
-    return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getdealdata}${id}`
-    )
-  }
-  getUserDealData(id) {
-    return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserDeals}/${id}`
-    )
-  }
-
-  // getcountrylist() {
-  //   return axios.get(
-  //     `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getcountries}`
-  //   );
-  // }
-
-
-  getcountries() {
-    return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getcountries}`
-    )
-  }
-
-
-  getcities() {
-    return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getcities}`
-    )
-  }
-
-  getairports() {
-    return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getairports}`
-    )
-  }
-
-  async getAllData() {
-    return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getAllData}`
-    )
-  }
-
-  async getAllUserData() {
-    return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getAllUserData}`
-    )
-  }
-  //*************USERS */
-  //when you press submit in admin editing page
-  updateUser(data) {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateUserDetail
-      }${data.get("id")}`,
-      data,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      }
-    )
-  }
-
-  deleteUser(id) {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteUser}${id}`
-    )
-  }
-
-  getuserData(id) {
-    return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserData}${id}}`
-    )
-  }
-
-
-  //websocket update user list
-  subscribeToUsersList(socketId, channelName) {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.subscribeUserLists}`,
-      {
-        socket_id: socketId,
-        channel_name: channelName
-      }
-    )
-  }
-
-
-  async updateUserStatus(userId, status) {
-    // we can use async and await here.
-    const response = await axios.put(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateUserStatus}${userId}`,
-      { status }
-    )
-    return response.data
-  }
-
-
-  //############################## FRONTEND INTERFACE ##########################/
-  frontLogin(...args) {
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.frontLogin}`,
-      ...args
-    )
-  }
-
-  async setOnlineStatus(id, status) {
-    const response = await axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.setOnlineStatus}${id}`,
-      { status }
-    )
-    return response
-  }
-
-  frontLogout() {
+  logoutAdmin() {
     const refreshToken = this.getRefreshToken()
     const accessToken = this.getToken()
 
     // If refresh token is not present, remove the local storage items and resolve the promise with an error
     if (!refreshToken && !accessToken) {
-      localStorage.removeItem("frontUserData")
+      localStorage.removeItem("userData")
       localStorage.removeItem(this.sanctumConfig.storageTokenKeyName)
       localStorage.removeItem(this.sanctumConfig.storageRefreshTokenKeyName)
-      return Promise.resolve({
-        data: { code: "no_refresh_token", message: "Refresh token not found." }
-      })
+      throw new Error("Refresh token not found.")
     }
 
     return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.frontLogout}`
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.logoutAdmin}`
     )
   }
 
-  getFrontOffersData({
+  loginAdmin(...args) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.loginAdmin}`,
+      ...args
+    )
+  }
+
+  async updateAdminStatus(adminId, status) {
+    // we can use async and await here.
+    const response = await axios.put(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateAdminStatus}/${adminId}`,
+      { status }
+    )
+    return response.data
+  }
+
+  updateAdminDealDetails(data, id) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateAdminDealDetails}/${id}`,
+      data
+    )
+  }
+
+  async updateAdminDealStatus(adminId, status) {
+    // we can use async and await here.
+    const response = await axios.put(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateAdminDealStatus}/${adminId}`,
+      { status }
+    )
+    return response.data
+  }
+
+  updateUserDealDetails(data, id) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateUserDealDetails}/${id}`,
+      data
+    )
+  }
+
+  updateAdminUserDetails(data) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateAdminUserDetails
+      }/${data.get("id")}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }
+    )
+  }
+
+  deleteAdminDeal(id) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteAdminDeal}/${id}`
+    )
+  }
+
+  deleteAdmin(id) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteAdmin}/${id}`
+    )
+  }
+
+  deleteAdminUser(id) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteAdminUser}/${id}`
+    )
+  }
+
+  subscribeToAdminList(socketId, channelName) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.subscribeToAdminList}`,
+      {
+        socket_id: socketId,
+        channel_name: channelName
+      }
+    )
+  }
+
+  subscribeToAdminDealsList(socketId, channelName) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.subscribeToAdminDealsList}`,
+      {
+        socket_id: socketId,
+        channel_name: channelName
+      }
+    )
+  }
+
+  subscribeToAdminUserList(socketId, channelName) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.subscribeToAdminUserList}`,
+      {
+        socket_id: socketId,
+        channel_name: channelName
+      }
+    )
+  }
+
+  async getUserListUserDeals(id = null, page = null, perPage = null, search = null) {
+    if (id) {
+      return axios.get(
+        `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserListUserDeals}/${id}`
+      )
+    }
+    page = page || 0
+    perPage = perPage || 5
+    search = search || ''
+    return axios.get(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserListUserDeals}?page=${page}&perPage=${perPage}&search=${search}`
+    )
+  }
+
+  getUserData(id) {
+    return axios.get(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserData}/${id}`
+    )
+  }
+
+  async updateUserDealStatus(id, status) {
+    // we can use async and await here.
+    const response = await axios.put(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateUserDealStatus}/${id}`,
+      { status }
+    )
+    return response.data
+  }
+
+  async updateUserStatus(id, status) {
+    // we can use async and await here.
+    const response = await axios.put(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateUserStatus}${id}`,
+      { status }
+    )
+    return response.data
+  }
+
+  getUserCountries() {
+    return axios.get(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserCountries}`
+    )
+  }
+
+  getUserAirports() {
+    return axios.get(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserAirports}`
+    )
+  }
+
+  async getUserAllData() {
+    return axios.get(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserAllData}`
+    )
+  }
+
+  getUserFrontOffersData({
     page,
     per_page,
     sortBy,
@@ -464,7 +421,7 @@ export default class sanctumService {
     weight
   }) {
     return axios.get(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getFrontOffersData}`,
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserFrontOffersData}`,
       {
         params: {
           page,
@@ -488,21 +445,16 @@ export default class sanctumService {
     )
   }
 
-  async getFrontSidebarData(
+  async getUserFrontSidebarData(
     searchQuery,
     searchField,
     departure_country_id,
     departure_city_id,
     arrival_country_id,
     arrival_city_id,
-    // departure_city,
-    // arrival_country,
-    // arrival_city,
-    // departure_airport,
-    // arrival_airport,
     arrival_airport_id // Add this parameter
   ) {
-    return axios.get(`${this.sanctumConfig.baseUrl}${this.sanctumConfig.getFrontSidebarData}`, {
+    return axios.get(`${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserFrontSidebarData}`, {
       params: {
         searchQuery,
         searchField,
@@ -510,11 +462,6 @@ export default class sanctumService {
         departure_city_id,
         arrival_country_id,
         arrival_city_id,
-        // departure_city,
-        // arrival_country,
-        // arrival_city,
-        // departure_airport,
-        // arrival_airport,
         arrival_airport_id // Add this parameter
       }
     })
@@ -522,50 +469,106 @@ export default class sanctumService {
 
   getUserDataForChat(id) {
     return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserDataForChat}${id}}`
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserDataForChat}/${id}}`
     )
   }
 
-  getChatContacts() {
+  getUserChatContacts() {
     return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getChatContacts}`
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserChatContacts}`
     )
   }
 
-  getChat(uniqueId) {
+  getUserChat(uniqueId) {
     return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getChat}${uniqueId}`
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserChat}/${uniqueId}`
     )
   }
 
-  getMoreMsgs(chat_id, lastMsgId) {
+  getUserMoreMsgs(chat_id, lastMsgId) {
     return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getMoreMsgs}${chat_id}/${lastMsgId}`
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserMoreMsgs}/${chat_id}/${lastMsgId}`
     )
   }
 
-  addDeal(data) {
+  updateUserDetails(data) {
     return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.addDealDetail}`,
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.updateUserDetails
+      }/${data.get("id")}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }
+    )
+  }
+
+  loginUser(...args) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.loginUser}`,
+      ...args
+    )
+  }
+
+  async setUserOnlineStatus(id, status) {
+    const response = await axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.setUserOnlineStatus}/${id}`,
+      { status }
+    )
+    return response
+  }
+
+  async logoutUser() {
+    const refreshToken = this.getRefreshToken()
+    const accessToken = this.getToken()
+
+    // If refresh token is not present, remove the local storage items and resolve the promise with an error
+    if (!refreshToken && !accessToken) {
+      localStorage.removeItem("frontUserData")
+      localStorage.removeItem(this.sanctumConfig.storageTokenKeyName)
+      localStorage.removeItem(this.sanctumConfig.storageRefreshTokenKeyName)
+      throw new Error("Refresh token not found.")
+    }
+
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.logoutUser}`
+    )
+  }
+
+  addUserNewDeal(data) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.addUserNewDeal}`,
       data
     )
   }
 
-  sendMsg(obj) {
+  sendUserMsg(obj) {
     return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.sendMsg}`,
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.sendUserMsg}`,
       obj
     )
   }
 
-  //websocket update admin list
-  subscribeToChatsList(socketId, channelName) {
+  subscribeToUserChatList(socketId, channelName) {
     return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.subscribeChatLists}`,
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.subscribeToUserChatList}`,
       {
         socket_id: socketId,
         channel_name: channelName
       }
+    )
+  }
+
+  deleteUserDeal(id) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteUserDeal}/${id}`
+    )
+  }
+
+  deleteUserAccount(id) {
+    return axios.post(
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.deleteUserAccount}/${id}`
     )
   }
 }

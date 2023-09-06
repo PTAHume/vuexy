@@ -27,7 +27,7 @@ const FetchDealData = ({ dataVersion }) => {
         try {
           dispatch(setLoadingDeal(true))
           // Get deal data
-          const response = await sanctum.getDealData(id)
+          const response = await sanctum.getAdminDealData(id)
           const dealData = response.data[0]
           dispatch(fetchDealDataSuccess(dealData))
         } catch (error) {
@@ -50,7 +50,7 @@ const FetchDealData = ({ dataVersion }) => {
       // Fetch countries, airports, and cities if not available in Redux and not fetched yet
       if (!fetchedDependentData && (!countries.length || !cities.length || !airports.length)) {
         try {
-          const allDataResponse = await sanctum.getAllData()
+          const allDataResponse = await sanctum.getAdminAllData()
 
           if (allDataResponse) {
             if (!countries.length) {

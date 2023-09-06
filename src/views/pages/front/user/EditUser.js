@@ -14,7 +14,7 @@ const EditUser = () => {
     <div>
       <FetchUserData dataVersion={user.version} redux={user} />
       {loading ? (
-        <div id='loading-overlay' style={{ display: 'flex' }}>
+        <div id='loading-overlay' style={{ display:  'flex'}}>
           <div className='loader'></div>
         </div>
       ) : (

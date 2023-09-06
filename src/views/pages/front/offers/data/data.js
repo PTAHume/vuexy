@@ -21,7 +21,7 @@ const fetchOffers = async ({
   weight
 } = {}) => {
   try {
-    const response = await sanctum.getFrontOffersData({
+    const response = await sanctum.getUserFrontOffersData({
       page,
       per_page: perPage,
       sortBy,
@@ -96,7 +96,7 @@ const products = fetchInitialProducts()
     arrival_airport_id
   ) => {
     try {
-      const response = await sanctum.getFrontSidebarData(
+      const response = await sanctum.getUserFrontSidebarData(
         searchQuery,
         searchField || "",
         departure_country_id || null,

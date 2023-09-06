@@ -19,7 +19,7 @@ const FetchUserData = ({dataVersion}) => {
     }
     try {
       dispatch(setLoading(true))
-      const response = await sanctum.getAdminUserData(id)
+      const response = await sanctum.getUserData(id)
       const userData = response.data[0]
 
       dispatch(fetchuserDataSuccess(userData))

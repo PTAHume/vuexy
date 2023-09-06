@@ -75,7 +75,7 @@ const Avatar = forwardRef((props, ref) => {
           className={classnames({
             [imgClassName]: imgClassName,
           })}
-          src={img}
+          src={img ?? ''}
           alt="avatarImg"
           height={imgHeight && !size ? imgHeight : 32}
           width={imgWidth && !size ? imgWidth : 32}

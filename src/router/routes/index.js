@@ -82,14 +82,14 @@ const MergeLayoutRoutes = (layout, defaultLayout) => {
       let isBlank = false
       // ** Checks if Route layout or Default layout matches current layout
       if (
-        (route.meta && route.meta.layout && route.meta.layout === layout) ||
+        (route?.meta.layout && route.meta.layout === layout) ||
         ((route.meta === undefined || route.meta.layout === undefined) && defaultLayout === layout)
       ) {
         let RouteTag = PrivateRoute
 
         // ** Check for public or private route
         if (route.meta) {
-          route.meta.layout === 'blank' ? (isBlank = true) : (isBlank = false)
+          isBlank = route.meta.layout === 'blank' 
           RouteTag = route.meta.publicRoute ? PublicRoute : PrivateRoute
         }
         if (route.element) {

@@ -1,7 +1,7 @@
 // ** Reducers Imports
 import layout from "./layout"
 import navbar from "./navbar"
-import authentication from "./authentication"
+import { authSlice } from "./authentication"
 import { adminSlice } from "../views/pages/admin/admin-management/store/adminSlice"
 import { dealSlice } from "../views/pages/admin/deals-management/store/dealSlice"
 import { userSlice } from "../views/pages/admin/user-management/store/userSlice"
@@ -15,7 +15,7 @@ import { appChatSlice } from "../views/pages/front/chat/store"
 const rootReducer = {
   navbar,
   layout,
-  authentication,
+  authentication: authSlice.reducer,
   frontauthentication: FrontAuthentication, // Change the key here
   adminData: adminSlice.reducer,
   dealData: dealSlice.reducer,

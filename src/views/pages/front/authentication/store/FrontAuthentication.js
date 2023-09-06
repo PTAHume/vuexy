@@ -16,7 +16,7 @@ export const authSlice = createSlice({
   name: 'frontauthentication',
   initialState: {
     frontUserData: initialUser()
-    
+
   },
   reducers: {
     handleFrontLogin: (state, action) => {
@@ -27,7 +27,7 @@ export const authSlice = createSlice({
       localStorage.setItem(config.storageTokenKeyName, JSON.stringify(action.payload.accessToken))
       localStorage.setItem(config.storageRefreshTokenKeyName, JSON.stringify(action.payload.refreshToken))
     },
-    handleFrontLogout: state => {
+    handleFrontLogout: (state) => {
       state.frontUserData = {}
       state[config.storageTokenKeyName] = null
       state[config.storageRefreshTokenKeyName] = null
@@ -35,11 +35,12 @@ export const authSlice = createSlice({
       localStorage.removeItem('frontUserData')
       localStorage.removeItem(config.storageTokenKeyName)
       localStorage.removeItem(config.storageRefreshTokenKeyName)
+      return state
     },
     //lets update the status.
     updateUserStatus: (state, action) => {
-      state.frontUserData.online_status = action.payload;
-      localStorage.setItem('frontUserData', JSON.stringify(state.frontUserData));
+      state.frontUserData.online_status = action.payload
+      localStorage.setItem('frontUserData', JSON.stringify(state.frontUserData))
     }
   }
 })

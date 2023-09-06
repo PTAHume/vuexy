@@ -160,7 +160,7 @@ const getColumn = (refreshData, dispatch) => {
 const getData = async () => {
 
   try {
-    const response = await sanctum.getData()
+    const response = await sanctum.getAdminData()
     const adminData = response.data
     // console.log(response)
     return adminData

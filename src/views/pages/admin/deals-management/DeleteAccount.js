@@ -45,7 +45,7 @@ const DeleteAccount = ({ id }) => {
     if (result.value) {
       try {
         dispatch(setLoading(true))
-        await sanctum.deleteDeal(id)
+        await sanctum.deleteAdminDeal(id)
         dispatch(setLoading(false))
         MySwal.fire({
           icon: 'success',

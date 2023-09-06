@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify'
-import { useForm, Controller, useFormContext } from "react-hook-form"
-import { useParams, useLocation, useNavigate } from "react-router-dom"
+import { useForm, Controller } from "react-hook-form"
+import { useParams, useNavigate } from "react-router-dom"
 import {
   Card,
   FormFeedback,
@@ -16,10 +16,10 @@ import {
   FormGroup
 } from "reactstrap"
 import Select from "react-select"
-import { Fragment } from "react"
+import { Fragment, useState } from "react"
 import { useDispatch, useSelector } from "react-redux" // Import useDispatch
 import sanctumService from "../../../../@core/auth/sanctum/sanctumService"
-import { fetchDealDataSuccess, setLoadingDeal } from "./store/dealSlice"
+import { fetchDealDataSuccess } from "./store/dealSlice"
 import { selectThemeColors } from "@utils"
 import "@styles/react/libs/spinner/spinner.scss"
 import useFormDefaults from "./hooks/useFormDefaults"
@@ -31,14 +31,36 @@ import Flatpickr from "react-flatpickr"
 import { format } from "date-fns"
 import { FixedSizeList as List } from "react-window"
 import "@styles/react/libs/flatpickr/flatpickr.scss"
-import { useState } from "react"
-import AutoSizer from 'react-virtualized-auto-sizer'
 
-// import axios, { all } from "axios"
-// import getCsrfToken from "@src/auth/sanctum/csrf"
-// import Pusher from "pusher-js"
-// import Echo from "laravel-echo"
-// import { getHomeRouteForLoggedInUser } from "@utils"
+const CustomMenuList = (props) => {
+  const { options, children, maxHeight, getValue } = props
+  const [value] = getValue()
+  const initialOffset = options.indexOf(value) * 35
+
+  // Check if the input value doesn't match any city
+  const noOptions = inputValue && !options.some((option) => option.label.toLowerCase().includes(inputValue.toLowerCase()))
+  const adjustedHeight = noOptions ? 65 : maxHeight
+  return (
+    <List
+      height={adjustedHeight}
+      itemCount={noOptions ? 1 : children.length}
+      itemSize={35}
+      initialScrollOffset={initialOffset}
+      width="100%"
+    >
+      {({ index, style }) => (
+        <div style={style}>
+          {noOptions ? (
+            <div style={{ ...style, textAlign: 'center' }}>No Option</div>
+          ) : (
+            children[index]
+          )}
+        </div>
+      )}
+    </List>
+  )
+}
+
 
 const DealEditContainer = ({ redux }) => {
   //MOST important ones
@@ -46,72 +68,27 @@ const DealEditContainer = ({ redux }) => {
   const dispatch = useDispatch() // Get the dispatch method
   const sanctum = new sanctumService()
   const { id } = useParams() //this comes from URL
-
   const status_options = [
     { value: "approved", label: "Approved" },
     { value: "pending", label: "Pending" },
     { value: "rejected", label: "Rejected" }
   ]
-
   const [inputValue, setInputValue] = useState("")
-
-
-  { /*Virtulization of long list dropdown to prevent slow response */ }
-  const CustomMenuList = (props) => {
-    const { options, children, maxHeight, getValue } = props
-    const [value] = getValue()
-    const initialOffset = options.indexOf(value) * 35
-
-    // Check if the input value doesn't match any city
-    const noOptions = inputValue && !options.some((option) => option.label.toLowerCase().includes(inputValue.toLowerCase()))
-    const adjustedHeight = noOptions ? 65 : maxHeight
-    return (
-      <List
-        height={adjustedHeight}
-        itemCount={noOptions ? 1 : children.length}
-        itemSize={35}
-        initialScrollOffset={initialOffset}
-        width="100%"
-      >
-        {({ index, style }) => (
-          <div style={style}>
-            {noOptions ? (
-              <div style={{ ...style, textAlign: 'center' }}>No Option</div>
-            ) : (
-              children[index]
-            )}
-          </div>
-        )}
-      </List>
-    )
-  }
-
-
-  { /*Delivery types label update*/ }
   const delivery_type = [
     { value: "hand_luggage", label: "Hand Luggage" },
     { value: "baggage", label: "Baggage" },
     { value: "document", label: "Document" }
   ]
-
-  { /* Duty Free Label */ }
   const duty_free = [
     { value: 0, label: "Inactive" },
     { value: 1, label: "Active" }
   ]
-
-  { /* User Authenticated Label */ }
   const user_authenticated = [
     { value: 0, label: "Unauthenticated" },
     { value: 1, label: "Authenticated" }
   ]
-
-  { /*lets get user data*/ }
   const users = redux.dealData[id]?.user
-
-  { /*lets set form data*/ }
   const {
-    reset,
     control,
     setValue,
     setError,
@@ -119,16 +96,10 @@ const DealEditContainer = ({ redux }) => {
     handleSubmit,
     formState: { errors }
   } = useForm()
-
-  { /*lets set countries cities and airports from redux*/ }
   const countries = useSelector((state) => state.dealData.countries) //comes from FetchDealData
   const cities = useSelector((state) => state.dealData.cities) //comes from FetchDealData
   const airports = useSelector((state) => state.dealData.airports) //comes from FetchDealData
-
-  { /*lets set set the values for initial load*/ }
   useFormDefaults(setValue, watch, countries, cities, redux, id, airports)
-
-  { /*lets set set the dependent values for dropdown change*/ }
   const {
     defaultDepartureCountry,
     defaultDepartureCity,
@@ -136,8 +107,6 @@ const DealEditContainer = ({ redux }) => {
     defaultArrivalCountry,
     defaultUser
   } = useDefaultDropdownValues(countries, cities, airports, redux, id)
-
-  { /*lets set set the handlers for dropdown change*/ }
   const {
     handleDepartureCountryChange,
     handleArrivalCountryChange,
@@ -158,8 +127,6 @@ const DealEditContainer = ({ redux }) => {
     defaultArrivalCountry,
     defaultUser
   )
-
-  { /*lets call onsubmit function*/ }
   const { onSubmit, isLoading } = useFormSubmission(
     handleSubmit,
     errors,
@@ -171,8 +138,6 @@ const DealEditContainer = ({ redux }) => {
     toast,
     setError
   )
-
-  { /*lets start to the form fields*/ }
   return (
     <Fragment>
       <Card>
@@ -339,8 +304,7 @@ const DealEditContainer = ({ redux }) => {
                     defaultValue={
                       countries ? countries.find(
                         (country) => country.id ===
-                          (redux.dealData &&
-                            redux.dealData[id]?.departure_country_id)
+                          (redux.dealData[id]?.departure_country_id)
                       ) || "" : ""
                     }
                     render={({ field }) => {
@@ -396,8 +360,7 @@ const DealEditContainer = ({ redux }) => {
                     defaultValue={
                       countries ? countries.find(
                         (country) => country.id ===
-                          (redux.dealData &&
-                            redux.dealData[id]?.arrival_country_id)
+                          (redux.dealData[id]?.arrival_country_id)
                       ) || "" : ""
                     }
                     render={({ field }) => {
@@ -509,8 +472,7 @@ const DealEditContainer = ({ redux }) => {
                     defaultValue={
                       cities ? cities.find(
                         (city) => city.id ===
-                          (redux.dealData &&
-                            redux.dealData[id]?.arrival_city_id)
+                          (redux.dealData[id]?.arrival_city_id)
                       ) || "" : ""
                     }
                     render={({ field }) => {
@@ -572,8 +534,7 @@ const DealEditContainer = ({ redux }) => {
                     defaultValue={
                       airports ? airports.find(
                         (airport) => airport.id ===
-                          (redux.dealData &&
-                            redux.dealData[id]?.departure_airport_id)
+                          (redux.dealData[id]?.departure_airport_id)
                       ) || "" : ""
                     }
                     render={({ field }) => {
@@ -630,8 +591,7 @@ const DealEditContainer = ({ redux }) => {
                     defaultValue={
                       airports ? airports.find(
                         (airport) => airport.id ===
-                          (redux.dealData &&
-                            redux.dealData[id]?.arrival_airport_id)
+                          (redux.dealData[id]?.arrival_airport_id)
                       ) || "" : ""
                     }
                     render={({ field }) => {

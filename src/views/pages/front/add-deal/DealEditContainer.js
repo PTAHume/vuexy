@@ -49,44 +49,16 @@ const CustomMenuList = (props) => {
   )
 }
 
-
 const DealEditContainer = ({ redux }) => {
   //MOST important ones
   const dispatch = useDispatch() // Get the dispatch method
   const sanctum = new sanctumService()
   const { id } = useParams() //this comes from URL
-
-  const status_options = [
-    { value: "approved", label: "Approved" },
-    { value: "pending", label: "Pending" },
-    { value: "rejected", label: "Rejected" }
-  ]
-
   const [inputValue, setInputValue] = useState("")
-
-  { /*Delivery types label update*/ }
-  const delivery_type = [
-    { value: "hand_luggage", label: "Hand Luggage" },
-    { value: "baggage", label: "Baggage" },
-    { value: "document", label: "Document" }
-  ]
-
-  { /* Duty Free Label */ }
   const duty_free = [
     { value: 0, label: "Inactive" },
     { value: 1, label: "Active" }
   ]
-
-  { /* User Authenticated Label */ }
-  const user_authenticated = [
-    { value: 0, label: "Unauthenticated" },
-    { value: 1, label: "Authenticated" }
-  ]
-
-  { /*lets get user data*/ }
-  const users = redux.dealData[id]?.user
-
-  { /*lets set form data*/ }
   const {
     control,
     setValue,
@@ -95,16 +67,10 @@ const DealEditContainer = ({ redux }) => {
     handleSubmit,
     formState: { errors }
   } = useForm()
-
-  { /*lets set countries cities and airports from redux*/ }
   const countries = useSelector((state) => state.dealData.countries) //comes from FetchDealData
   const cities = useSelector((state) => state.dealData.cities) //comes from FetchDealData
   const airports = useSelector((state) => state.dealData.airports) //comes from FetchDealData
-
-  { /*lets set set the values for initial load*/ }
   useFormDefaults(setValue, watch, countries, cities, redux, id, airports)
-
-  { /*lets set set the dependent values for dropdown change*/ }
   const {
     defaultDepartureCountry,
     defaultDepartureCity,
@@ -113,13 +79,11 @@ const DealEditContainer = ({ redux }) => {
     defaultUser
   } = useDefaultDropdownValues(countries, cities, airports, redux, id)
 
-  { /*lets set set the handlers for dropdown change*/ }
   const {
     handleDepartureCountryChange,
     handleArrivalCountryChange,
     handleDepartureCityChange,
     handleArrivalCityChange,
-    handleUserChange,
     filteredDepartureCities,
     filteredArrivalCities,
     filteredDepartureAirports,

@@ -38,17 +38,17 @@ const useFormSubmission = (handleSubmit, errors, id, redux, sanctum, dispatch, f
           departure_airport_id: data.departure_airport,
           departure_city_id: data.departure_city,
           departure_country_id: data.departure_country,
-          flight_number: data.flight_number,
+          //flight_number: data.flight_number,
           price: data.price,
-          user_id: data.user_id, //
+          //user_id: data.user_id, //
           weight: data.weight,
           status: data.status.value, // Access the 'value' property
           departure_date: data.departure_date,
           arrival_date: data.arrival_date,
-          duty_free: data.duty_free.value,
-          user_authenticated: data.user_authenticated.value
+          duty_free: data.duty_free.value
+          //user_authenticated: data.user_authenticated.value
         }
-        const res = await sanctum.updateDeal(dealData, id)
+        const res = await sanctum.updateUserDealDetails(dealData, id)
 
         if (res.status === 201) {
           setIsLoading(false)

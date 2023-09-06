@@ -4,7 +4,7 @@ import { MoreVertical, Edit, FileText, Archive, Trash } from 'react-feather'
 import { updateDealStatus } from '../store/updateDealStatus'
 import { Link } from 'react-router-dom'
 import sanctumService from '../../../../../@core/auth/sanctum/sanctumService'
-
+import { toast } from 'react-toastify'
 // ** Vars
 //const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary']
 const sanctum = new sanctumService()
@@ -187,7 +187,7 @@ const getColumns = (refreshData, dispatch) => [
     cell: (row) => {
       const handleDelete = async () => {
         try {
-          await sanctum.deleteDeal(row.id)
+          await sanctum.deleteUserDeal(row.id)
           // Show a success message or update the UI to remove the deleted item
           console.log("Deal deleted successfully")
           // Refresh the data
@@ -238,7 +238,7 @@ const getData = async (page = 1, perPage = 10, search = '') => {
   try {
 
     //const response = await sanctum.getDealsData(adjustedPage, perPage, search)
-    const response = await sanctum.getUserDeals(adjustedPage, perPage, search)
+    const response = await sanctum.getUserListUserDeals(null, adjustedPage, perPage, search)
     const deals = response.data.slice(0, -1)
     const pagination = response.data[response.data.length - 1].pagination
     const total = pagination.total

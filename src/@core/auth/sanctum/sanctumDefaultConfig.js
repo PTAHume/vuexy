@@ -1,68 +1,68 @@
-// ** Auth Endpoints
 export default {
-  baseUrl: 'https://api.dealmanager.co.uk/', // or your base URL
-  loginEndpoint: "api/admin/login",
-  registerEndpoint: "sanctum/register",
-  refreshEndpoint: "api/admin/refreshtoken",
-  logoutEndpoint: "api/admin/logout",
-
-  // ** This will be prefixed in authorization header with token
-  //  e.g. Authorization: Bearer <token>
+  // #################### MISC API CALL'S #####################################
+  baseUrl: 'https://api.dealmanager.co.uk/',
   tokenType: "Bearer",
-
-  // ** Value of this property will be used as key to store JWT token in storage
   storageTokenKeyName: "accessToken",
   storageRefreshTokenKeyName: 'refreshToken',
-
-  //########################ADMIN MANAGEMENT ############################/
-
-  //when we press submit button
-  updateAdminDetail: "api/admin/updateadmindetails/",
-  deleteAdmin: "api/admin/deleteadmin/",
-  setOnlineStatusForAdmin: "api/admin/setOnlineStatusForAdmin/",
-
-  //*********************************WEBSOCKET *******************/
-  subscribeAdminLists: "api/admin/subscribe-admin-list",
-  pusherAuth: "api/admin/update-admin-details/",
-  getData: "api/admin/getdata",
-  updateAdminStatus: "api/admin/updateadminstatus/",
-  getadmindata: "api/admin/getdata/",
-  //****************DEALS */************************ */
-  subscribeDealLists: "api/admin/subscribe-deals-list",
-  deleteDeal: "api/admin/deletedeal/",
-  updateDealDetail: "api/admin/updatedealdetails/",
-  getDealsData: "api/admin/getdealdata",
-  updateDealStatus: "api/admin/updatedealstatus/",
-  getdealdata: "api/admin/getdealdata/",
-  getcountries: "api/admin/getcountries",
-  getcities: "api/admin/getcities",
-  getairports: "api/admin/getairports",
-  getAllData: "api/admin/getAllData",
-
-  //********************************USERS *******************/
-  //when we press submit button
-  updateUserDetail: "api/admin/updateuserdetails/",
-  deleteUser: "api/admin/deleteuser/",
-  //*********************************WEBSOCKET *******************/
-  subscribeUserLists: "api/admin/subscribe-user-list",
-  pusherUserAuth: "api/admin/update-user-details/",
-  getUserData: "api/admin/getuserdata/",
-  updateUserStatus: "api/admin/updateuserstatus/",
-  getAdminAllUserData: "api/admin/getuserdata",
-  //######################## FRONT end MANAGEMENT ############################/
-  frontLogin: "api/front/login",
-  frontLogout: "api/front/logout",
-  getFrontOffersData: "api/front/getfrontoffersdata",
-  getFrontSidebarData: "api/front/getFrontSidebarData",
-  getCountries: "api/front/getCountries",
-  setOnlineStatus: "api/front/setOnlineStatus/",
-  getUserDataForChat: "api/front/getUserDataForChat/",
-  getChatContacts: "api/front/getChatContacts",
-  getChat: "api/front/getChat/",
-  sendMsg: "api/front/sendMsg",
-  getMoreMsgs: "api/front/getMoreMsgs/",
-  addDealDetail: "api/front/addNewDeal",
-  subscribeChatLists: "api/front/subscribe-chat-list",
-  getUserDeals: "api/front/listuserdeals",
-  getAllUserData: "api/front/getAllData"
+  registerEndpoint: "sanctum/register",
+  refreshEndpoint: "api/refreshToken",
+  // #################### ADMINISTRATOR API CALL'S ############################
+  // ##  MISC ##
+  loginAdmin: "api/admin/loginAdmin",
+  logoutAdmin: "api/admin/logoutAdmin",
+  // ##  SETS ##
+  setAdminOnlineStatus: "api/admin/setAdminOnlineStatus",
+  // ## UPDATES ##
+  updateAdminDetails: "api/admin/updateAdminDetails",
+  updateAdminStatus: "api/admin/updateAdminStatus",
+  updateAdminDealStatus: "api/admin/updateAdminDealStatus",
+  updateAdminDealDetails: "api/admin/updateAdminDealDetails",
+  updateAdminUserStatus: "api/admin/updateAdminUserStatus",
+  updateAdminUserDetails: "api/admin/updateAdminUserDetails",
+  // ##  SUBSCRIBERS ##
+  subscribeToAdminDealsList: "api/admin/subscribeToAdminDealsList",
+  subscribeToAdminUserList: "api/admin/subscribeToAdminUserList",
+  subscribeToAdminList: "api/admin/subscribeToAdminList",
+  // ##  DELETES ##
+  deleteAdminDeal: "api/admin/deleteAdminDeal",
+  deleteAdminUser: "api/admin/deleteAdminUser",
+  deleteAdmin: "api/admin/deleteAdmin",
+  // ##  GETS ##
+  getAdminData: "api/admin/getAdminData",
+  getAdminDealData: "api/admin/getAdminDealData",
+  getAdminCountries: "api/admin/getAdminCountries",
+  getAdminCities: "api/admin/getAdminCities",
+  getAdminAirports: "api/admin/getAdminAirports",
+  getAdminAllData: "api/admin/getAdminAllData",
+  getAdminUserData: "api/admin/getAdminUserData",
+  // #################### USER API CALL'S ####################################
+  // ##  MISC ##
+  sendUserMsg: "api/front/sendUserMsg",
+  loginUser: "api/front/loginUser",
+  logoutUser: "api/front/logoutUser",
+  // ##  SETS ##
+  setUserOnlineStatus: "api/front/setUserOnlineStatus",
+  // ##  ADDS ##
+  addUserNewDeal: "api/front/addUserNewDeal",
+  // ##  DELETES ##
+  deleteUserDeal: "api/front/deleteUserDeal",
+  deleteUserAccount: "api/front/deleteUserAccount",
+  // ##  UPDATES ##
+  updateUserDealDetails: "api/front/updateUserDealDetails",
+  updateUserDealStatus: "api/front/updateUserDealStatus",
+  updateUserDetails: "api/front/updateUserDetails",
+  updateUserStatus: "api/front/updateUserStatus",
+  // ##  SUBSCRIBERS ##
+  subscribeToUserChatList: "api/front/subscribeToUserChatList",
+  // ##  GETS ##
+  getUserData: "api/front/getUserData",
+  getUserFrontOffersData: "api/front/getUserFrontOffersData",
+  getUserFrontSidebarData: "api/front/getUserFrontSidebarData",
+  getUserCountries: "api/front/getUserCountries",
+  getUserDataForChat: "api/front/getUserDataForChat",
+  getUserChatContacts: "api/front/getUserChatContacts",
+  getUserChat: "api/front/getUserChat",
+  getUserMoreMsgs: "api/front/getUserMoreMsgs",
+  getUserListUserDeals: "api/front/getUserListUserDeals",
+  getUserAllData: "api/front/getUserAllData"
 }

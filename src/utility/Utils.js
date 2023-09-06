@@ -98,17 +98,6 @@ export const getHomeRouteForLoggedInUser = (userRole) => {
   return DefaultRouteFront //default route for FrontUser
 }
 
-{
-  /*Lets add default route for FrontUser */
-}
-// export const getHomeRouteForLoggedInFrontUser = (isUserLoggedIn) => {
-//   if (isUserLoggedIn) return DefaultRouteFront; //DefaultRoute for Front user
-//   // if (userRole === "vendor") return "/access-control"; //we will add here merchant default url
-//   return "/";
-// };
-
-// ** React Select Theme Colors
-
 export const selectThemeColors = (theme) => ({
   ...theme,
   colors: {

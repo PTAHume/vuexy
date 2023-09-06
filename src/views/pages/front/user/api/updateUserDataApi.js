@@ -1,4 +1,6 @@
+import { formToJSON } from "axios"
 import sanctumService from "../../../../../@core/auth/sanctum/sanctumService"
+import { Buffer } from 'buffer'
 const sanctum = new sanctumService()
 
 export const updateUserDetails = async (data) => {
@@ -15,7 +17,7 @@ export const updateUserDetails = async (data) => {
       formData.append('image', data.image)
     }
 
-    const res = await sanctum.updateAdminUserDetails(formData)
+    const res = await sanctum.updateUserDetails(formData)
     return res
   } catch (error) {
     throw error

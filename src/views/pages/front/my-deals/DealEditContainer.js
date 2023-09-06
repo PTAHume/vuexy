@@ -156,7 +156,7 @@ const DealEditContainer = ({ redux }) => {
                   </Label>
                   <Controller
                     defaultValue={
-                      (redux.dealData && redux.dealData[id]?.price) || ""
+                      (redux?.dealData[id]?.price) || ""
                     }
                     control={control}
                     rules={{ required: "Price is required" }}
@@ -183,7 +183,7 @@ const DealEditContainer = ({ redux }) => {
                   </Label>
                   <Controller
                     defaultValue={
-                      (redux.dealData && redux.dealData[id]?.weight) || ""
+                      (redux?.dealData[id]?.weight) || ""
                     }
                     control={control}
                     rules={{

@@ -45,7 +45,7 @@ const DeleteDeal = ({ id }) => {
     if (result.value) {
       try {
         dispatch(setLoadingDeal(true))
-        await sanctum.deleteDeal(id)
+        await sanctum.deleteAdminDeal(id)
         dispatch(setLoadingDeal(false))
         MySwal.fire({
           icon: 'success',

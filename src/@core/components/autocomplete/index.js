@@ -16,7 +16,7 @@ import { useOnClickOutside } from "@hooks/useOnClickOutside"
 import "@styles/base/bootstrap-extended/_include.scss"
 import "./autocomplete.scss"
 
-const Autocomplete = forwardRef((props) => {
+const Autocomplete = forwardRef((props, ref) => {
   const { field, errorMessage } = props
   // ** Refs
   const container = useRef(null)

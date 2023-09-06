@@ -48,7 +48,7 @@ const useFormSubmission = (handleSubmit, errors, id, redux, sanctum, dispatch, f
           duty_free: data.duty_free.value,
           user_authenticated: data.user_authenticated.value
         }
-        const res = await sanctum.updateDeal(dealData, id)
+        const res = await sanctum.updateAdminDealDetails(dealData, id)
 
         if (res.status === 201) {
           setIsLoading(false)

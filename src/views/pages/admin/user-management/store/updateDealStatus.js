@@ -9,7 +9,7 @@ export const updateDealStatus = createAsyncThunk(
   async ({ dealId, status }, { dispatch }) => {
     try {
       // Update the status using sanctum.updateAdminStatus()
-      await sanctum.updateDealStatus(dealId, status)
+      await sanctum.updateAdminDealStatus(dealId, status)
 
       // Update the Redux store with the new status
       dispatch(dealSlice.actions.updateDealStatus({ dealId, status }))

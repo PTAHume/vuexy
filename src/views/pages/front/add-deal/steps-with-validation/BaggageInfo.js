@@ -101,7 +101,7 @@ const BaggageInfo = ({ stepper }) => {
         duty_free: Boolean(data.duty_free)
       }
       console.log(JSON.stringify(dealData))
-      const res = await sanctum.addDeal(dealData)
+      const res = await sanctum.addUserNewDeal(dealData)
       if (res.status === 201) {
         setIsLoading(false)
         localStorage.setItem("lastUpdated", Date.now())

@@ -60,7 +60,7 @@ const Deals = () => {
   const handleWebSocketError = (error) => {
     // Your error handling code here
     if (error.response && error.response.status === 401) {
-      sanctum.refreshToken()
+      sanctum.refreshUserToken()
     }
   }
    
