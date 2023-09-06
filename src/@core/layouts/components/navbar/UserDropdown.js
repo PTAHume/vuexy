@@ -67,7 +67,7 @@ const AdminOptions = ({ setLogout, userProfile }) => {
   </>
 }
 
-const UserOptions = ({ setLogout, userProfile }) => {
+const UserOptions = ({ setLogout, userProfile, updateStatusForUserType }) => {
   return (
     <>
       <DropdownItem
@@ -272,7 +272,7 @@ const UserDropdown = () => {
           {
             (() => {
               if (isAdminLoggedIn && isAdmin) return <AdminOptions setLogout={setLogout} userProfile={userProfile} />
-              if (isFrontUserLoggedIn) return <UserOptions setLogout={setLogout} userProfile={userProfile} />
+              if (isFrontUserLoggedIn) return <UserOptions setLogout={setLogout} userProfile={userProfile} updateStatusForUserType={updateStatusForUserType} />
               else return <GuestOptions />
             })()
           }
