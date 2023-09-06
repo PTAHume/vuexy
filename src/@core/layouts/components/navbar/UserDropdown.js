@@ -67,7 +67,7 @@ const AdminOptions = ({ setLogout, userProfile }) => {
   </>
 }
 
-const UserOptions = ({ setLogout, userProfile, updateStatusForUserType }) => {
+const UserOptions = ({ setLogout, userProfile, id, updateStatusForUserType }) => {
   return (
     <>
       <DropdownItem
@@ -104,25 +104,25 @@ const UserOptions = ({ setLogout, userProfile, updateStatusForUserType }) => {
           <DropdownMenu end>
             <DropdownItem
               style={{ width: "100%" }}
-              onClick={() => updateStatusForUserType(isAdmin ? reduxAdminUserData.id : reduxUserData.id, "online")}
+              onClick={() => updateStatusForUserType(id, "online")}
             >
               <span className="align-middle">Online</span>
             </DropdownItem>
             <DropdownItem
               style={{ width: "100%" }}
-              onClick={() => updateStatusForUserType(isAdmin ? reduxAdminUserData.id : reduxUserData.id, "offline")}
+              onClick={() => updateStatusForUserType(id, "offline")}
             >
               <span className="align-middle">Offline</span>
             </DropdownItem>
             <DropdownItem
               style={{ width: "100%" }}
-              onClick={() => updateStatusForUserType(isAdmin ? reduxAdminUserData.id : reduxUserData.id, "away")}
+              onClick={() => updateStatusForUserType(id, "away")}
             >
               <span className="align-middle">Away</span>
             </DropdownItem>
             <DropdownItem
               style={{ width: "100%" }}
-              onClick={() => updateStatusForUserType(isAdmin ? reduxAdminUserData.id : reduxUserData.id, "busy")}
+              onClick={() => updateStatusForUserType(id, "busy")}
             >
               <span className="align-middle">Busy</span>
             </DropdownItem>
@@ -272,7 +272,10 @@ const UserDropdown = () => {
           {
             (() => {
               if (isAdminLoggedIn && isAdmin) return <AdminOptions setLogout={setLogout} userProfile={userProfile} />
-              if (isFrontUserLoggedIn) return <UserOptions setLogout={setLogout} userProfile={userProfile} updateStatusForUserType={updateStatusForUserType} />
+              if (isFrontUserLoggedIn) return <UserOptions
+                setLogout={setLogout} userProfile={userProfile}
+                id={isAdmin ? reduxAdminUserData.id : reduxUserData.id}
+                updateStatusForUserType={updateStatusForUserType} />
               else return <GuestOptions />
             })()
           }
