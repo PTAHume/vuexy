@@ -53,7 +53,7 @@ export default {
   updateUserDetails: "api/front/updateUserDetails",
   updateUserStatus: "api/front/updateUserStatus",
   // ##  SUBSCRIBERS ##
-  subscribeToUserChatList: "api/front/subscribeToUserChatList",
+  subscribeToUserChatsList: "api/front/subscribeToUserChatsList",
   // ##  GETS ##
   getUserData: "api/front/getUserData",
   getUserFrontOffersData: "api/front/getUserFrontOffersData",

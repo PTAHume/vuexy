@@ -550,9 +550,9 @@ export default class sanctumService {
     )
   }
 
-  subscribeToUserChatList(socketId, channelName) {
+  subscribeToUserChatsList(socketId, channelName) {
     return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.subscribeToUserChatList}`,
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.subscribeToUserChatsList}`,
       {
         socket_id: socketId,
         channel_name: channelName

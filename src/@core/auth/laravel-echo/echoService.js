@@ -20,7 +20,7 @@ export const echoInstance = new Echo({
                 try {
                     // Remove "private-" prefix if it exists
                     const cleanedChannelName = channel.name.replace('private-', '')
-                    const method = `subscribeTo${cleanedChannelName.charAt(0).toUpperCase() + cleanedChannelName.slice(1)}List`
+                    const method = `subscribeToUser${cleanedChannelName.charAt(0).toUpperCase() + cleanedChannelName.slice(1)}List`
                    
                     const response = await sanctum[method](socketId, channel.name)
 

@@ -87,11 +87,12 @@ const ChatLog = (props) => {
 
   const handleWebSocketSuccess = (status) => {
     // Your success handling code here
-    console.log("success", status)
+    //console.log("success", status)
   }
 
   const handleWebSocketError = (error) => {
     // Your error handling code here
+    //console.log("error", error)
     if (error.response && error.response.status === 401) {
       //sanctum.refreshToken()
     }
