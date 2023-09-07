@@ -68,6 +68,7 @@ const AdminOptions = ({ setLogout, userProfile }) => {
 }
 
 const UserOptions = ({ setLogout, userProfile, id, updateStatusForUserType }) => {
+  const [showSubMenu, setShowSubMenu] = useState(false)
   return (
     <>
       <DropdownItem
@@ -91,16 +92,22 @@ const UserOptions = ({ setLogout, userProfile, id, updateStatusForUserType }) =>
         <span className="align-middle">Logout</span>
       </DropdownItem>
 
-      <UncontrolledDropdown tag="span">
+      <span className="dropdown show" onMouseEnter={() => {
+        setShowSubMenu(true)
+        }}
+        onMouseLeave={() => {
+          setShowSubMenu(false)
+        }}>
         <DropdownItem
           tag={Link}
           to="/"
+          className="foo"
           onClick={(e) => e.preventDefault()}
         >
           <User size={14} className="me-75" />
           <span className="align-middle">Status</span>
         </DropdownItem>
-        <div className="submenu-wrapper">
+        <div hidden={!showSubMenu} className="submenu-wrapper">
           <DropdownMenu end>
             <DropdownItem
               style={{ width: "100%" }}
@@ -128,7 +135,7 @@ const UserOptions = ({ setLogout, userProfile, id, updateStatusForUserType }) =>
             </DropdownItem>
           </DropdownMenu>
         </div>
-      </UncontrolledDropdown>
+      </span>
     </>
   )
 }
