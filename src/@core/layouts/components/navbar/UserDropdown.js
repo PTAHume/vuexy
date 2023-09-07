@@ -93,16 +93,12 @@ const UserOptions = ({ setLogout, userProfile, id, updateStatusForUserType }) =>
       </DropdownItem>
 
       <span className="dropdown show" onMouseEnter={() => {
-        setShowSubMenu(true)
+        setShowSubMenu(true) 
         }}
         onMouseLeave={() => {
-          setShowSubMenu(false)
+          setTimeout(() => { setShowSubMenu(false) }, 500)
         }}>
         <DropdownItem
-          tag={Link}
-          to="/"
-          className="foo"
-          onClick={(e) => e.preventDefault()}
         >
           <User size={14} className="me-75" />
           <span className="align-middle">Status</span>
