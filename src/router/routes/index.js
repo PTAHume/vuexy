@@ -23,18 +23,19 @@ import EditAdmins from './EditAdmin'
 import DealsManagement from './DealManagement'
 import EditDeals from './EditDeal'
 import EditUsers from './EditUser'
-import UserManagement from './User-management'
+import UserManagement from './user-management'
 import Offers from './Front/FrontendHome'
 import UserAuthenticationRoutes from './Front/UserAuthentication'
 import MyChats from './Front/MyChats'
 import AddDeal from './Front/AddDeal'
 import MyDeals from './Front/MyDeals'
 import EditMyDeals from './Front/EditDeal'
+import UserProfile from './Front/UserProfile'
 
 const getLayout = {
   blank: <BlankLayout />,
   vertical: <VerticalLayout />,
-  horizontal: <HorizontalLayout /> 
+  horizontal: <HorizontalLayout />
 }
 
 // ** Document title
@@ -60,7 +61,8 @@ const Routes = [
   ...MyChats,
   ...AddDeal,
   ...MyDeals,
-  ...EditMyDeals
+  ...EditMyDeals,
+  ...UserProfile
 ]
 
 const getRouteMeta = route => {
@@ -89,7 +91,7 @@ const MergeLayoutRoutes = (layout, defaultLayout) => {
 
         // ** Check for public or private route
         if (route.meta) {
-          isBlank = route.meta.layout === 'blank' 
+          isBlank = route.meta.layout === 'blank'
           RouteTag = route.meta.publicRoute ? PublicRoute : PrivateRoute
         }
         if (route.element) {
@@ -97,7 +99,7 @@ const MergeLayoutRoutes = (layout, defaultLayout) => {
             // eslint-disable-next-line multiline-ternary
             isObjEmpty(route.element.props) && isBlank === false
               ? // eslint-disable-next-line multiline-ternary
-                LayoutWrapper
+              LayoutWrapper
               : Fragment
 
           route.element = (

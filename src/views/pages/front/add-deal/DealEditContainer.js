@@ -5,7 +5,7 @@ import { Card, FormFeedback, CardHeader, CardTitle, CardBody, Button, Form, Labe
 import Select from "react-select"
 import { Fragment, useState } from "react"
 import { useDispatch, useSelector } from "react-redux" // Import useDispatch
-import sanctumService from "../../../../@core/auth/sanctum/sanctumService"
+import sanctumService from "@sanctum/sanctumService"
 import { fetchDealDataSuccess } from "./store/dealSlice"
 import { selectThemeColors } from "@utils"
 import "@styles/react/libs/spinner/spinner.scss"

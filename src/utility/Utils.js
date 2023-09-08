@@ -1,5 +1,5 @@
 import { DefaultRoute, DefaultRouteFront } from "../router/routes"
-import sanctumService from "../@core/auth/sanctum/sanctumService"
+import sanctumService from "@sanctum/sanctumService"
 //import { useSelector } from "react-redux"
 const sanctum = new sanctumService()
 // ** Checks if an object is empty (returns boolean)

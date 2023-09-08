@@ -113,7 +113,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "start": "vite",
-    "dev": "vite --port 3000 --host=127.0.0.1",
+    "dev": "vite --port 3000 --host=localhost",
     "preview": "vite preview",
     "format": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src/**/*.js src/**/*.js",

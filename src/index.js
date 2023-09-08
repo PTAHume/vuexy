@@ -21,7 +21,7 @@ import 'react-toastify/dist/ReactToastify.css'
 
 // ** i18n
 import './configs/i18n'
- 
+
 // ** Spinner (Splash Screen)
 import Spinner from './@core/components/spinner/Fallback-spinner'
 
@@ -56,18 +56,15 @@ const root = createRoot(container)
 
 root.render(
   <StrictMode>
-    
-  <BrowserRouter>
-    <Provider store={store}>
-      <Suspense fallback={<Spinner />}>
-        {/* <AbilityContext.Provider value={ability}> */}
+    <BrowserRouter>
+      <Provider store={store}>
+        <Suspense fallback={<Spinner />}>
           <ThemeContext>
             <LazyApp />
             <ToastContainer position={themeConfig.layout.toastPosition} toastClassName='react-hot-toast' />
           </ThemeContext>
-        {/* </AbilityContext.Provider> */}
-      </Suspense>
-    </Provider>
+        </Suspense>
+      </Provider>
     </BrowserRouter>
   </StrictMode>
 )

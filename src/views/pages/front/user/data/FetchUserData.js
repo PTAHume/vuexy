@@ -2,27 +2,27 @@ import { useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchuserDataSuccess, setLoading } from '../store/userSlice'
-import sanctumService from '../../../../../@core/auth/sanctum/sanctumService'
+import sanctumService from '@sanctum/sanctumService'
 import { getHomeRouteForLoggedInUser } from '@utils'
 
 const FetchUserData = ({dataVersion}) => {
   const navigate = useNavigate()
-  const { id } = useParams()
+  const  { id } = useParams()
   const dispatch = useDispatch()
   const sanctum = new sanctumService()
-  const userData = useSelector((state) => state.userData.userData[id])
-  const keycompare = useSelector((state) => state.userData.version)
+  const profile = useSelector((state) => state.userProfile.userData)
+  const keycompare = useSelector((state) => state.userProfile.version)
 
   const fetchuserData = useCallback(async () => {
-    if (userData && keycompare === dataVersion) {
-      return
+    if (profile && keycompare === dataVersion) {
+      //return
     }
     try {
       dispatch(setLoading(true))
       const response = await sanctum.getUserData(id)
-      const userData = response.data[0]
+      const profile = response.data[0]
 
-      dispatch(fetchuserDataSuccess(userData))
+      dispatch(fetchuserDataSuccess(profile))
       dispatch(setLoading(false))
     } catch (error) {
       console.log(error)

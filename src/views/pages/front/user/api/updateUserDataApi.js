@@ -1,5 +1,5 @@
 import { formToJSON } from "axios"
-import sanctumService from "../../../../../@core/auth/sanctum/sanctumService"
+import sanctumService from "@sanctum/sanctumService"
 import { Buffer } from 'buffer'
 const sanctum = new sanctumService()
 

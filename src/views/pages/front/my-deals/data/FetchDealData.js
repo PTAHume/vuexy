@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchDealDataSuccess, setLoadingDeal, setReduxCountries, setReduxCities, setReduxAirports } from '../store'
-import sanctumService from '../../../../../@core/auth/sanctum/sanctumService'
+import sanctumService from '@sanctum/sanctumService'
 import { getHomeRouteForLoggedInUser } from '@utils'
 
 const FetchDealData = ({ dataVersion }) => {

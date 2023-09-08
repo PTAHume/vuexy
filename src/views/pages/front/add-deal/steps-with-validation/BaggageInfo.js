@@ -7,7 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { selectThemeColors, getReduxUserData } from '@utils'
 import * as yup from 'yup'
 import { Label, Row, Col, Button, Form, Input, FormFeedback } from 'reactstrap'
-import sanctumService from "../../../../../@core/auth/sanctum/sanctumService"
+import sanctumService from "@sanctum/sanctumService"
 import moment from 'moment'
 import { toast } from 'react-toastify'
 import Avatar from "@components/avatar"
@@ -16,7 +16,7 @@ import {
   dealDataSucceeded
 } from "../store"
 import '@styles/react/libs/react-select/_react-select.scss'
-import './CustomSelectValidation.scss'
+import '@styles/customSelectValidation.scss'
 
 const BaggageInfo = ({ stepper }) => {
   const dispatch = useDispatch()

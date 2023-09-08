@@ -47,7 +47,7 @@ import {
   UncontrolledDropdown
 } from "reactstrap"
 
-import { useSubscribeToChannel } from '../../../../@core/auth/laravel-echo/useSubscribeToChannel'
+import { useSubscribeToChannel } from '@core/auth/laravel-echo/useSubscribeToChannel'
 
 const ChatLog = (props) => {
   // ** Props & Store

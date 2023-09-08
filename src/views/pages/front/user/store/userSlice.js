@@ -1,51 +1,51 @@
 // userSlice.js
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit'
 
-const initialUserData = { userData: {} };
+const initialUserData = { profile: {} }
 
-export const userSlice = createSlice({
-  name: 'user',
+export const userProfileSlice = createSlice({
+  name: 'userProfile',
   initialState: {
-    userData: initialUserData,
+    profile: initialUserData,
     version: 0,
-    loading: false,
+    loading: false
   },
 
   reducers: {
     updateUserStatus: (state, action) => {
-      const { userId, status } = action.payload;
-      if (state.userData[userId]) {
-        state.userData[userId].status = status;
+      const { userId, status } = action.payload
+      if (state.profile[userId]) {
+        state.profile[userId].status = status
       }
     },
 
     setLoading: (state, action) => {
-      state.loading = action.payload;
+      state.loading = action.payload
     },
 
     fetchuserDataStart: (state) => {
-      state.loading = true;
+      state.loading = true
     },
 
     fetchuserDataSuccess: (state, action) => {
-      const userData = Array.isArray(action.payload) ? action.payload[0] : action.payload;
-      const { id } = userData;
-      state.userData[id] = userData;
-      state.version += 1;
-      state.loading = false;
+      const profile = Array.isArray(action.payload) ? action.payload[0] : action.payload
+      //const { id } = userData
+      state.profile = profile
+      state.version += 1
+      state.loading = false
     },
     setDataVersion: (state, action) => {
-      state.dataVersion = action.payload;
-    },
-  },
-});
+      state.dataVersion = action.payload
+    }
+  }
+})
 
 export const {
   updateUserStatus,
   setLoading,
   setDataVersion,
   fetchuserDataStart,
-  fetchuserDataSuccess,
-} = userSlice.actions;
+  fetchuserDataSuccess
+} = userProfileSlice.actions
 
-export default userSlice.reducer;
+export default userProfileSlice.reducer

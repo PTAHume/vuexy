@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import sanctumService from '../../../../../@core/auth/sanctum/sanctumService'
+import sanctumService from '@sanctum/sanctumService'
 import {editDealsSlice} from '.'
 
 

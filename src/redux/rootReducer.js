@@ -5,6 +5,7 @@ import { authSlice } from "./authentication"
 import { adminSlice } from "../views/pages/admin/admin-management/store/adminSlice"
 import { dealSlice } from "../views/pages/admin/deals-management/store/dealSlice"
 import { userSlice } from "../views/pages/admin/user-management/store/userSlice"
+import { userProfileSlice } from "../views/pages/front/user/store/userSlice"
 import { dealsSlice } from "@src/views/pages/front/add-deal/store"
 import { editDealsSlice } from "@src/views/pages/front/my-deals/store"
 import { offersSlice } from '@src/views/pages/front/offers/store'
@@ -20,6 +21,7 @@ const rootReducer = {
   adminData: adminSlice.reducer,
   dealData: dealSlice.reducer,
   userData: userSlice.reducer,
+  userProfile: userProfileSlice.reducer,
   useDealData: dealsSlice.reducer,
   useEditDealData: editDealsSlice.reducer,
   ecommerce: offersSlice.reducer, //

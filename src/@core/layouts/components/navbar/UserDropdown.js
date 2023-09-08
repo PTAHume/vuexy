@@ -33,7 +33,8 @@ import {
 import sanctumService from "../../../../@core/auth/sanctum/sanctumService"
 import defaultAvatar from "@src/assets/images/avatars/no-image.png"
 
-const AdminOptions = ({ setLogout, userProfile }) => {
+const AdminOptions = ({ setLogout, id }) => {
+  const navigate = useNavigate()
   return <>
     <DropdownItem tag={Link} to="/admin">
       <Settings size={14} className="me-75" />
@@ -44,9 +45,9 @@ const AdminOptions = ({ setLogout, userProfile }) => {
       <span className="align-middle">Home</span>
     </DropdownItem>
     <DropdownItem
-      tag={Link}
-      to="/"
-      onClick={() => userProfile()}
+      tag="a"
+      onClick={() => navigate(`/admin/admin-management/admins/${id}/edit`)
+      }
     >
       <User size={14} className="me-75" />
       <span className="align-middle">Profile</span>
@@ -67,14 +68,14 @@ const AdminOptions = ({ setLogout, userProfile }) => {
   </>
 }
 
-const UserOptions = ({ setLogout, userProfile, id, updateStatusForUserType }) => {
+const UserOptions = ({ setLogout, id, updateStatusForUserType }) => {
   const [showSubMenu, setShowSubMenu] = useState(false)
+  const navigate = useNavigate()
   return (
     <>
       <DropdownItem
-        tag={Link}
-        to="/"
-        onClick={() => userProfile()}
+        tag="a"
+        onClick={() => navigate(`/user/${id}`)}
       >
         <User size={14} className="me-75" />
         <span className="align-middle">Profile</span>
@@ -87,14 +88,15 @@ const UserOptions = ({ setLogout, userProfile, id, updateStatusForUserType }) =>
         <Mail size={14} className="me-75" />
         <span className="align-middle">Inbox</span>
       </DropdownItem>
-      <DropdownItem tag={Link} onClick={() => setLogout(true)}>
+      <DropdownItem tag={Link}
+        to="#" onClick={() => setLogout(true)}>
         <Power size={14} className="me-75" />
         <span className="align-middle">Logout</span>
       </DropdownItem>
 
       <span className="dropdown show" onMouseEnter={() => {
-        setShowSubMenu(true) 
-        }}
+        setShowSubMenu(true)
+      }}
         onMouseLeave={() => {
           setTimeout(() => { setShowSubMenu(false) }, 500)
         }}>
@@ -164,9 +166,6 @@ const UserDropdown = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const sanctum = new sanctumService()
-  const userProfile = () => {
-    Router.navigate('/')
-  }
   const Avatars = () => {
     if (isAdminLoggedIn && reduxAdminUserData?.image) {
       if (`${baseURL}/${reduxAdminUserData.image}`) {
@@ -274,9 +273,9 @@ const UserDropdown = () => {
         <DropdownMenu end>
           {
             (() => {
-              if (isAdminLoggedIn && isAdmin) return <AdminOptions setLogout={setLogout} userProfile={userProfile} />
+              if (isAdminLoggedIn && isAdmin) return <AdminOptions id={reduxAdminUserData.id} setLogout={setLogout} />
               if (isFrontUserLoggedIn) return <UserOptions
-                setLogout={setLogout} userProfile={userProfile}
+                setLogout={setLogout}
                 id={isAdmin ? reduxAdminUserData.id : reduxUserData.id}
                 updateStatusForUserType={updateStatusForUserType} />
               else return <GuestOptions />

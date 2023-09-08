@@ -82,7 +82,7 @@ export const appChatSlice = createSlice({
     },
     setEnableSendMessage: (state, action) => {
       state.enableSendMessage = JSON.parse(action.payload)
-      window.localStorage.setItem("EnableSendMessage", JSON.stringify(action.payload))
+      window.localStorage.setItem("EnableSendMessage", JSON.stringify(action?.payload ?? []))
     },
     updateMessageId: (state, action) => {
       const { oldId, newId, NewTime } = action.payload

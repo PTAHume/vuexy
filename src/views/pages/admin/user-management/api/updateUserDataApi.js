@@ -1,4 +1,4 @@
-import sanctumService from "../../../../../@core/auth/sanctum/sanctumService"
+import sanctumService from "@sanctum/sanctumService"
 const sanctum = new sanctumService()
 
 export const updateUserDetails = async (data) => {

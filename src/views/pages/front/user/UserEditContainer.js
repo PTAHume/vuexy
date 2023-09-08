@@ -18,12 +18,15 @@ import {
 import Select from "react-select"
 import { useState, useEffect, Fragment } from "react"
 import { useDispatch } from "react-redux" // Import useDispatch
-import sanctumService from "../../../../@core/auth/sanctum/sanctumService"
+import sanctumService from "@sanctum/sanctumService"
 import { fetchuserDataSuccess } from "./store/userSlice"
 import { selectThemeColors } from "@utils"
-import "@styles/react/libs/spinner/spinner.scss"
 import { updateUserDetails } from "./api/updateUserDataApi"
 import DeleteAccount from "./DeleteAccount"
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import "@styles/react/libs/spinner/spinner.scss"
+import '@styles/customSelectValidation.scss'
 
 const UserEditContainer = ({ redux }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -31,15 +34,12 @@ const UserEditContainer = ({ redux }) => {
     { value: 1, label: "Active" },
     { value: 0, label: "Inactive" }
   ]
-  //image things
   const [avatar, setAvatar] = useState("")
   const [selectedFile, setSelectedFile] = useState(null)
   const [previewUrl, setPreviewUrl] = useState("")
-
   const dispatch = useDispatch() // Get the dispatch method
   const sanctum = new sanctumService()
   const { id } = useParams() //this comes from URL
-
   const onChange = (e) => {
     const files = e.target.files
     if (files.length > 0) {
@@ -55,125 +55,76 @@ const UserEditContainer = ({ redux }) => {
     }
   }
 
-  const {
-    reset,
-    control,
-    setError,
-    handleSubmit,
-    formState: { errors }
-  } = useForm()
-
   const handleImgReset = () => {
     setAvatar("")
   }
 
   useEffect(() => {
-    const imageUrl = previewUrl || (redux.userData[id]?.image ? `${sanctum.baseurl()}${redux.userData[id]?.image}` : defaultImage)
+    const imageUrl = previewUrl || (redux.profile?.image ? `${sanctum.baseurl()}${redux.profile?.image}` : defaultImage)
     setAvatar(imageUrl)
-  }, [redux.userData[id]?.image, previewUrl])
+  }, [redux.profile?.image, previewUrl])
+
+
+  const SignupSchema = yup.object().shape({
+    name: yup.string().required('Name is required'),
+    email: yup.string().required('Valid email required'),
+    password: yup.string().required('Password required'),
+    mobile: yup.string().required('mobile required'),
+    status: yup.object().transform((value, originalValue) => {
+      return originalValue ?? value
+    }).typeError("Status is required")
+  })
+
+  const { reset, control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(SignupSchema)
+  })
 
   const onSubmit = async (data) => {
-    //  console.log(data.status.value)
     setIsLoading(true)
-    const allFieldsFilled = Object.values(data).every(
-      (field) => (typeof field === "object" && field !== null) || field.length > 0
-    )
-
-    if (allFieldsFilled) {
-      if (
-        Object.values(data).every(
-          (field) => (typeof field === "object" && field !== null) || field.length > 0
-        ) &&
-        (!errors || Object.keys(errors).length === 0)
-      ) {
-        // const [avatar, setAvatar] = useState(data.image ? data.image : '')
-
-        try {
-          const userData = {
-            id,
-            email: data.email,
-            password: data.password,
-            name: data.name,
-            mobile: data.mobile,
-            status: parseInt(data.status.value, 10)
-          }
-
-          if (selectedFile) {
-            userData.image = selectedFile
-          } else if (redux.userData[id]?.image) {
-            userData.image = redux.userData[id]?.image
-          } else {
-            userData.image = ""
-          }
-          const res = await updateUserDetails(userData)
-
-          if (res.status === 201) {
-            setIsLoading(false)
-            localStorage.setItem("lastUpdated", Date.now())
-
-            dispatch(fetchuserDataSuccess(res.data))
-
-            toast(
-              <div className="d-flex">
-                <div className="me-1">
-                  <Avatar
-                    size="sm"
-                    color="success"
-                    icon={<Check size={12} />}
-                  />
-                </div>
-                <div className="d-flex flex-column">
-                  <h6>Form Submitted!</h6>
-                  <div></div>
-                  <span>You have successfully updated the User details!</span>
-                </div>
-              </div>
-            )
-          }
-        } catch (error) {
-          setIsLoading(false)
-          if (error.response && error.response.status === 422) {
-            const errors = error.response.data.errors
-            if (errors.email) {
-              setError("email", {
-                type: "manual",
-                message: errors.email ? errors.email : "Incorrect  email"
-              })
-            } else if (errors.password) {
-              setError("password", {
-                type: "manual",
-                message: errors.password ? errors.password : "Incorrect  password"
-              })
-            } else if (errors.name) {
-              setError("name", {
-                type: "manual",
-                message: errors.name ? errors.name : "Incorrect  name"
-              })
-            } else if (errors.mobile) {
-              setError("mobile", {
-                type: "manual",
-                message: errors.mobile ? errors.mobile : "Incorrect  mobile"
-              })
-            } else if (errors.status) {
-              setError("status", {
-                type: "manual",
-                message: errors.status ? errors.status : "Incorrect  status"
-              })
-            }
-          } else {
-            console.error("Unexpected error:", error)
-          }
-        }
+    try {
+      const userProfile = {
+        id,
+        email: data.email,
+        password: data.password,
+        name: data.name,
+        mobile: data.mobile,
+        status: parseInt(data.status?.value, 10)
       }
-    } else {
-      for (const key in data) {
-        if (!data[key] || data[key].length === 0) {
-          setError(key, {
-            type: "manual",
-            message: `The ${key} field is required.`
-          })
-        }
+      if (selectedFile) {
+        userProfile.image = selectedFile
+      } else if (redux.profile?.image) {
+        userProfile.image = redux.profile?.image
+      } else {
+        userProfile.image = ""
       }
+      const res = await updateUserDetails(userProfile)
+
+      if (res.status === 201) {
+        setIsLoading(false)
+        localStorage.setItem("lastUpdated", Date.now())
+
+        dispatch(fetchuserDataSuccess(res.data))
+
+        toast(
+          <div className="d-flex">
+            <div className="me-1">
+              <Avatar
+                size="sm"
+                color="success"
+                icon={<Check size={12} />}
+              />
+            </div>
+            <div className="d-flex flex-column">
+              <h6>Form Submitted!</h6>
+              <div></div>
+              <span>You have successfully updated the User details!</span>
+            </div>
+          </div>
+        )
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
       setIsLoading(false)
     }
   }
@@ -240,7 +191,7 @@ const UserEditContainer = ({ redux }) => {
                 Name
               </Label>
               <Controller
-                defaultValue={redux.userData[id]?.name || ""}
+                defaultValue={redux.profile?.name || ""}
                 control={control}
                 rules={{
                   required: "Name is required"
@@ -264,7 +215,7 @@ const UserEditContainer = ({ redux }) => {
                 Mobile Phone
               </Label>
               <Controller
-                defaultValue={redux.userData[id]?.mobile || ""}
+                defaultValue={redux.profile?.mobile || ""}
                 control={control}
                 rules={{
                   required: "Mobile is required"
@@ -291,7 +242,7 @@ const UserEditContainer = ({ redux }) => {
               <Controller
                 name="email"
                 id="emailAsync"
-                defaultValue={redux.userData[id]?.email || ""}
+                defaultValue={redux.profile?.email || ""}
                 control={control}
                 rules={{ required: "Email is required" }}
                 render={({ field }) => (
@@ -312,7 +263,7 @@ const UserEditContainer = ({ redux }) => {
                 Password
               </Label>
               <Controller
-                defaultValue={redux.userData[id]?.password || ""}
+                defaultValue={redux.profile?.password || ""}
                 control={control}
                 rules={{ required: "Password is required" }}
                 id="passwordAsync"
@@ -336,25 +287,28 @@ const UserEditContainer = ({ redux }) => {
                 Status
               </Label>
               <Controller
-                id="react-select"
-                control={control}
                 name="status"
+                id="statusAsync"
+                control={control}
                 defaultValue={options.find(
                   (option) => option.value ===
-                    (redux.userData && parseInt(redux.userData[id]?.status, 10))
-                )} z
-                render={({ field }) => (
-                  <Select
-                    options={options}
-                    classNamePrefix="select"
-                    theme={selectThemeColors}
-                    {...field}
-                  />
+                    (redux.profile && parseInt(redux.profile?.status, 10))
                 )}
+                render={({ field }) => {
+                  return (
+                    <Select
+                      options={options}
+                      classNamePrefix="select"
+                      className={errors.status && true ? 'isInvalid' : 'none'}
+                      theme={selectThemeColors}
+                      {...field}
+                      value={field.value}
+                    />
+                  )
+                }}
+                autocomplete="off" // Add this lin
               />
-              {errors.status && (
-                <FormFeedback>{errors.status.message}</FormFeedback>
-              )}
+              {errors.status && <FormFeedback style={{ display: 'flex' }}>{errors.status.message}</FormFeedback>}
             </div>
 
             <div className="d-flex">

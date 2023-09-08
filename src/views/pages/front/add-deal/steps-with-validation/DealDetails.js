@@ -15,7 +15,7 @@ import Flatpickr from "react-flatpickr"
 import confirmDatePlugin from 'flatpickr/dist/plugins/confirmDate/confirmDate'
 import "flatpickr/dist/themes/dark.css"
 import "@styles/react/libs/flatpickr/flatpickr.scss"
-import './CustomSelectValidation.scss'
+import '@styles/customSelectValidation.scss'
 import {
   setDepartureDate,
   setArrivalDate,

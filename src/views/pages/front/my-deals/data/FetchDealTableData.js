@@ -3,7 +3,7 @@ import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input
 import { MoreVertical, Edit, FileText, Archive, Trash } from 'react-feather'
 import { updateDealStatus } from '../store/updateDealStatus'
 import { Link } from 'react-router-dom'
-import sanctumService from '../../../../../@core/auth/sanctum/sanctumService'
+import sanctumService from '@sanctum/sanctumService'
 import { toast } from 'react-toastify'
 // ** Vars
 //const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary']

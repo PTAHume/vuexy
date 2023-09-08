@@ -18,7 +18,7 @@ import {
 import Select from "react-select"
 import { useState, useEffect, Fragment } from "react"
 import { useDispatch } from "react-redux" // Import useDispatch
-import sanctumService from "../../../../@core/auth/sanctum/sanctumService"
+import sanctumService from "@sanctum/sanctumService"
 import { fetchuserDataSuccess } from "./store/userSlice"
 import { selectThemeColors } from "@utils"
 import "@styles/react/libs/spinner/spinner.scss"
@@ -73,7 +73,8 @@ const UserEditContainer = ({ redux }) => {
   }, [redux.userData[id]?.image, previewUrl])
 
   const onSubmit = async (data) => {
-    //  console.log(data.status.value)
+    debugger
+    console.log(data.status.value)
     setIsLoading(true)
     const allFieldsFilled = Object.values(data).every(
       (field) => (typeof field === "object" && field !== null) || field.length > 0

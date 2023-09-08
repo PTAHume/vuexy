@@ -7,15 +7,17 @@ import { Card, FormFeedback, CardHeader, CardTitle, CardBody, Button, Form, Labe
 import Select from 'react-select'
 import { useState, useEffect, Fragment } from 'react'
 import { useDispatch } from 'react-redux' // Import useDispatch
-import sanctumService from '../../../../@core/auth/sanctum/sanctumService'
+import sanctumService from '@sanctum/sanctumService'
 import { fetchAdminDataSuccess } from './store/adminSlice'
 import { selectThemeColors } from '@utils'
-import "@styles/react/libs/spinner/spinner.scss"
 import { updateAdminDetails } from './api/updateAdminDataApi'
 import DeleteAccount from './DeleteAccount'
 import { toast } from 'react-toastify'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import "@styles/react/libs/spinner/spinner.scss"
+import '@styles/customSelectValidation.scss'
 
-//TODO : we need to make sure that updated REDUX IS LOADING AFTER NAVAIGATING!!!!!!!!!!!!!!!!!!!!!!!!!
 const AdminEditContainer = ({ redux }) => {
   const [isLoading, setIsLoading] = useState(false)
   const options = [
@@ -26,18 +28,9 @@ const AdminEditContainer = ({ redux }) => {
   const [avatar, setAvatar] = useState('')
   const [selectedFile, setSelectedFile] = useState(null)
   const [previewUrl, setPreviewUrl] = useState('')
-
   const dispatch = useDispatch() // Get the dispatch method
   const sanctum = new sanctumService()
   const { id } = useParams() //this comes from URL
-  const {
-    reset,
-    control,
-    setError,
-    handleSubmit,
-    formState: { errors }
-  } = useForm()
-
   const onChange = (e) => {
     const files = e.target.files
     if (files.length > 0) {
@@ -52,122 +45,78 @@ const AdminEditContainer = ({ redux }) => {
       setPreviewUrl('')
     }
   }
+  const SignupSchema = yup.object().shape({
+    name: yup.string().required('Name required'),
+    email: yup.string().required('Valid email required'),
+    password: yup.string().required('Password required'),
+    mobile: yup.string().required('Mobile required'),
+    type: yup.string().required('Admin type required'),
+    status: yup.object().transform((value, originalValue) => {
+      return originalValue ?? value
+    }).typeError("Status is required")
+  })
 
+  const { reset, control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(SignupSchema)
+  })
 
   const handleImgReset = () => {
     setAvatar('')
   }
 
-
   useEffect(() => {
-    const imageUrl = previewUrl ? previewUrl : redux.adminData[id]?.image ? `${sanctum.baseurl()}${redux.adminData[id]?.image}` : defaultImage
+    const imageUrl = previewUrl || (redux.adminData[id]?.image ? `${sanctum.baseurl()}${redux.adminData[id]?.image}` : defaultImage)
     setAvatar(imageUrl)
   }, [redux.adminData[id]?.image, previewUrl])
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     setIsLoading(true)
-    const allFieldsFilled = Object.values(data).every(
-      (field) => (typeof field === "object" && field !== null) || field.length > 0)
 
-    if (allFieldsFilled) {
-      if (Object.values(data).every(field => (typeof field === "object" && field !== null) || field.length > 0) &&
-        (!errors || Object.keys(errors).length === 0)) {
+    try {
+      const adminData = {
+        id,
+        email: data.email,
+        password: data.password,
+        type: data.type,
+        name: data.name,
+        mobile: data.mobile,
+        status: parseInt(data.status.value, 10)
+      }
 
-        try {
-          const adminData = {
-            id,
-            email: data.email,
-            password: data.password,
-            type: data.type,
-            name: data.name,
-            mobile: data.mobile,
-            status: parseInt(data.status.value, 10)
-          }
+      if (selectedFile) {
+        adminData.image = selectedFile
+      } else if (redux.adminData[id]?.image) {
+        adminData.image = redux.adminData[id]?.image
+      } else {
+        adminData.image = ''
+      }
+      const res = await updateAdminDetails(adminData)
 
-          if (selectedFile) {
-            adminData.image = selectedFile
-          } else if (redux.adminData[id]?.image) {
-            adminData.image = redux.adminData[id]?.image
-          } else {
-            adminData.image = ''
-          }
-          const res = await updateAdminDetails(adminData)
-
-          if (res.status === 201) {
-            setIsLoading(false)
-            localStorage.setItem('lastUpdated', Date.now())
-            dispatch(fetchAdminDataSuccess(res.data))
-            toast(
-              <div className='d-flex'>
-                <div className='me-1'>
-                  <Avatar size='sm' color='success' icon={<Check size={12} />} />
-                </div>
-                <div className='d-flex flex-column'>
-                  <h6>Form Submitted!</h6>
-                  <div>
-                  </div>
-                  <span>You have successfully updated the Admin details!</span>
-                </div>
+      if (res.status === 201) {
+        setIsLoading(false)
+        localStorage.setItem('lastUpdated', Date.now())
+        dispatch(fetchAdminDataSuccess(res.data))
+        toast(
+          <div className='d-flex'>
+            <div className='me-1'>
+              <Avatar size='sm' color='success' icon={<Check size={12} />} />
+            </div>
+            <div className='d-flex flex-column'>
+              <h6>Form Submitted!</h6>
+              <div>
               </div>
-            )
-          }
-        } catch (error) {
-          setIsLoading(false)
-          if (error.response && error.response.status === 422) {
-            const errors = error.response.data.errors
-            if (errors.email) {
-              setError("email", {
-                type: "manual",
-                message: errors.email ? errors.email : "Incorrect correct email"
-              })
-            } else if (errors.password) {
-              setError("password", {
-                type: "manual",
-                message: errors.password ? errors.password : "Incorrect correct password"
-              })
-            } else if (errors.name) {
-              setError("name", {
-                type: "manual",
-                message: errors.name ? errors.name : "Incorrect correct name"
-              })
-            } else if (errors.type) {
-              setError("type", {
-                type: "manual",
-                message: errors.type ? errors.type : "Incorrect correct type"
-              })
-            } else if (errors.mobile) {
-              setError("mobile", {
-                type: "manual",
-                message: errors.mobile ? errors.mobile : "Incorrect correct mobile"
-              })
-            } else if (errors.status) {
-              setError("status", {
-                type: "manual",
-                message: errors.status ? errors.status : "Incorrect correct status"
-              })
-            } else if (errors.image) {
-              setError("image", {
-                type: "manual",
-                message: errors.image ? errors.image : "Incorrect image"
-              })
-            }
-          } else {
-            console.error("Unexpected error:", error)
-          }
-        }
+              <span>You have successfully updated the Admin details!</span>
+            </div>
+          </div>
+        )
       }
-    } else {
-      for (const key in data) {
-        if (!data[key] || data[key].length === 0) {
-          setError(key, {
-            type: "manual",
-            message: `The ${key} field is required.`
-          })
-        }
-      }
+    } catch (error) {
+      console.error(error)
+    } finally {
       setIsLoading(false)
     }
   }
+
   const handleReset = () => {
     reset({
       email: '',
@@ -289,28 +238,33 @@ const AdminEditContainer = ({ redux }) => {
               {errors.type && <FormFeedback>{errors.type.message}</FormFeedback>}
             </div>
 
-            <div className='mb-1'>
-              <Label className='form-label' for='statusAsync'>
+            <div className="mb-1">
+              <Label className="form-label" for="statusAsync">
                 Status
               </Label>
               <Controller
-                id='react-select'
+                name="status"
+                id="statusAsync"
                 control={control}
-                name='status'
                 defaultValue={options.find(
                   (option) => option.value ===
                     (redux.adminData && parseInt(redux.adminData[id]?.status, 10))
                 )}
-                render={({ field }) => (
-                  <Select
-                    options={options}
-                    classNamePrefix='select'
-                    theme={selectThemeColors}
-                    {...field}
-                  />
-                )}
+                render={({ field }) => {
+                  return (
+                    <Select
+                      options={options}
+                      classNamePrefix="select"
+                      className={errors.status && true ? 'isInvalid' : 'none'}
+                      theme={selectThemeColors}
+                      {...field}
+                      value={field.value}
+                    />
+                  )
+                }}
+                autocomplete="off" // Add this lin
               />
-              {errors.status && <FormFeedback>{errors.status.message}</FormFeedback>}
+              {errors.status && <FormFeedback style={{ display: 'flex' }}>{errors.status.message}</FormFeedback>}
             </div>
 
 

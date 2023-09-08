@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchuserDataSuccess, setLoading } from '../store/userSlice'
-import sanctumService from '../../../../../@core/auth/sanctum/sanctumService'
+import sanctumService from '@sanctum/sanctumService'
 import { getHomeRouteForLoggedInUser } from '@utils'
 
 const FetchUserData = ({dataVersion}) => {

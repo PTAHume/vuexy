@@ -4,7 +4,7 @@ import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input
 import { MoreVertical, Edit, FileText, Archive, Trash } from 'react-feather'
 import { updateUserStatus } from '../store/updateUserStatus'
 import { Link } from 'react-router-dom'
-import sanctumService from '../../../../../@core/auth/sanctum/sanctumService'
+import sanctumService from '@sanctum/sanctumService'
 
 // ** Vars
 const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary']

@@ -49,7 +49,7 @@ export default () => {
         { find: '@configs', replacement: path.resolve(__dirname, 'src/configs') },
 
         { find: '@styles', replacement: path.resolve(__dirname, 'src/@core/scss') },
-
+        { find: '@core', replacement: path.resolve(__dirname, 'src/@core') },
         { find: '@utils', replacement: path.resolve(__dirname, 'src/utility/Utils') },
         { find: '@hooks', replacement: path.resolve(__dirname, 'src/utility/hooks') },
         { find: '@assets', replacement: path.resolve(__dirname, 'src/@core/assets') },

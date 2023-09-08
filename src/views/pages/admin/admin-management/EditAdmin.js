@@ -8,7 +8,7 @@ const EditAdmin = () => {
   const admin = useSelector((state) => state.adminData);
 
   //loading while fetching a data
-  const loading = admin.loading;
+  const loading = admin.loading
 
   return (
     <div>
