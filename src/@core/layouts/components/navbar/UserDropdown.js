@@ -218,14 +218,14 @@ const UserDropdown = () => {
           setIsLoading(false)
           navigate(getHomeRouteForLoggedInUser("admin"))
           sanctum.logoutAdmin()
-          toast.success("Logged out successfully! 2")
+          toast.success("Logged out successfully!")
         } else {
           // Call user logout API here
           dispatch(handleFrontLogout())
           setIsLoading(false)
           navigate(getHomeRouteForLoggedInUser(""))
           sanctum.logoutUser()
-          toast.success("Logged out successfully! 2")
+          toast.success("Logged out successfully!")
         }
       } catch (error) {
         console.log(error)
