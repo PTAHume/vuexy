@@ -5,7 +5,7 @@ export default {
   storageTokenKeyName: "accessToken",
   storageRefreshTokenKeyName: 'refreshToken',
   registerEndpoint: "sanctum/register",
-  refreshEndpoint: "api/refreshToken",
+  refreshToken: "api/refreshToken",
   // #################### ADMINISTRATOR API CALL'S ############################
   // ##  MISC ##
   loginAdmin: "api/admin/loginAdmin",

@@ -134,7 +134,7 @@ export default class sanctumService {
 
   refreshToken() {
     return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.refreshEndpoint}`,
+      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.refreshToken}`,
       {
         refreshToken: this.getRefreshToken()
       }
@@ -230,20 +230,23 @@ export default class sanctumService {
   }
 
   logoutAdmin() {
-    const refreshToken = this.getRefreshToken()
-    const accessToken = this.getToken()
+    try {
+      const refreshToken = this.getRefreshToken()
+      const accessToken = this.getToken()
 
-    // If refresh token is not present, remove the local storage items and resolve the promise with an error
-    if (!refreshToken && !accessToken) {
-      localStorage.removeItem("userData")
-      localStorage.removeItem(this.sanctumConfig.storageTokenKeyName)
-      localStorage.removeItem(this.sanctumConfig.storageRefreshTokenKeyName)
-      throw new Error("Refresh token not found.")
+      // If refresh token is not present, remove the local storage items and resolve the promise with an error
+      if (!refreshToken && !accessToken) {
+        localStorage.removeItem("userData")
+        localStorage.removeItem(this.sanctumConfig.storageTokenKeyName)
+        localStorage.removeItem(this.sanctumConfig.storageRefreshTokenKeyName)
+        console.error("Refresh token not found.")
+      }
+      return axios.post(
+        `${this.sanctumConfig.baseUrl}${this.sanctumConfig.logoutAdmin}`
+      )
+    } catch (error) {
+      console.error(error)
     }
-
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.logoutAdmin}`
-    )
   }
 
   loginAdmin(...args) {
@@ -519,21 +522,27 @@ export default class sanctumService {
     return response
   }
 
-  async logoutUser() {
-    const refreshToken = this.getRefreshToken()
-    const accessToken = this.getToken()
+  logoutUser() {
+    try {
+      const refreshToken = this.getRefreshToken()
+      const accessToken = this.getToken()
 
-    // If refresh token is not present, remove the local storage items and resolve the promise with an error
-    if (!refreshToken && !accessToken) {
-      localStorage.removeItem("frontUserData")
-      localStorage.removeItem(this.sanctumConfig.storageTokenKeyName)
-      localStorage.removeItem(this.sanctumConfig.storageRefreshTokenKeyName)
-      throw new Error("Refresh token not found.")
+      // If refresh token is not present, remove the local storage items and resolve the promise with an error
+      if (!refreshToken && !accessToken) {
+        localStorage.removeItem("frontUserData")
+        localStorage.removeItem(this.sanctumConfig.storageTokenKeyName)
+        localStorage.removeItem(this.sanctumConfig.storageRefreshTokenKeyName)
+        return Promise.resolve({
+          data: { code: "no_refresh_token", message: "Refresh token not found." }
+        })
+      }
+
+     return axios.post(
+        `${this.sanctumConfig.baseUrl}${this.sanctumConfig.logoutUser}`
+      )
+    } catch (error) {
+      console.log(error)
     }
-
-    return axios.post(
-      `${this.sanctumConfig.baseUrl}${this.sanctumConfig.logoutUser}`
-    )
   }
 
   addUserNewDeal(data) {

@@ -168,11 +168,9 @@ const UserDropdown = () => {
   const sanctum = new sanctumService()
   const Avatars = () => {
     if (isAdminLoggedIn && reduxAdminUserData?.image) {
-      if (`${baseURL}/${reduxAdminUserData.image}`) {
-        return reduxUserData?.image
-      } else {
-        return `${baseURL}/${reduxUserData.image}`
-      }
+      return `${baseURL}/${reduxAdminUserData.image}`
+    } else if (reduxUserData?.image) {
+      return `${baseURL}/${reduxUserData.image}`
     } else {
       return defaultAvatar
     }
@@ -216,33 +214,25 @@ const UserDropdown = () => {
       setIsLoading(true)
       try {
         if (isAdminLoggedIn) {
-          // Call admin logout API here
-          sanctum.logoutAdmin().then((res) => {
-            if (res.data.code === 200) {
-              dispatch(handleLogout())
-              navigate(getHomeRouteForLoggedInUser("admin"))
-              setIsLoading(false)
-              toast.success("Logged out successfully!")
-            }
-          })
+          dispatch(handleLogout())
+          setIsLoading(false)
+          navigate(getHomeRouteForLoggedInUser("admin"))
+          sanctum.logoutAdmin()
+          toast.success("Logged out successfully! 2")
         } else {
           // Call user logout API here
-          sanctum.logoutUser().then((res) => {
-            if (res.data.code === 200) {
-              dispatch(handleFrontLogout())
-              navigate(getHomeRouteForLoggedInUser(""))
-              setIsLoading(false)
-              toast.success("Logged out successfully!")
-            }
-          })
+          dispatch(handleFrontLogout())
+          setIsLoading(false)
+          navigate(getHomeRouteForLoggedInUser(""))
+          sanctum.logoutUser()
+          toast.success("Logged out successfully! 2")
         }
       } catch (error) {
-        toast.error(error?.message || error)
         console.log(error)
-        navigate(getHomeRouteForLoggedInUser(""))
       }
     }
   }, [logout])
+
   return (
     <>
       {isLoading && <PageSpinner />}
