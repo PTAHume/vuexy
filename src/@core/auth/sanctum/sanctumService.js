@@ -231,19 +231,11 @@ export default class sanctumService {
 
   logoutAdmin() {
     try {
-      const refreshToken = this.getRefreshToken()
-      const accessToken = this.getToken()
-
-      // If refresh token is not present, remove the local storage items and resolve the promise with an error
-      if (!refreshToken && !accessToken) {
-        localStorage.removeItem("userData")
-        localStorage.removeItem(this.sanctumConfig.storageTokenKeyName)
-        localStorage.removeItem(this.sanctumConfig.storageRefreshTokenKeyName)
-        console.error("Refresh token not found.")
-      }
-      return axios.post(
-        `${this.sanctumConfig.baseUrl}${this.sanctumConfig.logoutAdmin}`
-      )
+      localStorage.removeItem("userData")
+      localStorage.removeItem(this.sanctumConfig.storageTokenKeyName)
+      localStorage.removeItem(this.sanctumConfig.storageRefreshTokenKeyName)
+      axios.post(
+        `${this.sanctumConfig.baseUrl}${this.sanctumConfig.logoutAdmin}`)
     } catch (error) {
       console.error(error)
     }
@@ -524,22 +516,11 @@ export default class sanctumService {
 
   logoutUser() {
     try {
-      const refreshToken = this.getRefreshToken()
-      const accessToken = this.getToken()
-
-      // If refresh token is not present, remove the local storage items and resolve the promise with an error
-      if (!refreshToken && !accessToken) {
-        localStorage.removeItem("frontUserData")
-        localStorage.removeItem(this.sanctumConfig.storageTokenKeyName)
-        localStorage.removeItem(this.sanctumConfig.storageRefreshTokenKeyName)
-        return Promise.resolve({
-          data: { code: "no_refresh_token", message: "Refresh token not found." }
-        })
-      }
-
-     return axios.post(
-        `${this.sanctumConfig.baseUrl}${this.sanctumConfig.logoutUser}`
-      )
+      localStorage.removeItem("frontUserData")
+      localStorage.removeItem(this.sanctumConfig.storageTokenKeyName)
+      localStorage.removeItem(this.sanctumConfig.storageRefreshTokenKeyName)
+      axios.post(
+        `${this.sanctumConfig.baseUrl}${this.sanctumConfig.logoutUser}`)
     } catch (error) {
       console.log(error)
     }

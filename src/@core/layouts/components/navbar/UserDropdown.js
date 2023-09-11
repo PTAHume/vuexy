@@ -61,7 +61,14 @@ const AdminOptions = ({ setLogout, id }) => {
       <span className="align-middle">Inbox</span>
     </DropdownItem>
     {/* ... (Other menu items) */}
-    <DropdownItem tag={Link} onClick={() => setLogout(true)}>
+    <DropdownItem tag={Link} onClick={(e) => {
+      e.persist()
+      e.nativeEvent.stopImmediatePropagation()
+      e.stopPropagation()
+      e.preventDefault()
+      setLogout(true)
+      return false
+    }}>
       <Power size={14} className="me-75" />
       <span className="align-middle">Logout</span>
     </DropdownItem>
@@ -89,7 +96,14 @@ const UserOptions = ({ setLogout, id, updateStatusForUserType }) => {
         <span className="align-middle">Inbox</span>
       </DropdownItem>
       <DropdownItem tag={Link}
-        to="#" onClick={() => setLogout(true)}>
+        onClick={(e) => {
+          e.persist()
+          e.nativeEvent.stopImmediatePropagation()
+          e.stopPropagation()
+          e.preventDefault()
+          setLogout(true)
+          return false
+        }}>
         <Power size={14} className="me-75" />
         <span className="align-middle">Logout</span>
       </DropdownItem>
@@ -215,17 +229,17 @@ const UserDropdown = () => {
       try {
         if (isAdminLoggedIn) {
           dispatch(handleLogout())
-          setIsLoading(false)
-          navigate(getHomeRouteForLoggedInUser("admin"))
           sanctum.logoutAdmin()
+          setIsLoading(false)
           toast.success("Logged out successfully!")
+          navigate(getHomeRouteForLoggedInUser("admin"))
         } else {
           // Call user logout API here
           dispatch(handleFrontLogout())
-          setIsLoading(false)
-          navigate(getHomeRouteForLoggedInUser(""))
           sanctum.logoutUser()
+          setIsLoading(false)
           toast.success("Logged out successfully!")
+          navigate(getHomeRouteForLoggedInUser(""))
         }
       } catch (error) {
         console.log(error)
