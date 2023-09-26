@@ -67,7 +67,6 @@ export const appChatSlice = createSlice({
     setTemporaryMessageId: (state, action) => {
       state.temporaryMessageId = action.payload
     },
-
     showLoaderMoreMsg: (state) => {
       state.isLoadingMoreMsg = true
     },

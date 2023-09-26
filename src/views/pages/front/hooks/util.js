@@ -1,6 +1,6 @@
 //UTILS STARTS HERE
 export const paginateArray = (array, itemsPerPage, currentPage) => {
-   //console.log('Input parameters:', { array, itemsPerPage, currentPage })
+  //console.log('Input parameters:', { array, itemsPerPage, currentPage })
 
   if (!Array.isArray(array)) return []
 
@@ -13,17 +13,17 @@ export const paginateArray = (array, itemsPerPage, currentPage) => {
 
 // ** Returns sorted array
 export const sortCompare = (key) => (a, b) => {
-  const fieldA = key === "price" ? parseFloat(a[key]) : a[key];
-  const fieldB = key === "price" ? parseFloat(b[key]) : b[key];
+  const fieldA = key === "price" ? parseFloat(a[key]) : a[key]
+  const fieldB = key === "price" ? parseFloat(b[key]) : b[key]
 
-  let comparison = 0;
+  let comparison = 0
   if (fieldA > fieldB) {
-    comparison = 1;
+    comparison = 1
   } else if (fieldA < fieldB) {
-    comparison = -1;
+    comparison = -1
   }
-  return comparison;
-};
+  return comparison
+}
 
 
 // ** Returns number range
@@ -52,18 +52,18 @@ export const randomDate = (start, end) => {
 
 
 export const getSortBy = (sortBy) => {
-  let sortDesc = false;
+  let sortDesc = false
   const sortByKey = (() => {
     if (sortBy === "price-desc") {
-      sortDesc = true;
-      return "price";
+      sortDesc = true
+      return "price"
     }
     if (sortBy === "price-asc") {
-      return "price";
+      return "price"
     }
-    sortDesc = true;
-    return "id";
-  })();
+    sortDesc = true
+    return "id"
+  })()
 
-  return { sortByKey, sortDesc };
-};
+  return { sortByKey, sortDesc }
+}

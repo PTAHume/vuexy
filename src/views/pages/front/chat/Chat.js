@@ -1,7 +1,7 @@
 
 // ** React Imports
 import React, { useState, useEffect, useRef } from "react"
-import { baseURL } from "../../../../utility/Utils"
+import { baseURL } from '@utils'
 // ** Custom Components
 import Avatar from "@components/avatar"
 import { toast } from 'react-toastify'

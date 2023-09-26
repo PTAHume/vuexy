@@ -1,14 +1,13 @@
 // ** React Imports
-import { Fragment } from "react";
-import { offersSlice } from "../store";
+import { Fragment, useState } from "react"
+import { offersSlice } from "../store"
 // ** Product components
-import ProductCards from "./ProductCards";
-import ProductsHeader from "./ProductsHeader";
-import ProductsSearchbar from "./ProductsSearchbar";
-import { useState } from "react";
-import "@styles/react/libs/spinner/spinner.scss";
+import ProductCards from "./ProductCards"
+import ProductsHeader from "./ProductsHeader"
+import ProductsSearchbar from "./ProductsSearchbar"
+import "@styles/react/libs/spinner/spinner.scss"
 // ** Reactstrap Imports
-import { Pagination, PaginationItem, PaginationLink } from "reactstrap";
+import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
 
 const ProductsPage = (props) => {
   // ** Props
@@ -18,23 +17,22 @@ const ProductsPage = (props) => {
     activeView,
     getProducts,
     setActiveView,
-    appliedFilters,
-   
-  } = props;
+    appliedFilters
+  } = props
 
-  const [loading, setLoading] = useState(false); //this is general spinner occupies whole page
-  const [productPartLoading, setproductPartLoading] = useState(false); //this is general spinner occupies Priduct part 
+  const [loading, setLoading] = useState(false) //this is general spinner occupies whole page
+  const [productPartLoading, setproductPartLoading] = useState(false) //this is general spinner occupies Priduct part 
 
   // ** Handles pagination
   const handlePageChange = async (newPage) => {
-    let targetPage;
+    let targetPage
 
     if (newPage === "next") {
-      targetPage = store.params.page + 1;
+      targetPage = store.params.page + 1
     } else if (newPage === "prev") {
-      targetPage = store.params.page - 1;
+      targetPage = store.params.page - 1
     } else {
-      targetPage = newPage;
+      targetPage = newPage
     }
 
     if (targetPage >= 1) {
@@ -43,37 +41,35 @@ const ProductsPage = (props) => {
         dispatch(
           offersSlice.actions.updateParams({
             ...store.params,
-            page: targetPage,
+            page: targetPage
           })
-        );
+        )
       } else {
-        setLoading(true); // Set loading to true before fetching data
+        setLoading(true) // Set loading to true before fetching data
         // Fetch the new page and store it in the pages object
         const newParams = {
           ...store.params,
           ...appliedFilters,
-          page: targetPage,
-        };
-        const result = await dispatch(getProducts(newParams)); // Make the dispatch call awaitable
-        setLoading(false); // Set loading to false after data is fetched
+          page: targetPage
+        }
+        const result = await dispatch(getProducts(newParams)) // Make the dispatch call awaitable
+        setLoading(false) // Set loading to false after data is fetched
 
         // Dispatch setPages with the new page data
         dispatch(
           offersSlice.actions.setPages({
             page: targetPage,
-            data: result.payload.products,
+            data: result.payload.products
           })
-        );
+        )
       }
     }
-  };
+  }
 
   // ** Render pages
   const renderPageItems = () => {
     const arrLength =
-      store.totalProducts !== 0 && store.products.length !== 0
-        ? Math.ceil(store.totalProducts / store.params.perPage)
-        : 1;
+      store.totalProducts !== 0 && store.products.length !== 0 ? Math.ceil(store.totalProducts / store.params.perPage) : 1
 
     if (arrLength > 0) {
       return new Array(arrLength).fill().map((item, index) => {
@@ -96,20 +92,20 @@ const ProductsPage = (props) => {
               ) : null}
             </PaginationLink>
           </PaginationItem>
-        );
-      });
+        )
+      })
     } else {
-      return [0];
+      return [0]
     }
-  };
+  }
 
   // ** handle next page click
   const handleNext = () => {
-    const totalPages = Math.ceil(store.totalProducts / store.params.perPage);
+    const totalPages = Math.ceil(store.totalProducts / store.params.perPage)
     if (store.params.page < totalPages) {
-      handlePageChange("next");
+      handlePageChange("next")
     }
-  };
+  }
 
   return (
 
@@ -148,8 +144,7 @@ const ProductsPage = (props) => {
               <PaginationItem
                 disabled={store.params.page === 1}
                 className="prev-item"
-                onClick={() =>
-                  store.params.page !== 1 ? handlePageChange("prev") : null
+                onClick={() => (store.params.page !== 1 ? handlePageChange("prev") : null)
                 }
               >
                 <PaginationLink
@@ -180,7 +175,7 @@ const ProductsPage = (props) => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProductsPage;
+export default ProductsPage

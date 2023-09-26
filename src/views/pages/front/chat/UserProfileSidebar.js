@@ -1,6 +1,6 @@
 // ** Custom Components
 import Avatar from '@components/avatar'
-import { baseURL } from '../../../../utility/Utils'
+import { baseURL } from '@utils'
 // ** Third Party Components
 import classnames from 'classnames'
 import PerfectScrollbar from 'react-perfect-scrollbar'

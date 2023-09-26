@@ -11,7 +11,7 @@ import BlankLayout from '@layouts/BlankLayout'
 import { useLayout } from '@hooks/useLayout'
 
 // ** Utils
-import { getUserData, getHomeRouteForLoggedInUser } from '../utility/Utils'
+import { getUserData, getHomeRouteForLoggedInUser } from '@utils'
 
 // ** GetRoutes
 import { getRoutes } from './routes'

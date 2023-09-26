@@ -1,6 +1,6 @@
 // ** React Imports
 import { Fragment, useState, useEffect } from 'react'
-import { getReduxUserData } from "../../../../utility/Utils"
+import { getReduxUserData } from '@utils'
 // ** Chat App Component Imports
 import Chat from './Chat'
 import Sidebar from './SidebarLeft'
