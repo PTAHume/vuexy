@@ -30,7 +30,8 @@ import {
   DropdownToggle,
   DropdownItem
 } from "reactstrap"
-import sanctumService from "../../../../@core/auth/sanctum/sanctumService"
+//import sanctumService from "../../../../@core/auth/sanctum/sanctumService"
+import sanctumService from "@sanctum/sanctumService"
 import defaultAvatar from "@src/assets/images/avatars/no-image.png"
 
 const AdminOptions = ({ setLogout, id }) => {

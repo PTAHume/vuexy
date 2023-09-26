@@ -39,9 +39,6 @@ import useDebouncedFetchCountries from "../../hooks/debouncedFetchCountries"
 import { useApplyFilters } from "../../hooks/useApplyFilters"
 import useResetFields from "../../hooks/useResetFields"
 
-{
-  /*Lets create related constants here */
-}
 const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
   const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false)
@@ -130,9 +127,6 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
     }
   }, [searchQuery, filterKey, debouncedFetchCountries])
 
-  {
-    /*Delivery type value and label */
-  }
   const delivery_type = [
     { value: "hand_luggage", label: "Hand Luggage" },
     { value: "baggage", label: "Baggage" },
@@ -156,12 +150,6 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
   )
 
   const {
-    departureCountryKey,
-    departureCityKey,
-    departureAirportKey,
-    arrivalCountryKey,
-    arrivalCityKey,
-    arrivalAirportKey,
     handleReset
   } = useResetFields(
     reset,
@@ -195,20 +183,20 @@ const Sidebar = ({ sidebarOpen, handleApplyFilters }) => {
             <CardBody>
               <Form
                 onSubmit={handleSubmit((data) => applyFilters(
-                    data,
-                    departure_country_id,
-                    departureCityInput,
-                    departure_city_id,
-                    departureAirportInput,
-                    departure_airport_id,
-                    arrivalCityInput,
-                    arrival_city_id,
-                    arrivalCountryInput,
-                    arrival_country_id,
-                    arrivalAirportInput,
-                    arrival_airport_id,
-                    departureCountryInput
-                  )
+                  data,
+                  departure_country_id,
+                  departureCityInput,
+                  departure_city_id,
+                  departureAirportInput,
+                  departure_airport_id,
+                  arrivalCityInput,
+                  arrival_city_id,
+                  arrivalCountryInput,
+                  arrival_country_id,
+                  arrivalAirportInput,
+                  arrival_airport_id,
+                  departureCountryInput
+                )
                 )}
               >
                 {/* Country */}

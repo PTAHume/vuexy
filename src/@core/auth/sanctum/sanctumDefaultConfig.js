@@ -64,5 +64,6 @@ export default {
   getUserChat: "api/front/getUserChat",
   getUserMoreMsgs: "api/front/getUserMoreMsgs",
   getUserListUserDeals: "api/front/getUserListUserDeals",
-  getUserAllData: "api/front/getUserAllData"
+  getUserAllData: "api/front/getUserAllData",
+  getTheUserChatContact: "api/front/getTheUserChatContact"
 }

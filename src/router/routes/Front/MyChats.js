@@ -8,14 +8,14 @@ const AppChat = lazy(() => import('../../../views/pages/front/chat/'))
 const MyChats = [
   {
     element: <AppChat />,
-    path: '/my-chats',
+    path: '/my-chats/:id?',
     meta: {
       appLayout: true,
       className: 'chat-application',
-      privateRoute:"true",
+      privateRoute: "true"
     }
-  },
- 
+  }
+
 ]
 
 export default MyChats

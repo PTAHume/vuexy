@@ -1,6 +1,5 @@
 import { DefaultRoute, DefaultRouteFront } from "../router/routes"
 import sanctumService from "@sanctum/sanctumService"
-//import { useSelector } from "react-redux"
 const sanctum = new sanctumService()
 // ** Checks if an object is empty (returns boolean)
 export const isObjEmpty = (obj) => Object.keys(obj).length === 0
@@ -57,23 +56,13 @@ export const isAdminUserLoggedIn = (state) => {
   const adminData = localStorage.getItem("userData")
   return admin && admin.type === "admin" && adminData !== null
 }
-
-//get user details
 export const isUserLoggedIn = (state) => {
   const user = state.frontauthentication.frontUserData
   const frontUserData = localStorage.getItem("frontUserData")
   return user && frontUserData !== null
 }
-
-//base url of website
-export const baseURL = `${sanctum.baseurl().replace(/\s/g, "")}` //better to fetch from one place so when we change base url it will be updated globally.
-
-//#########FIND IT WHERE IT HAS BEEN USED AND ADD THERE ADMIN REDUX DATA ALSO##################
+export const baseURL = `${sanctum.baseurl().replace(/\s/g, "")}` //better to fetch from one place so when we change 
 export const getUserData = () => JSON.parse(localStorage.getItem("userData"))
-
-{
-  /*Lets add the front user data for localstorage */
-}
 export const getFrontUserData = () => {
   JSON.parse(localStorage.getItem("frontUserData"))
 }
@@ -87,14 +76,10 @@ export const getReduxUserData = (state) => {
   return state.frontauthentication.frontUserData
 }
 
-{
-  /*DONT CONFUSE YOURSELF : getHomeRouteForLoggedInUser is for ADMIN ONLY!!! */
-}
 export const getHomeRouteForLoggedInUser = (userRole) => {
   if (userRole === "admin") {
     return DefaultRoute //DefaultRoute for Admin
   }
-  // if (userRole === "vendor") return "/access-control" //we will add here merchant default url
   return DefaultRouteFront //default route for FrontUser
 }
 

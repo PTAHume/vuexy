@@ -1,62 +1,77 @@
 // ** React Imports
 import { useState, useEffect } from 'react'
-import { baseURL } from '../../../../utility/Utils'
-// ** Custom Components
+import { baseURL, formatDateToMonthShort } from '@utils'
+import sanctumService from '@sanctum/sanctumService'
+import classnames from 'classnames'
 import Avatar from '@components/avatar'
 import {
   showLoader, hideLoader,
-  selectChat, setOldestMessageId, setSelectedChatUniqueId
+  selectChat, setOldestMessageId, setSelectedChatUniqueId,
+  getChatContacts
 } from './store'
-import { useDispatch } from 'react-redux'
-import { formatDateToMonthShort } from '@utils'
-import classnames from 'classnames'
+import { useDispatch } from "react-redux"
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import { X, Search, Bell, Trash } from 'react-feather'
 import { CardText, InputGroup, InputGroupText, Badge, Input } from 'reactstrap'
+import { useParams } from 'react-router-dom'
+
 
 const SidebarLeft = props => {
   // ** Props & Store
+  const { id } = useParams()
   const { store, sidebar, handleSidebar, userSidebarLeft, handleUserSidebarLeft } = props
   const { chats, contacts, userProfile } = store
-  const dispatch = useDispatch()
-  const [query, setQuery] = useState('')
   const [active, setActive] = useState({ chatId: null, userId: null, uniqueId: null })
   const [filteredChat, setFilteredChat] = useState([])
   const [filteredContacts, setFilteredContacts] = useState([])
   const isEmpty = (obj) => {
     return Object.keys(obj).length === 0 && obj.constructor === Object
   }
+  const dispatch = useDispatch()
+  const [query, setQuery] = useState('')
+  const sanctum = new sanctumService()
+
+  const loadData = async (uniqueId) => {
+    try {
+      let selectedItem = chats.find((chatItem) => chatItem.unique_id === uniqueId)
+      if (!selectedItem) {
+        await dispatch(getChatContacts()).unwrap()
+        await sanctum.getUserChatContacts().then((result) => {
+          //console.log(result)
+          selectedItem = result?.data
+            ?.chatsContacts?.find((chatItem) => chatItem.unique_id === uniqueId)
+        })
+      }
+      if (!selectedItem) return
+      // Find the correct chat from the selectedUser array.
+      const selectedChat = store.selectedUser.find(userChat => userChat.data.chat.id === selectedItem.chat?.id)
+      if (!selectedChat || selectedChat.data.chat.id !== selectedItem.chat?.id) {
+        window.localStorage.setItem("EnableSendMessage", JSON.stringify(true))
+        dispatch(showLoader())
+        dispatch(selectChat(selectedItem?.unique_id))
+        dispatch(setSelectedChatUniqueId(selectedItem?.unique_id))
+        dispatch(setOldestMessageId(null))
+      } else {
+        setActive({
+          chatId: selectedChat.data.chat.id,
+          userId: selectedChat.data.contact.id,
+          uniqueId: selectedChat.id
+        })
+        dispatch(setSelectedChatUniqueId(selectedItem?.unique_id))
+      }
+      if (sidebar === true) {
+        handleSidebar()
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      dispatch(hideLoader())
+    }
+  }
 
   // ** Handles User Chat Click
-  const handleUserClick = async (uniqueId) => {
-    const selectedItem = chats.find((chatItem) => chatItem.unique_id === uniqueId)
-    // Find the correct chat from the selectedUser array.
-    const selectedChat = store.selectedUser.find(userChat => userChat.data.chat.id === selectedItem.chat?.id)
-    if (!selectedChat || selectedChat.data.chat.id !== selectedItem.chat?.id) {
-      try {
-        window.localStorage.setItem("EnableSendMessage", JSON.stringify(true))
-        await dispatch(showLoader())
-        await dispatch(selectChat(selectedItem?.unique_id))
-        await dispatch(setSelectedChatUniqueId(selectedItem?.unique_id))
-        await dispatch(setOldestMessageId(null))
-      } catch (error) {
-        console.error('Error in handleUserClick:', error)
-      } finally {
-        dispatch(hideLoader())
-      }
-    } else {
-      setActive({
-        chatId: selectedChat.data.chat.id,
-        userId: selectedChat.data.contact.id,
-        uniqueId: selectedChat.id
-      })
-      await dispatch(setSelectedChatUniqueId(selectedItem?.unique_id))
-
-    }
-
-    if (sidebar === true) {
-      handleSidebar()
-    }
+  const handleUserClick = (uniqueId) => {
+    loadData(uniqueId)
   }
 
   useEffect(() => {
@@ -73,6 +88,12 @@ const SidebarLeft = props => {
     }
   }, [store.selectedUser, store.selectedChatUniqueId])
 
+  useEffect(() => {
+    if (id) {
+      loadData(id)
+    }
+  }, [id])
+
   const renderChats = () => {
     if (chats && chats.length) {
       if (query.length && !filteredChat.length) {
@@ -83,11 +104,9 @@ const SidebarLeft = props => {
         )
       } else {
         const arrToMap = query.length && filteredChat.length ? filteredChat : chats
-
         return arrToMap.map(item => {
           // console.log(item.chat.id)
           const time = formatDateToMonthShort(item.chat.lastMessage ? item.chat.lastMessage.time : new Date())
-
           return (
             <li
               key={`${item.chat.id}_${item.id}`}
@@ -116,6 +135,7 @@ const SidebarLeft = props => {
             </li>
           )
         })
+
       }
     } else {
       return null

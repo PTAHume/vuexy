@@ -449,8 +449,8 @@ export default class sanctumService {
     arrival_city_id,
     arrival_airport_id // Add this parameter
   ) {
-    return axios.get(`${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserFrontSidebarData}`, {
-      params: {
+    return axios.get(`${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserFrontSidebarData}`,
+      {
         searchQuery,
         searchField,
         departure_country_id,
@@ -459,7 +459,7 @@ export default class sanctumService {
         arrival_city_id,
         arrival_airport_id // Add this parameter
       }
-    })
+    )
   }
 
   getUserDataForChat(id) {
@@ -472,6 +472,11 @@ export default class sanctumService {
     return axios.post(
       `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getUserChatContacts}`
     )
+  }
+
+  getTheUserChatContact = (dealCreatorId, LoggedInUserId, offerId, dealType) => {
+    const url = `${this.sanctumConfig.baseUrl}${this.sanctumConfig.getTheUserChatContact}?user_id=${LoggedInUserId}&opponent_id=${dealCreatorId}&offer_id=${offerId}&deal_type=${dealType}`
+    return axios.get(url)
   }
 
   getUserChat(uniqueId) {

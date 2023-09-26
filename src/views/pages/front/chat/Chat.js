@@ -1,7 +1,7 @@
 
 // ** React Imports
 import React, { useState, useEffect, useRef } from "react"
-import { baseURL } from "../../../../utility/Utils"
+import { baseURL } from '@utils'
 // ** Custom Components
 import Avatar from "@components/avatar"
 import { toast } from 'react-toastify'
@@ -141,9 +141,11 @@ const ChatLog = (props) => {
       if (hasUserGotRateLimitItem?.button === 'disabled' && enableSendMessage === true) {
         dispatch(setEnableSendMessage(false))
         toast.info("Too many consecutive requests made in too sort a time span! Please wait a moment before trying again, you will be notified when you can send a message again")
+        return
       } else if (hasUserGotRateLimitItem?.button === 'enabled' && enableSendMessage === false) {
         dispatch(setEnableSendMessage(true))
         toast.info("You may continue sending messages agin now, please be mindful not to spam chat!")
+        return
       }
     }
 

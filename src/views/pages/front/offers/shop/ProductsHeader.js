@@ -1,8 +1,8 @@
 // ** Third Party Components
-import classnames from "classnames";
-import { Menu, Grid, List } from "react-feather";
-import React, { useState } from "react";
-import {  setPages, updateParams,   clearPages, clearSortedProducts, } from "../store"; 
+import classnames from "classnames"
+import { Menu, List } from "react-feather"
+import React, { useState } from "react"
+import { clearPages, clearSortedProducts } from "../store"
 import {
   Row,
   Col,
@@ -11,52 +11,37 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  UncontrolledButtonDropdown,
-} from "reactstrap";
+  UncontrolledButtonDropdown
+} from "reactstrap"
 
 const ProductsHeader = (props) => {
-  const [loading, setLoading] = useState(false); //this is general spinner occupies whole page
+  const [loading, setLoading] = useState(false) //this is general spinner occupies whole page
   // ** Props
-  const { activeView, setActiveView, dispatch, getProducts, store } = props;
+  const { activeView, setActiveView, dispatch, getProducts, store } = props
   // ProductsHeader.js
-const handleSorting = async (sortBy) => {
-    setLoading(true);
-    dispatch(clearPages());
-    dispatch(clearSortedProducts());
-  // Check if the data for the selected sorting option is available in the store
-  // if (store.sortedProducts[sortBy]) {
-  //   // Use the stored data
-  //   props.setLoading(true);
-  //   const newParams = { ...store.params, sortBy };
-  //   await dispatch(setPages({ page: store.params.page, data: store.sortedProducts[sortBy] }));
-  //   await dispatch(updateParams(newParams));
-  //   props.setLoading(false);
-  // } else {
-    // Fetch data and save it in the store
-    //props.setLoading(true);
-    const newParams = { ...store.params, sortBy };
-    await dispatch(getProducts(newParams));
-    setLoading(false);
-  //}
-};
-
-  
-  
-  // ** Sorting obj
+  const handleSorting = async (sortBy) => {
+    setLoading(true)
+    dispatch(clearPages())
+    dispatch(clearSortedProducts())
+    const newParams = { ...store.params, sortBy }
+    await dispatch(getProducts(newParams))
+    setLoading(false)
+    //}
+  }
   const sortToggleText = {
     "price-desc": "Highest",
     "price-asc": "Lowest",
-    featured: "Featured",
-  };
+    featured: "Featured"
+  }
 
   return (
     <div className="ecommerce-header">
       <Row>
-      {loading ? (
-                <div id="loading-overlay" style={{ display: "flex" }}>
-                  <div className="loader"></div>
-                </div>
-              ) : null}
+        {loading ? (
+          <div id="loading-overlay" style={{ display: "flex" }}>
+            <div className="loader"></div>
+          </div>
+        ) : null}
         <Col sm="12">
           <div className="ecommerce-header-items">
             <div className="result-toggler">
@@ -71,14 +56,14 @@ const handleSorting = async (sortBy) => {
             </div>
             <div className="view-options d-flex">
               <UncontrolledButtonDropdown className="dropdown-sort">
-              <DropdownToggle
-                className="text-capitalize me-1"
-                color="primary"
-                outline
-                caret
-              >
-                {sortToggleText[store.params.sortBy]}{" "}
-              </DropdownToggle>
+                <DropdownToggle
+                  className="text-capitalize me-1"
+                  color="primary"
+                  outline
+                  caret
+                >
+                  {sortToggleText[store.params.sortBy]}{" "}
+                </DropdownToggle>
                 <DropdownMenu>
                   <DropdownItem
                     className="w-100"
@@ -101,24 +86,10 @@ const handleSorting = async (sortBy) => {
                 </DropdownMenu>
               </UncontrolledButtonDropdown>
               <ButtonGroup>
-                {/* 
-                WE WILL NEED THIS PART FOR OTHER CATEGORY OFFERS!!!
-                <Button
-                  tag='label'
-                  className={classnames('btn-icon view-btn grid-view-btn', {
-                    active: activeView === 'grid'
-                  })}
-                  color='primary'
-                  outline
-                  onClick={() => setActiveView('grid')}
-                >
-                  <Grid size={18} />
-                </Button> */}
-
                 <Button
                   tag="label"
                   className={classnames("btn-icon view-btn list-view-btn", {
-                    active: activeView === "list",
+                    active: activeView === "list"
                   })}
                   color="primary"
                   outline
@@ -132,7 +103,7 @@ const handleSorting = async (sortBy) => {
         </Col>
       </Row>
     </div>
-  );
-};
+  )
+}
 
-export default ProductsHeader;
+export default ProductsHeader

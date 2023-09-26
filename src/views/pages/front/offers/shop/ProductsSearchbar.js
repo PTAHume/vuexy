@@ -9,13 +9,10 @@ const ProductsSearchbar = props => {
   const { dispatch, getProducts, store, setLoading } = props
 
   const handleSearch = async (e) => {
-    setLoading(true);
-    await dispatch(getProducts({ ...store.params, q: e.target.value }));
-    setLoading(false);
-  };
-
-  
-
+    setLoading(true)
+    await dispatch(getProducts({ ...store.params, q: e.target.value }))
+    setLoading(false)
+  }
   return (
     <div id='ecommerce-searchbar' className='ecommerce-searchbar'>
       <Row className='mt-1'>
