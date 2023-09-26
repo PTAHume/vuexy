@@ -31,6 +31,7 @@ import AddDeal from './Front/AddDeal'
 import MyDeals from './Front/MyDeals'
 import EditMyDeals from './Front/EditDeal'
 import UserProfile from './Front/UserProfile'
+import License from './Front/ContactUs'
 
 const getLayout = {
   blank: <BlankLayout />,
@@ -62,7 +63,8 @@ const Routes = [
   ...AddDeal,
   ...MyDeals,
   ...EditMyDeals,
-  ...UserProfile
+  ...UserProfile,
+  ...License
 ]
 
 const getRouteMeta = route => {
