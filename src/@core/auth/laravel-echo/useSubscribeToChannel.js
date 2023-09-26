@@ -2,7 +2,6 @@
 import { useEffect } from 'react'
 import { echoInstance } from './echoService'
 
-
 export const useSubscribeToChannel = (channelName, onError, onSuccess, onDataReceived, args = null) => {
   useEffect(() => {
     let channel
@@ -10,6 +9,7 @@ export const useSubscribeToChannel = (channelName, onError, onSuccess, onDataRec
     async function subscribe() {
       channel = echoInstance.private(channelName)
       channel.listen(`.App\\Events\\${channelName.charAt(0).toUpperCase() + channelName.slice(1)}ListUpdated`, (data) => {
+        //console.log(data)
         onDataReceived(data, args)
       })
     }
