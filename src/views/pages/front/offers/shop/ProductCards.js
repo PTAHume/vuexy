@@ -31,7 +31,7 @@ const ProductCards = (props) => {
     { value: "document", label: "Document" }
   ]
   const handleContactBtn = async (dealCreatorId, offerId, deliveryType) => {
-    console.log(`dealCreatorId=${dealCreatorId}, LoggedInUserId=${reduxUserData.id}, offerId=${offerId}, deliveryType=${deliveryType}`)
+    //console.log(`dealCreatorId=${dealCreatorId}, LoggedInUserId=${reduxUserData.id}, offerId=${offerId}, deliveryType=${deliveryType}`)
     if (!dealCreatorId || !reduxUserData?.id || !offerId || !deliveryType) {
       toast.error("please ensure you are logged in")
     }
@@ -46,6 +46,10 @@ const ProductCards = (props) => {
       console.error(error)
     }
   }
+  const handleEditBtn = (id) => {
+    navigate(`/my-deals/${id}/edit`)
+  }
+
 
   const renderProducts = () => {
     if (products.length) {
@@ -204,13 +208,17 @@ const ProductCards = (props) => {
                 <span>{"Contact"}</span>
               </Button>
               ) : (
-              <Button
-                    color="Secondary"
-                className="btn-cart move-cart"
-              >
-                <Info className="me-50" size={14} />
-                <span>{"this is your deal"}</span>
-              </Button>
+                <Button
+                  color="info"
+                  className="btn-cart move-cart"
+                  onClick={() => {
+                    console.log(item)
+                    handleEditBtn(item.id)
+                  }}
+                >
+                  <Info style={{ color: "black" }} className="me-50" size={14} />
+                  <span style={{ color: "black" }}>Edit Your Deal</span>
+                </Button>
               )
 
               }
